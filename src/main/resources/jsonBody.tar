@@ -1,0 +1,57 @@
+{
+  'packageName': 'com.asseg.template',
+  'categoryType': '1',
+  'name': 'Bank',
+   "components": [
+        {
+            "label": "gast1",
+            "applyMaskOn": "change",
+            "tableView": true,
+            "key": "miguel",
+            "conditional": {
+                "show": false,
+                "when": "gast2"
+            },
+            "type": "textfield",
+            "input": true
+        },
+        {
+            "label": "textArea1",
+            "applyMaskOn": "change",
+            "autoExpand": false,
+            "tableView": true,
+            "key": "textArea1",
+            "type": "textarea",
+            "input": true
+        },
+        {
+            "label": "Password",
+            "applyMaskOn": "change",
+            "tableView": false,
+            "key": "password",
+            "type": "password",
+            "input": true,
+            "protected": true
+        },
+        {
+            "label": "Number1",
+            "applyMaskOn": "change",
+            "mask": false,
+            "tableView": false,
+            "delimiter": false,
+            "requireDecimal": false,
+            "inputFormat": "plain",
+            "truncateMultipleSpaces": false,
+            "key": "number1",
+            "type": "number",
+            "input": true
+        },
+        {
+            "label": "Checkbox",
+            "tableView": false,
+            "key": "checkbox",
+            "type": "checkbox",
+            "input": true
+        }
+   ]
+}

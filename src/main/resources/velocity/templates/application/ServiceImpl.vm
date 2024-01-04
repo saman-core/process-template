@@ -1,0 +1,45 @@
+#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
+package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.service.impl;
+
+import ${template.getPackageName()}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
+import ${template.getPackageName()}.${nameTemplateLowerCase}.repository.${nameTemplate}Repository;
+import ${template.getPackageName()}.${nameTemplateLowerCase}.service.${nameTemplate}Service;
+import ${template.getPackageName()}.${nameTemplateLowerCase}.transformer.${nameTemplate}Transformer;
+import io.smallrye.mutiny.Uni;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+@ApplicationScoped
+public class ${nameTemplate}ServiceImpl implements ${nameTemplate}Service {
+
+    @Inject
+    ${nameTemplate}Repository repository;
+
+    @Inject
+    ${nameTemplate}Transformer transformer;
+
+    @Override
+    public Uni<${nameTemplate}Model> getById(Long id) {
+        return repository.getById(id)
+        .onItem().transform(entity -> transformer.toModel(entity));
+    }
+
+    @Override
+    public Uni<${nameTemplate}Model> create(${nameTemplate}Model model) {
+        return repository.create(transformer.toEntity(model))
+        .onItem().transform(entity -> transformer.toModel(entity));
+    }
+
+    @Override
+    public Uni<${nameTemplate}Model> update(${nameTemplate}Model model) {
+        return repository.update(transformer.toEntity(model))
+        .onItem().transform(entity -> transformer.toModel(entity));
+    }
+
+    @Override
+    public Uni<Boolean> deleteById(Long id) {
+        return repository.delete(id);
+    }
+}

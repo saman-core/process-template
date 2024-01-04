@@ -1,0 +1,50 @@
+#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
+package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.transformer;
+
+import org.jboss.logging.Logger;
+import com.asseg.common.transformer.GenericTransformer;
+import com.asseg.common.error.message.TechnicalExceptionsEnum;
+import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.entity.${nameTemplate}Entity;
+import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
+
+import com.asseg.common.error.util.ExceptionHandler;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+@ApplicationScoped
+public class  ${nameTemplate}Transformer extends GenericTransformer<${nameTemplate}Entity, ${nameTemplate}Model> {
+
+    @Inject
+    Logger log;
+
+    public ${nameTemplate}Entity toEntity(${nameTemplate}Model model) {
+        try {
+            log.debugf("${nameTemplate}Transformer.toEntity model: %s", model);
+            return transformToEntity(model);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.TRANSFORMER_OBJECT_ERROR, e);
+        }
+    }
+
+    public ${nameTemplate}Model toModel(${nameTemplate}Entity entity) {
+        try {
+            log.debugf("${nameTemplate}Transformer.toModel entity: %s", entity);
+            return transformToModel(entity);
+        } catch (Exception e) {
+        log.error(e.getMessage(), e);
+        throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.TRANSFORMER_OBJECT_ERROR, e);
+        }
+    }
+
+    public ${nameTemplate}Entity copyToAttached(${nameTemplate}Entity detached, ${nameTemplate}Entity attached) {
+        try {
+            log.debugf("${nameTemplate}Transformer.copyToAttached");
+            return transformCopyToAttached(detached, attached);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.TRANSFORMER_OBJECT_ERROR, e);
+        }
+    }
+}

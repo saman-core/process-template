@@ -1,0 +1,63 @@
+#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
+package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.api;
+
+import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
+import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.service.${nameTemplate}Service;
+import io.smallrye.mutiny.Uni;
+import org.jboss.logging.Logger;
+
+import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+
+@Path("/${nameTemplateLowerCase}")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public class ${nameTemplate}Api {
+
+    @Inject
+    Logger log;
+
+    @Context
+    UriInfo uriInfo;
+
+    @Inject
+    ${nameTemplate}Service service;
+
+    @GET
+    @Path("/getById/{id}")
+    @RolesAllowed({"ms_client"})
+    public Uni<${nameTemplate}Model> getById(@PathParam("id") long id) {
+        log.debugf("${nameTemplate}Api.getById %d ", id);
+        return service.getById(id);
+    }
+
+    @DELETE
+    @Path("/deleteById/{id}")
+    @RolesAllowed({"ms_client"})
+    public Uni<Boolean> deleteById(@PathParam("id") Long id) {
+        log.debugf("${nameTemplate}Api.deleteById %d ", id);
+        return service.deleteById(id);
+    }
+
+   @POST
+   @Path("/create")
+   @RolesAllowed({"ms_client"})
+   public Uni<${nameTemplate}Model> create(@Valid ${nameTemplate}Model ${this.mangleObjectIdentifier($nameTemplate)}Model) {
+        log.debug("${nameTemplate}Api.create");
+        return service.create(${this.mangleObjectIdentifier($nameTemplate)}Model);
+   }
+
+   @PUT
+   @Path("/update")
+   @RolesAllowed({"ms_client"})
+   public Uni<${nameTemplate}Model> update(@Valid ${nameTemplate}Model ${this.mangleObjectIdentifier($nameTemplate)}Model) {
+        log.debug("${nameTemplate}Api.update");
+        return service.update(${this.mangleObjectIdentifier($nameTemplate)}Model);
+   }
+}

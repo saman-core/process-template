@@ -1,0 +1,17 @@
+#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
+package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.repository;
+
+import io.smallrye.mutiny.Uni;
+import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.entity.${nameTemplate}Entity;
+
+public interface ${nameTemplate}Repository {
+
+    Uni<${nameTemplate}Entity> create(${nameTemplate}Entity entity);
+
+    Uni<${nameTemplate}Entity> getById(Long id);
+
+    Uni<${nameTemplate}Entity> update(${nameTemplate}Entity entity);
+
+    Uni<Boolean> delete(Long id);
+}

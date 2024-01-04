@@ -1,0 +1,68 @@
+#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
+package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.entity;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import javax.persistence.*;
+import java.io.Serial;
+import java.io.Serializable;
+#foreach($field in $template.getFields())
+#set ($objectType = ${this.getObjectType($field)})
+#if($this.getImport($objectType))
+import $this.getImport($objectType);
+#end
+#end
+
+@Entity
+@Getter
+@Setter
+@Table(name = "${nameTemplateLowerCase}")
+public class ${nameTemplate}Entity implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_${nameTemplateLowerCase}")
+    @Column(name = "${nameTemplateLowerCase}_id", unique = true, nullable = false)
+    private Long id;
+
+#foreach ($field in $template.getFields())
+#if($field.isPersistent())
+#if($this.validateIfHasColumnDefinition($field))
+    ${this.getEntityColumnDefinition($field)}
+#end
+    private ${this.getObjectType($field)} ${this.mangle($field.getKey())};
+
+#end
+#end
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ${nameTemplate}Entity that = (${nameTemplate}Entity) o;
+        return new EqualsBuilder().append(id, that.id)
+#foreach ($field in $template.getFields())
+#if($field.isPersistent())
+                .append(${this.mangle($field.getKey())}, that.${this.mangle($field.getKey())})
+#end
+#end
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+#foreach ($field in $template.getFields())
+#if(${field.isPersistent()})
+                .append(${this.mangle($field.getKey())})
+#end
+#end
+                .toHashCode();
+    }
+}

@@ -1,0 +1,27 @@
+#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
+package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.model;
+
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
+#foreach($field in $template.getFields())
+#set ($objectType = ${this.getObjectType($field)})
+#if($this.getImport($objectType))
+import $this.getImport($objectType);
+#end
+#end
+
+@Value
+@Jacksonized
+@Builder(
+    setterPrefix = "set",
+    builderMethodName = "newBuilder",
+    toBuilder = true
+)
+public class ${nameTemplate}Model {
+    Long id;
+#foreach ($field in $template.getFields())
+    ${this.getObjectType($field)} ${this.mangle($field.getKey())};
+#end
+}

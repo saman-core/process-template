@@ -1,0 +1,52 @@
+#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameTemplateLowerCase = ${nameTemplateLowerCase})
+package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.repository.reactive.panache;
+
+import com.asseg.common.error.message.TechnicalExceptionsEnum;
+import com.asseg.common.error.util.ExceptionHandler;
+
+import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.entity.${nameTemplate}Entity;
+import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.repository.${nameTemplate}Repository;
+import io.smallrye.mutiny.Uni;
+import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
+import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.transformer.${nameTemplate}Transformer;
+
+import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.NotFoundException;
+
+@ApplicationScoped
+public class ${nameTemplate}RepositoryReactivePanache implements PanacheRepositoryBase<${nameTemplate}Entity, Long>, ${nameTemplate}Repository {
+
+    @Inject
+    ${nameTemplate}Transformer transformer;
+
+    @Override
+    public Uni<${nameTemplate}Entity> create(${nameTemplate}Entity entity) {
+        entity.setId(null);
+        return persistAndFlush(entity)
+        .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e));
+    }
+
+    @Override
+    public Uni<${nameTemplate}Entity> getById(Long id) {
+        return findById(id)
+        .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e))
+        .onItem().ifNull().failWith(NotFoundException::new);
+    }
+
+    @Override
+    public Uni<${nameTemplate}Entity> update(${nameTemplate}Entity entity) {
+        return getById(entity.getId())
+        .onItem().transform(attached -> transformer.copyToAttached(entity, attached))
+        .onItem().transformToUni(this::persistAndFlush)
+        .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e));
+    }
+
+    @Override
+    public Uni<Boolean> delete(Long id) {
+        return deleteById(id)
+        .onItem().call(this::flush)
+        .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e));
+    }
+}
