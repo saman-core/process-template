@@ -1,0 +1,48 @@
+#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
+package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.client.rest;
+
+import ${template.getPackageName()}.${nameTemplateLowerCase}.client.${nameTemplate}Client;
+import ${template.getPackageName()}.${nameTemplateLowerCase}.client.rest.microprofile.${nameTemplate}RestClient;
+import ${template.getPackageName()}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
+import io.smallrye.mutiny.Uni;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+@ApplicationScoped
+public class ${nameTemplate}RestClientWrapper implements ${nameTemplate}Client {
+
+    @Inject
+    Logger log;
+
+    @Inject
+    @RestClient
+    ${nameTemplate}RestClient service;
+
+    @Override
+    public Uni<${nameTemplate}Model> getById(Long id) {
+        log.debugf("${nameTemplate}RestClientWrapper.getById %d", id);
+        return service.getById(id);
+    }
+
+    @Override
+    public Uni<${nameTemplate}Model> create(${nameTemplate}Model model) {
+        log.debug("${nameTemplate}RestClientWrapper.create");
+        return service.create(model);
+    }
+
+    @Override
+    public Uni<${nameTemplate}Model> update(${nameTemplate}Model model) {
+        log.debugf("${nameTemplate}RestClientWrapper.update %d", model.getId());
+        return service.update(model);
+    }
+
+    @Override
+    public Uni<Boolean> deleteById(Long id) {
+        log.debugf("${nameTemplate}RestClientWrapper.deleteById %d", id);
+        return service.deleteById(id);
+    }
+}

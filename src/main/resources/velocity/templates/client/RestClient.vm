@@ -1,0 +1,36 @@
+#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
+package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.client.rest.microprofile;
+
+import io.smallrye.mutiny.Uni;
+import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
+import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
+@ApplicationScoped
+@RegisterRestClient(configKey = "${nameTemplateLowerCase}-api}")
+@RegisterClientHeaders
+@Path("/${nameTemplateLowerCase}s}")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public interface ${nameTemplate}RestClient {
+
+    @GET
+    @Path("/getById/{id}")
+    Uni<${nameTemplate}Model> getById(@PathParam("id") Long id);
+
+    @POST
+    @Path("/create")
+    Uni<${nameTemplate}Model> create(${nameTemplate}Model model);
+
+    @PUT
+    @Path("/update")
+    Uni<${nameTemplate}Model> update(${nameTemplate}Model model);
+
+    @DELETE
+    @Path("/deleteById/{id}")
+    Uni<Boolean> deleteById(@PathParam("id") Long id);
+}
