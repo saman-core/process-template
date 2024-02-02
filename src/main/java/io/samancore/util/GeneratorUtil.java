@@ -1,6 +1,6 @@
-package com.generator.util;
+package io.samancore.util;
 
-import com.generator.Field;
+import io.samancore.Field;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
 import org.apache.velocity.Template;
@@ -197,7 +197,7 @@ public class GeneratorUtil {
         return writer.toString();
     }
 
-    public List<OutputFile> compile(com.generator.Template template, String module) {
+    public List<OutputFile> compile(io.samancore.Template template, String module) {
         List<OutputFile> outputFiles = new ArrayList<>();
         VelocityContext context = new VelocityContext();
         context.put("this", this);

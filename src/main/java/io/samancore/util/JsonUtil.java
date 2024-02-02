@@ -1,8 +1,8 @@
-package com.generator.util;
+package io.samancore.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.generator.Field;
+import io.samancore.Field;
 
 import java.util.ArrayList;
 import java.util.Iterator;

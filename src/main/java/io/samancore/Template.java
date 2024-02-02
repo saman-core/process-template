@@ -1,4 +1,4 @@
-package com.generator;
+package io.samancore;
 
 import java.util.List;
 

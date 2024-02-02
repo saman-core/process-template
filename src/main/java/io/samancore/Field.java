@@ -1,6 +1,4 @@
-package com.generator;
-
-import java.util.List;
+package io.samancore;
 
 public class Field {
     String key;
