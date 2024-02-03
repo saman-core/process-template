@@ -1,0 +1,27 @@
+name: CI-CD-MVN-DEPLOY
+on:
+  workflow_dispatch:
+
+env:
+  REPOSITORY: process-template
+  ACTOR: saman-core
+
+jobs:
+  build_contenizer:
+    name: Build & MVN Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set settings.xml
+        env:
+          SETTINGS_XML: ${{ secrets.SETTINGS_XML }}
+          TOKEN: ${{ secrets.GIT_TOKEN }}
+        run: |
+          base64 -d -i <<<$(echo $SETTINGS_XML) > settings.xml
+          sed -i -e 's/OWNER/${{ env.ACTOR }}/g' -e 's/REPOSITORY/${{ env.REPOSITORY }}/g' -e 's/TOKEN/${{ env.TOKEN }}/g' ./settings.xml
+
+      - name: Deploy app
+        run: |
+          ./mvnw -s ./settings.xml deploy -DskipTests
