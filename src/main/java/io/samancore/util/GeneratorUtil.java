@@ -1,7 +1,6 @@
 package io.samancore.util;
 
 import io.samancore.model.Field;
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
 import org.apache.velocity.Template;
