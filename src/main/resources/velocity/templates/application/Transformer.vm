@@ -1,26 +1,30 @@
 #set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
+#set ($nameProductTemplate = ${nameProduct}+${nameTemplate})
 #set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.transformer;
+#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
+#set ($nameProductTemplateLowerCase = ${nameProductLowerCase}+${nameTemplateLowerCase})
+package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.transformer;
 
 import org.jboss.logging.Logger;
 import com.asseg.common.transformer.GenericTransformer;
 import com.asseg.common.error.message.TechnicalExceptionsEnum;
-import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.entity.${nameTemplate}Entity;
-import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
+import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.entity.${nameProductTemplate}Entity;
+import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameProductTemplate}Model;
 
 import com.asseg.common.error.util.ExceptionHandler;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class  ${nameTemplate}Transformer extends GenericTransformer<${nameTemplate}Entity, ${nameTemplate}Model> {
+public class  ${nameProductTemplate}Transformer extends GenericTransformer<${nameProductTemplate}Entity, ${nameProductTemplate}Model> {
 
     @Inject
     Logger log;
 
-    public ${nameTemplate}Entity toEntity(${nameTemplate}Model model) {
+    public ${nameProductTemplate}Entity toEntity(${nameProductTemplate}Model model) {
         try {
-            log.debugf("${nameTemplate}Transformer.toEntity model: %s", model);
+            log.debugf("${nameProductTemplate}Transformer.toEntity model: %s", model);
             return transformToEntity(model);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -28,9 +32,9 @@ public class  ${nameTemplate}Transformer extends GenericTransformer<${nameTempla
         }
     }
 
-    public ${nameTemplate}Model toModel(${nameTemplate}Entity entity) {
+    public ${nameProductTemplate}Model toModel(${nameProductTemplate}Entity entity) {
         try {
-            log.debugf("${nameTemplate}Transformer.toModel entity: %s", entity);
+            log.debugf("${nameProductTemplate}Transformer.toModel entity: %s", entity);
             return transformToModel(entity);
         } catch (Exception e) {
         log.error(e.getMessage(), e);
@@ -38,9 +42,9 @@ public class  ${nameTemplate}Transformer extends GenericTransformer<${nameTempla
         }
     }
 
-    public ${nameTemplate}Entity copyToAttached(${nameTemplate}Entity detached, ${nameTemplate}Entity attached) {
+    public ${nameProductTemplate}Entity copyToAttached(${nameProductTemplate}Entity detached, ${nameProductTemplate}Entity attached) {
         try {
-            log.debugf("${nameTemplate}Transformer.copyToAttached");
+            log.debugf("${nameProductTemplate}Transformer.copyToAttached");
             return transformCopyToAttached(detached, attached);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import io.samancore.model.Field;
+import io.samancore.model.Template;
 import io.samancore.util.GeneratorUtil;
 import io.samancore.util.JsonUtil;
 import lombok.SneakyThrows;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -20,16 +21,14 @@ import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD
 public class Runner {
 
     public static final String COMPONENTS = "components";
-    private static GeneratorUtil generator = new GeneratorUtil();
-    private static JsonUtil jsonUtil = new JsonUtil();
-
+    private static final GeneratorUtil generator = new GeneratorUtil();
 
     @SneakyThrows
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         try {
 
             String absolutePath = Paths.get("").toAbsolutePath().toString();
-            String resourcePath = absolutePath.concat("/src/main/resources/jsonBody2.tar");
+            String resourcePath = absolutePath.concat("/src/main/resources/jsonTemplate.json");
 
             File file = new File(resourcePath);
 
@@ -40,22 +39,21 @@ public class Runner {
                     .build();
 
             JsonNode json = jsonMapper.readValue(file, JsonNode.class);
-            Template template = new Template();
-            template.setPackageName(json.get("packageName").textValue());
-            template.setName(json.get("name").textValue());
+            var templateBuilder = Template.newBuilder()
+                    .setPackageName(json.get("packageName").textValue())
+                    .setName(json.get("name").textValue())
+                    .setProductName(json.get("productName").textValue());
 
             ArrayNode components = (ArrayNode) json.get(COMPONENTS);
-            List<Field> fieldList = jsonUtil.getFieldsOfComponent(components);
-            template.setFields(fieldList);
+            List<Field> fieldList = JsonUtil.getFieldsOfComponent(components);
+            templateBuilder.setFields(fieldList);
 
             String module = "application";
-            if (module != null) {
-                List<GeneratorUtil.OutputFile> outputFiles = generator.compile(template, module);
-                String destinationPath = absolutePath.concat("/src/main/java/");
-                for (GeneratorUtil.OutputFile outputFile : outputFiles) {
-                    File resourcesFileDestination = new File(destinationPath);
-                    outputFile.writeToDestination(null, resourcesFileDestination);
-                }
+            List<GeneratorUtil.OutputFile> outputFiles = generator.compile(templateBuilder.build(), module);
+            String destinationPath = "src/main/java/";
+            for (GeneratorUtil.OutputFile outputFile : outputFiles) {
+                File resourcesFileDestination = new File(destinationPath);
+                outputFile.writeToDestination( null, resourcesFileDestination);
             }
         } catch (Exception error) {
             throw new MojoExecutionException(error.getMessage(), error);

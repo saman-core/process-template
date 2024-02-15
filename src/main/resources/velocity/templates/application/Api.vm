@@ -1,9 +1,13 @@
 #set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
+#set ($nameProductTemplate = ${nameProduct}+${nameTemplate})
 #set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.api;
+#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
+#set ($nameProductTemplateLowerCase = ${nameProductLowerCase}+${nameTemplateLowerCase})
+package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.api;
 
-import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
-import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.service.${nameTemplate}Service;
+import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameProductTemplate}Model;
+import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.service.${nameProductTemplate}Service;
 import io.smallrye.mutiny.Uni;
 import org.jboss.logging.Logger;
 
@@ -15,10 +19,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-@Path("/${nameTemplateLowerCase}")
+@Path("/${nameProductTemplateLowerCase}s")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ${nameTemplate}Api {
+public class ${nameProductTemplate}Api {
 
     @Inject
     Logger log;
@@ -27,13 +31,13 @@ public class ${nameTemplate}Api {
     UriInfo uriInfo;
 
     @Inject
-    ${nameTemplate}Service service;
+    ${nameProductTemplate}Service service;
 
     @GET
     @Path("/getById/{id}")
     @RolesAllowed({"ms_client"})
-    public Uni<${nameTemplate}Model> getById(@PathParam("id") long id) {
-        log.debugf("${nameTemplate}Api.getById %d ", id);
+    public Uni<${nameProductTemplate}Model> getById(@PathParam("id") long id) {
+        log.debugf("${nameProductTemplate}Api.getById %d ", id);
         return service.getById(id);
     }
 
@@ -41,23 +45,23 @@ public class ${nameTemplate}Api {
     @Path("/deleteById/{id}")
     @RolesAllowed({"ms_client"})
     public Uni<Boolean> deleteById(@PathParam("id") Long id) {
-        log.debugf("${nameTemplate}Api.deleteById %d ", id);
+        log.debugf("${nameProductTemplate}Api.deleteById %d ", id);
         return service.deleteById(id);
     }
 
    @POST
    @Path("/create")
    @RolesAllowed({"ms_client"})
-   public Uni<${nameTemplate}Model> create(@Valid ${nameTemplate}Model ${this.mangleObjectIdentifier($nameTemplate)}Model) {
-        log.debug("${nameTemplate}Api.create");
-        return service.create(${this.mangleObjectIdentifier($nameTemplate)}Model);
+   public Uni<${nameProductTemplate}Model> create(@Valid ${nameProductTemplate}Model ${this.mangleObjectIdentifier($nameProductTemplate)}Model) {
+        log.debug("${nameProductTemplate}Api.create");
+        return service.create(${this.mangleObjectIdentifier($nameProductTemplate)}Model);
    }
 
    @PUT
    @Path("/update")
    @RolesAllowed({"ms_client"})
-   public Uni<${nameTemplate}Model> update(@Valid ${nameTemplate}Model ${this.mangleObjectIdentifier($nameTemplate)}Model) {
-        log.debug("${nameTemplate}Api.update");
-        return service.update(${this.mangleObjectIdentifier($nameTemplate)}Model);
+   public Uni<${nameProductTemplate}Model> update(@Valid ${nameProductTemplate}Model ${this.mangleObjectIdentifier($nameProductTemplate)}Model) {
+        log.debug("${nameProductTemplate}Api.update");
+        return service.update(${this.mangleObjectIdentifier($nameProductTemplate)}Model);
    }
 }

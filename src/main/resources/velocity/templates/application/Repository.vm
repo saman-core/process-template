@@ -1,17 +1,21 @@
 #set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
+#set ($nameProductTemplate = ${nameProduct}+${nameTemplate})
 #set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.repository;
+#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
+#set ($nameProductTemplateLowerCase = ${nameProductLowerCase}+${nameTemplateLowerCase})
+package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.repository;
 
 import io.smallrye.mutiny.Uni;
-import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.entity.${nameTemplate}Entity;
+import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.entity.${nameProductTemplate}Entity;
 
-public interface ${nameTemplate}Repository {
+public interface ${nameProductTemplate}Repository {
 
-    Uni<${nameTemplate}Entity> create(${nameTemplate}Entity entity);
+    Uni<${nameProductTemplate}Entity> create(${nameProductTemplate}Entity entity);
 
-    Uni<${nameTemplate}Entity> getById(Long id);
+    Uni<${nameProductTemplate}Entity> getById(Long id);
 
-    Uni<${nameTemplate}Entity> update(${nameTemplate}Entity entity);
+    Uni<${nameProductTemplate}Entity> update(${nameProductTemplate}Entity entity);
 
     Uni<Boolean> delete(Long id);
 }

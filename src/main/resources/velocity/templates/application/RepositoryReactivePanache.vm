@@ -1,42 +1,46 @@
 #set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
-#set ($nameTemplateLowerCase = ${nameTemplateLowerCase})
-package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.repository.reactive.panache;
+#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
+#set ($nameProductTemplate = ${nameProduct}+${nameTemplate})
+#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
+#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
+#set ($nameProductTemplateLowerCase = ${nameProductLowerCase}+${nameTemplateLowerCase})
+package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.repository.reactive.panache;
 
 import com.asseg.common.error.message.TechnicalExceptionsEnum;
 import com.asseg.common.error.util.ExceptionHandler;
 
-import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.entity.${nameTemplate}Entity;
-import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.repository.${nameTemplate}Repository;
+import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.repository.${nameProductTemplate}Repository;
+import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.entity.${nameProductTemplate}Entity;
 import io.smallrye.mutiny.Uni;
 import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
-import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.transformer.${nameTemplate}Transformer;
+import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.transformer.${nameProductTemplate}Transformer;
 
 import javax.inject.Inject;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.NotFoundException;
 
 @ApplicationScoped
-public class ${nameTemplate}RepositoryReactivePanache implements PanacheRepositoryBase<${nameTemplate}Entity, Long>, ${nameTemplate}Repository {
+public class ${nameProductTemplate}RepositoryReactivePanache implements PanacheRepositoryBase<${nameProductTemplate}Entity, Long>, ${nameProductTemplate}Repository {
 
     @Inject
-    ${nameTemplate}Transformer transformer;
+    ${nameProductTemplate}Transformer transformer;
 
     @Override
-    public Uni<${nameTemplate}Entity> create(${nameTemplate}Entity entity) {
+    public Uni<${nameProductTemplate}Entity> create(${nameProductTemplate}Entity entity) {
         entity.setId(null);
         return persistAndFlush(entity)
         .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e));
     }
 
     @Override
-    public Uni<${nameTemplate}Entity> getById(Long id) {
+    public Uni<${nameProductTemplate}Entity> getById(Long id) {
         return findById(id)
         .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e))
         .onItem().ifNull().failWith(NotFoundException::new);
     }
 
     @Override
-    public Uni<${nameTemplate}Entity> update(${nameTemplate}Entity entity) {
+    public Uni<${nameProductTemplate}Entity> update(${nameProductTemplate}Entity entity) {
         return getById(entity.getId())
         .onItem().transform(attached -> transformer.copyToAttached(entity, attached))
         .onItem().transformToUni(this::persistAndFlush)

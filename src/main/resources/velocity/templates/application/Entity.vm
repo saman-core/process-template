@@ -1,6 +1,10 @@
 #set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
+#set ($nameProductTemplate = ${nameProduct}+${nameTemplate})
 #set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.entity;
+#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
+#set ($nameProductTemplateLowerCase = ${nameProductLowerCase}+${nameTemplateLowerCase})
+package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,15 +23,15 @@ import $this.getImport($objectType);
 @Entity
 @Getter
 @Setter
-@Table(name = "${nameTemplateLowerCase}")
-public class ${nameTemplate}Entity implements Serializable {
+@Table(name = "${nameProductTemplateLowerCase}")
+public class ${nameProductTemplate}Entity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_${nameTemplateLowerCase}")
-    @Column(name = "${nameTemplateLowerCase}_id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_${nameProductTemplateLowerCase}")
+    @Column(name = "${nameProductTemplateLowerCase}_id", unique = true, nullable = false)
     private Long id;
 
 #foreach ($field in $template.getFields())
@@ -44,7 +48,7 @@ public class ${nameTemplate}Entity implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ${nameTemplate}Entity that = (${nameTemplate}Entity) o;
+        ${nameProductTemplate}Entity that = (${nameProductTemplate}Entity) o;
         return new EqualsBuilder().append(id, that.id)
 #foreach ($field in $template.getFields())
 #if($field.isPersistent())

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import io.samancore.model.Field;
+import io.samancore.model.Template;
 import io.samancore.util.GeneratorUtil;
 import io.samancore.util.JsonUtil;
 import org.apache.maven.plugin.AbstractMojo;
@@ -24,9 +26,7 @@ import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD
 @Mojo(name = "generator-class", defaultPhase = LifecyclePhase.COMPILE)
 public class GeneratorClassMojo extends AbstractMojo {
 
-    private static GeneratorUtil generator = new GeneratorUtil();
-    private static JsonUtil jsonUtil = new JsonUtil();
-
+    private static final GeneratorUtil generator = new GeneratorUtil();
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     MavenProject project;
@@ -34,7 +34,7 @@ public class GeneratorClassMojo extends AbstractMojo {
 /*    @Parameter(property = "scope")
     String scope;*/
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         String baseDirPath = project.getBasedir().getParent();
         getLog().info("baseDirPath:"+baseDirPath);
 
@@ -42,7 +42,7 @@ public class GeneratorClassMojo extends AbstractMojo {
 
         try {
             String absolutePath = Paths.get("").toAbsolutePath().toString();
-            var resourcePath = absolutePath.concat("/jsonBody.tar");
+            var resourcePath = absolutePath.concat("/jsonTemplate.json");
             getLog().info("resourcePath:"+resourcePath);
 
             File file = new File(resourcePath);
@@ -56,13 +56,14 @@ public class GeneratorClassMojo extends AbstractMojo {
             JsonNode json = jsonMapper.readValue(file, JsonNode.class);
             getLog().info("hay json> "+ json);
 
-            Template template = new Template();
-            template.setPackageName(json.get("packageName").textValue());
-            template.setName(json.get("name").textValue());
+            var templateBuilder = Template.newBuilder()
+                    .setPackageName(json.get("packageName").textValue())
+                    .setName(json.get("name").textValue())
+                    .setProductName(json.get("productName").textValue());
 
             ArrayNode components = (ArrayNode) json.get("components");
-            List<Field> fieldList = jsonUtil.getFieldsOfComponent(components);
-            template.setFields(fieldList);
+            List<Field> fieldList = JsonUtil.getFieldsOfComponent(components);
+            templateBuilder.setFields(fieldList);
 
             String module = null;
             if(project.getArtifactId().toLowerCase(Locale.ROOT).contains("model")){
@@ -74,7 +75,7 @@ public class GeneratorClassMojo extends AbstractMojo {
             }
 
             if(module != null) {
-                List<GeneratorUtil.OutputFile> outputFiles = generator.compile(template, module);
+                List<GeneratorUtil.OutputFile> outputFiles = generator.compile(templateBuilder.build(), module);
 
                 String destinationPath = project.getBasedir().getPath().concat("/src/main/java/");
                 getLog().info("destinationPath:"+destinationPath);

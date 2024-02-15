@@ -1,6 +1,7 @@
 package io.samancore.util;
 
-import io.samancore.Field;
+import io.samancore.model.Field;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
 import org.apache.velocity.Template;
@@ -48,9 +49,8 @@ public class GeneratorUtil {
             // Class names used internally by the avro code generator
             "Builder"));
     private VelocityEngine velocityEngine;
-    private String templateDir;
-    private String javaSuffix = ".java";
-    private String velocityFileSuffix = ".vm";
+    private static final String javaSuffix = ".java";
+    private static final String velocityFileSuffix = ".vm";
 
     public GeneratorUtil() {
         initialize();
@@ -65,14 +65,14 @@ public class GeneratorUtil {
         return templateName.concat(fileName).concat(javaSuffix);
     }
 
-    public String makePathDestination(String templateName, String templatePackageName, String fileName) {
+    public String makePathDestination(String productName, String templateName, String templatePackageName, String fileName) {
         fileName = fileName.replace(velocityFileSuffix, "");
-        var javaFileName = getJavaFileNameDestination(fileName, templateName);
+        var javaFileName = getJavaFileNameDestination(fileName, productName.concat(templateName));
         if (templatePackageName == null || templatePackageName.isEmpty()) {
             return javaFileName;
         } else {
             var packageDestination = ROUTE_PACKAGE_OUTPUT_MAP.get(fileName);
-            return templatePackageName.replace('.', File.separatorChar) + File.separatorChar + templateName.toLowerCase(Locale.ROOT) + File.separatorChar + packageDestination + File.separatorChar + javaFileName;
+            return templatePackageName.toLowerCase(Locale.ROOT).replace('.', File.separatorChar) + File.separatorChar + templateName.toLowerCase(Locale.ROOT) + File.separatorChar + packageDestination + File.separatorChar + javaFileName;
         }
     }
 
@@ -197,22 +197,23 @@ public class GeneratorUtil {
         return writer.toString();
     }
 
-    public List<OutputFile> compile(io.samancore.Template template, String module) {
+    public List<OutputFile> compile(io.samancore.model.Template template, String module) {
         List<OutputFile> outputFiles = new ArrayList<>();
         VelocityContext context = new VelocityContext();
         context.put("this", this);
         context.put("template", template);
 
-        this.templateDir = System.getProperty("velocity.templates.".concat(module),
+        String templateDir = System.getProperty("velocity.templates.".concat(module),
                 "/velocity/templates/".concat(module).concat(File.separator));
 
         var templatesToGenerateList = FILES_MODULE_GENERATOR_MAP.get(module);
         for (String templateFileName : templatesToGenerateList) {
             var output = renderTemplate(templateDir.concat(templateFileName), context);
 
+            String productName = mangle(template.getProductName(), RESERVED_WORDS, false);
             String templateName = mangle(template.getName(), RESERVED_WORDS, false);
-            var templatePackageName = mangle(template.getPackageName(), RESERVED_WORDS, false);
-            var outputFilePathDestination = makePathDestination(templateName, templatePackageName, templateFileName);
+            var templatePackageName = mangle(template.getPackageName(), RESERVED_WORDS, false).concat(".").concat(productName);
+            var outputFilePathDestination = makePathDestination(productName, templateName, templatePackageName, templateFileName);
 
             OutputFile outputFile = new OutputFile();
             outputFile.path = outputFilePathDestination;
@@ -257,10 +258,6 @@ public class GeneratorUtil {
                     fos.close();
             }
             return f;
-        }
-
-        public String getPath() {
-            return path;
         }
     }
 }

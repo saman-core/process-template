@@ -1,9 +1,13 @@
 #set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
+#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
+#set ($nameProductTemplate = ${nameProduct}+${nameTemplate})
 #set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-package ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.client.rest.microprofile;
+#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
+#set ($nameProductTemplateLowerCase = ${nameProductLowerCase}+${nameTemplateLowerCase})
+package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.client.rest.microprofile;
 
 import io.smallrye.mutiny.Uni;
-import ${this.mangle($template.getPackageName())}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
+import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameProductTemplate}Model;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import javax.enterprise.context.ApplicationScoped;
@@ -11,24 +15,24 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @ApplicationScoped
-@RegisterRestClient(configKey = "${nameTemplateLowerCase}-api}")
+@RegisterRestClient(configKey = "${nameProductTemplateLowerCase}-api}")
 @RegisterClientHeaders
-@Path("/${nameTemplateLowerCase}s}")
+@Path("/${nameProductTemplateLowerCase}s}")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public interface ${nameTemplate}RestClient {
+public interface ${nameProductTemplate}RestClient {
 
     @GET
     @Path("/getById/{id}")
-    Uni<${nameTemplate}Model> getById(@PathParam("id") Long id);
+    Uni<${nameProductTemplate}Model> getById(@PathParam("id") Long id);
 
     @POST
     @Path("/create")
-    Uni<${nameTemplate}Model> create(${nameTemplate}Model model);
+    Uni<${nameProductTemplate}Model> create(${nameProductTemplate}Model model);
 
     @PUT
     @Path("/update")
-    Uni<${nameTemplate}Model> update(${nameTemplate}Model model);
+    Uni<${nameProductTemplate}Model> update(${nameProductTemplate}Model model);
 
     @DELETE
     @Path("/deleteById/{id}")
