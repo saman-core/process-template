@@ -14,9 +14,14 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.release>17</maven.compiler.release>
-
+        <mongodb.driver.version>4.11.1</mongodb.driver.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>${mongodb.driver.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -69,6 +74,13 @@
             <scope>provided</scope>
             <version>1.18.24</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jboss.logging/jboss-logging -->
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.5.3.Final</version>
+        </dependency>
+
         <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>javax.persistence-api</artifactId>

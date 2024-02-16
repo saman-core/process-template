@@ -31,8 +31,6 @@ public class GeneratorClassMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     MavenProject project;
 
-/*    @Parameter(property = "scope")
-    String scope;*/
 
     public void execute() throws MojoExecutionException {
         String baseDirPath = project.getBasedir().getParent();
@@ -42,7 +40,7 @@ public class GeneratorClassMojo extends AbstractMojo {
 
         try {
             String absolutePath = Paths.get("").toAbsolutePath().toString();
-            var resourcePath = absolutePath.concat("/jsonTemplate.json");
+            var resourcePath = absolutePath.concat("/").concat(ConstantUtil.JSON_FILE_NAME);
             getLog().info("resourcePath:"+resourcePath);
 
             File file = new File(resourcePath);

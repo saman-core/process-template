@@ -8,6 +8,7 @@ import io.samancore.model.Field;
 import io.samancore.model.Template;
 import io.samancore.util.GeneratorUtil;
 import io.samancore.util.JsonUtil;
+import io.samancore.util.MongoUtil;
 import lombok.SneakyThrows;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -21,14 +22,15 @@ import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD
 public class Runner {
 
     public static final String COMPONENTS = "components";
-    private static final GeneratorUtil generator = new GeneratorUtil();
+    private static GeneratorUtil generator = new GeneratorUtil();
+    private static MongoUtil mongoUtil = new MongoUtil();
 
     @SneakyThrows
     public static void main(String[] args) {
         try {
 
             String absolutePath = Paths.get("").toAbsolutePath().toString();
-            String resourcePath = absolutePath.concat("/src/main/resources/jsonTemplate.json");
+            String resourcePath = absolutePath.concat("/src/main/resources/".concat(ConstantUtil.JSON_FILE_NAME));
 
             File file = new File(resourcePath);
 
@@ -55,6 +57,8 @@ public class Runner {
                 File resourcesFileDestination = new File(destinationPath);
                 outputFile.writeToDestination( null, resourcesFileDestination);
             }
+
+            mongoUtil.execute(json);
         } catch (Exception error) {
             throw new MojoExecutionException(error.getMessage(), error);
         }
