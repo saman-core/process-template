@@ -13,8 +13,11 @@ import lombok.SneakyThrows;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Properties;
 
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES;
@@ -28,11 +31,18 @@ public class Runner {
     @SneakyThrows
     public static void main(String[] args) {
         try {
-
             String absolutePath = Paths.get("").toAbsolutePath().toString();
-            String resourcePath = absolutePath.concat("/src/main/resources/".concat(ConstantUtil.JSON_FILE_NAME));
+            var templateResourcePath = absolutePath.concat("/").concat(ConstantUtil.TEMPLATE_FILE_NAME);
+            File templateFile = new File(templateResourcePath);
+            InputStream templateInputStream = new FileInputStream(templateFile);
 
-            File file = new File(resourcePath);
+            Properties templateProperties = new Properties();
+            templateProperties.load(templateInputStream);
+
+            var templateBuilder = Template.newBuilder()
+                    .setPackageName(templateProperties.getProperty("packageName"))
+                    .setName(templateProperties.getProperty("templateName"))
+                    .setProductName(templateProperties.getProperty("productName"));
 
             JsonMapper jsonMapper = JsonMapper.builder()
                     .configure(ALLOW_UNQUOTED_FIELD_NAMES, true)
@@ -40,13 +50,12 @@ public class Runner {
                     .configure(MapperFeature.ALLOW_EXPLICIT_PROPERTY_RENAMING, true)
                     .build();
 
-            JsonNode json = jsonMapper.readValue(file, JsonNode.class);
-            var templateBuilder = Template.newBuilder()
-                    .setPackageName(json.get("packageName").textValue())
-                    .setName(json.get("name").textValue())
-                    .setProductName(json.get("productName").textValue());
+            var jsonResourcePath = absolutePath.concat("/").concat(ConstantUtil.JSON_FILE_NAME);
+            File jsonFile = new File(jsonResourcePath);
+            JsonNode jsonForm = jsonMapper.readValue(jsonFile, JsonNode.class);
 
-            ArrayNode components = (ArrayNode) json.get(COMPONENTS);
+            ArrayNode components = (ArrayNode) jsonForm.get("components");
+
             List<Field> fieldList = JsonUtil.getFieldsOfComponent(components);
             templateBuilder.setFields(fieldList);
 
@@ -58,7 +67,7 @@ public class Runner {
                 outputFile.writeToDestination( null, resourcesFileDestination);
             }
 
-            mongoUtil.execute(json);
+            mongoUtil.execute(jsonForm);
         } catch (Exception error) {
             throw new MojoExecutionException(error.getMessage(), error);
         }

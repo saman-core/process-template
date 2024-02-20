@@ -7,12 +7,12 @@
 package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.transformer;
 
 import org.jboss.logging.Logger;
-import com.asseg.common.transformer.GenericTransformer;
-import com.asseg.common.error.message.TechnicalExceptionsEnum;
+import io.samancore.common.transformer.GenericTransformer;
+import io.samancore.common.error.message.TechnicalExceptionsEnum;
 import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.entity.${nameProductTemplate}Entity;
 import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameProductTemplate}Model;
 
-import com.asseg.common.error.util.ExceptionHandler;
+import io.samancore.common.error.util.ExceptionHandler;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

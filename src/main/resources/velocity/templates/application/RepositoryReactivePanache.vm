@@ -6,8 +6,8 @@
 #set ($nameProductTemplateLowerCase = ${nameProductLowerCase}+${nameTemplateLowerCase})
 package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.repository.reactive.panache;
 
-import com.asseg.common.error.message.TechnicalExceptionsEnum;
-import com.asseg.common.error.util.ExceptionHandler;
+import io.samancore.common.error.message.TechnicalExceptionsEnum;
+import io.samancore.common.error.util.ExceptionHandler;
 
 import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.repository.${nameProductTemplate}Repository;
 import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.entity.${nameProductTemplate}Entity;

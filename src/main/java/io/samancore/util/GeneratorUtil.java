@@ -76,7 +76,7 @@ public class GeneratorUtil {
     }
 
     public static String mangleTypeIdentifier(String word) {
-        return mangle(word, RESERVED_WORDS, false);
+        return StringUtils.capitalize(mangle(word, RESERVED_WORDS, false));
     }
 
     public static String mangle(String word) {
@@ -209,9 +209,9 @@ public class GeneratorUtil {
         for (String templateFileName : templatesToGenerateList) {
             var output = renderTemplate(templateDir.concat(templateFileName), context);
 
-            String productName = mangle(template.getProductName(), RESERVED_WORDS, false);
-            String templateName = mangle(template.getName(), RESERVED_WORDS, false);
-            var templatePackageName = mangle(template.getPackageName(), RESERVED_WORDS, false).concat(".").concat(productName);
+            String templateName = mangleTypeIdentifier(template.getName());
+            String productName = mangleTypeIdentifier(template.getProductName());
+            var templatePackageName = mangle(template.getPackageName()).concat(".").concat(productName.toLowerCase(Locale.ROOT));
             var outputFilePathDestination = makePathDestination(productName, templateName, templatePackageName, templateFileName);
 
             OutputFile outputFile = new OutputFile();

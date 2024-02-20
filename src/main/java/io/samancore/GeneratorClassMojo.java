@@ -16,9 +16,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES;
@@ -40,10 +43,18 @@ public class GeneratorClassMojo extends AbstractMojo {
 
         try {
             String absolutePath = Paths.get("").toAbsolutePath().toString();
-            var resourcePath = absolutePath.concat("/").concat(ConstantUtil.JSON_FILE_NAME);
-            getLog().info("resourcePath:"+resourcePath);
+            var templateResourcePath = absolutePath.concat("/").concat(ConstantUtil.TEMPLATE_FILE_NAME);
+            getLog().info("resourcePath:"+templateResourcePath);
+            File templateFile = new File(templateResourcePath);
+            InputStream templateInputStream = new FileInputStream(templateFile);
 
-            File file = new File(resourcePath);
+            Properties templateProperties = new Properties();
+            templateProperties.load(templateInputStream);
+
+            var templateBuilder = Template.newBuilder()
+                    .setPackageName(templateProperties.getProperty("packageName"))
+                    .setName(templateProperties.getProperty("templateName"))
+                    .setProductName(templateProperties.getProperty("productName"));
 
             JsonMapper jsonMapper = JsonMapper.builder()
                     .configure(ALLOW_UNQUOTED_FIELD_NAMES, true)
@@ -51,15 +62,13 @@ public class GeneratorClassMojo extends AbstractMojo {
                     .configure(MapperFeature.ALLOW_EXPLICIT_PROPERTY_RENAMING, true)
                     .build();
 
-            JsonNode json = jsonMapper.readValue(file, JsonNode.class);
-            getLog().info("hay json> "+ json);
+            var jsonResourcePath = absolutePath.concat("/").concat(ConstantUtil.JSON_FILE_NAME);
+            getLog().info("jsonResourcePath:"+jsonResourcePath);
+            File jsonFile = new File(jsonResourcePath);
+            JsonNode jsonForm = jsonMapper.readValue(jsonFile, JsonNode.class);
+            getLog().info("jsonForm: "+ jsonForm);
 
-            var templateBuilder = Template.newBuilder()
-                    .setPackageName(json.get("packageName").textValue())
-                    .setName(json.get("name").textValue())
-                    .setProductName(json.get("productName").textValue());
-
-            ArrayNode components = (ArrayNode) json.get("components");
+            ArrayNode components = (ArrayNode) jsonForm.get("components");
             List<Field> fieldList = JsonUtil.getFieldsOfComponent(components);
             templateBuilder.setFields(fieldList);
 
