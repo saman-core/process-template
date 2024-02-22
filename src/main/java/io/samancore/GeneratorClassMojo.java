@@ -26,7 +26,7 @@ import java.util.Properties;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES;
 
-@Mojo(name = "generator-class", defaultPhase = LifecyclePhase.COMPILE)
+@Mojo(name = "generator-class", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class GeneratorClassMojo extends AbstractMojo {
 
     private static final GeneratorUtil generator = new GeneratorUtil();
@@ -84,8 +84,7 @@ public class GeneratorClassMojo extends AbstractMojo {
             if(module != null) {
                 List<GeneratorUtil.OutputFile> outputFiles = generator.compile(templateBuilder.build(), module);
 
-                //String destinationPath = project.getBasedir().getPath().concat("/target/generated-sources/cde/java/");
-                String destinationPath = project.getBasedir().getPath().concat("/target/classes/");
+                String destinationPath = project.getBasedir().getPath().concat("/target/generated-sources/cde/java/");
                 getLog().info("destinationPath:"+destinationPath);
                 for (GeneratorUtil.OutputFile outputFile : outputFiles) {
                     File resourcesFileDestination = new File(destinationPath);
