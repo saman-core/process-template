@@ -3,6 +3,7 @@ package io.samancore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.samancore.util.MongoUtil;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -12,8 +13,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.Properties;
 
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES;
@@ -34,8 +39,8 @@ public class SaveTemplateMojo extends AbstractMojo {
         try {
             String absolutePath = Paths.get("").toAbsolutePath().toString();
             var resourcePathJsonBody = absolutePath.concat("/").concat(ConstantUtil.JSON_FILE_NAME);
-            File jsonFile = new File(resourcePathJsonBody);
 
+            File jsonFile = new File(resourcePathJsonBody);
             JsonMapper jsonMapper = JsonMapper.builder()
                     .configure(ALLOW_UNQUOTED_FIELD_NAMES, true)
                     .configure(ALLOW_SINGLE_QUOTES, true)
@@ -43,6 +48,12 @@ public class SaveTemplateMojo extends AbstractMojo {
                     .build();
 
             JsonNode json = jsonMapper.readValue(jsonFile, JsonNode.class);
+
+            Properties templateProps = getTemplateProperties();
+            ((ObjectNode) json).put("packageName", templateProps.getProperty("packageName"));
+            ((ObjectNode) json).put("templateName", templateProps.getProperty("templateName"));
+            ((ObjectNode) json).put("productName", templateProps.getProperty("productName"));
+
             if (project.getArtifactId().toLowerCase(Locale.ROOT).contains("application")) {
                 mongoUtil.execute(json);
             }
@@ -50,7 +61,19 @@ public class SaveTemplateMojo extends AbstractMojo {
             getLog().error("error", error);
             throw new MojoExecutionException(error.getMessage(), error);
         }
+    }
 
-
+    private Properties getTemplateProperties() throws IOException {
+        String absolutePath = Paths.get("").toAbsolutePath().toString();
+        var templateResourcePath = absolutePath.concat("/").concat(ConstantUtil.TEMPLATE_FILE_NAME);
+        File templateFile = new File(templateResourcePath);
+        try (InputStream templateInputStream = new FileInputStream(templateFile)) {
+            Properties templateProperties = new Properties();
+            templateProperties.load(templateInputStream);
+            return templateProperties;
+        } catch (Exception error) {
+            getLog().error("error", error);
+            throw error;
+        }
     }
 }
