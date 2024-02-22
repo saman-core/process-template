@@ -85,6 +85,7 @@ public class GeneratorClassMojo extends AbstractMojo {
                 List<GeneratorUtil.OutputFile> outputFiles = generator.compile(templateBuilder.build(), module);
 
                 String destinationPath = project.getBasedir().getPath().concat("/target/generated-sources/cde/java/");
+                project.addCompileSourceRoot(destinationPath);
                 getLog().info("destinationPath:"+destinationPath);
                 for (GeneratorUtil.OutputFile outputFile : outputFiles) {
                     File resourcesFileDestination = new File(destinationPath);
