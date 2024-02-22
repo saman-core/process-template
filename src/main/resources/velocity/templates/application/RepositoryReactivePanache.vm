@@ -15,9 +15,9 @@ import io.smallrye.mutiny.Uni;
 import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
 import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.transformer.${nameProductTemplate}Transformer;
 
-import javax.inject.Inject;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.NotFoundException;
+import jakarta.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
 public class ${nameProductTemplate}RepositoryReactivePanache implements PanacheRepositoryBase<${nameProductTemplate}Entity, Long>, ${nameProductTemplate}Repository {

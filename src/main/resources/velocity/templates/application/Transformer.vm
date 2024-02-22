@@ -13,8 +13,8 @@ import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${name
 import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameProductTemplate}Model;
 
 import io.samancore.common.error.util.ExceptionHandler;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class  ${nameProductTemplate}Transformer extends GenericTransformer<${nameProductTemplate}Entity, ${nameProductTemplate}Model> {
