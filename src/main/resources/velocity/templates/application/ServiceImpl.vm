@@ -1,43 +1,41 @@
 #set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
 #set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
-#set ($nameProductTemplate = ${nameProduct}+${nameTemplate})
 #set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
 #set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
-#set ($nameProductTemplateLowerCase = ${nameProductLowerCase}+${nameTemplateLowerCase})
 package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.service.impl;
 
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameProductTemplate}Model;
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.repository.${nameProductTemplate}Repository;
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.service.${nameProductTemplate}Service;
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.transformer.${nameProductTemplate}Transformer;
+import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
+import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.repository.${nameTemplate}Repository;
+import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.service.${nameTemplate}Service;
+import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.transformer.${nameTemplate}Transformer;
 import io.smallrye.mutiny.Uni;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-public class ${nameProductTemplate}ServiceImpl implements ${nameProductTemplate}Service {
+public class ${nameTemplate}ServiceImpl implements ${nameTemplate}Service {
 
     @Inject
-    ${nameProductTemplate}Repository repository;
+    ${nameTemplate}Repository repository;
 
     @Inject
-    ${nameProductTemplate}Transformer transformer;
+    ${nameTemplate}Transformer transformer;
 
     @Override
-    public Uni<${nameProductTemplate}Model> getById(Long id) {
+    public Uni<${nameTemplate}Model> getById(Long id) {
         return repository.getById(id)
         .onItem().transform(entity -> transformer.toModel(entity));
     }
 
     @Override
-    public Uni<${nameProductTemplate}Model> create(${nameProductTemplate}Model model) {
+    public Uni<${nameTemplate}Model> create(${nameTemplate}Model model) {
         return repository.create(transformer.toEntity(model))
         .onItem().transform(entity -> transformer.toModel(entity));
     }
 
     @Override
-    public Uni<${nameProductTemplate}Model> update(${nameProductTemplate}Model model) {
+    public Uni<${nameTemplate}Model> update(${nameTemplate}Model model) {
         return repository.update(transformer.toEntity(model))
         .onItem().transform(entity -> transformer.toModel(entity));
     }

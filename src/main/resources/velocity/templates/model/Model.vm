@@ -1,9 +1,7 @@
 #set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
 #set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
-#set ($nameProductTemplate = ${nameProduct}+${nameTemplate})
 #set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
 #set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
-#set ($nameProductTemplateLowerCase = ${nameProductLowerCase}+${nameTemplateLowerCase})
 package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model;
 
 import lombok.Builder;
@@ -23,7 +21,7 @@ import $this.getImport($objectType);
     builderMethodName = "newBuilder",
     toBuilder = true
 )
-public class ${nameProductTemplate}Model {
+public class ${nameTemplate}Model {
     Long id;
 #foreach ($field in $template.getFields())
     ${this.getObjectType($field)} ${this.mangle($field.getKey())};

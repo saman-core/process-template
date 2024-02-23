@@ -1,14 +1,12 @@
 #set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
 #set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
-#set ($nameProductTemplate = ${nameProduct}+${nameTemplate})
 #set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
 #set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
-#set ($nameProductTemplateLowerCase = ${nameProductLowerCase}+${nameTemplateLowerCase})
 package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.client.rest;
 
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.client.${nameProductTemplate}Client;
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.client.rest.microprofile.${nameProductTemplate}RestClient;
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameProductTemplate}Model;
+import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.client.${nameTemplate}Client;
+import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.client.rest.microprofile.${nameTemplate}RestClient;
+import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
@@ -17,36 +15,36 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-public class ${nameProductTemplate}RestClientWrapper implements ${nameProductTemplate}Client {
+public class ${nameTemplate}RestClientWrapper implements ${nameTemplate}Client {
 
     @Inject
     Logger log;
 
     @Inject
     @RestClient
-    ${nameProductTemplate}RestClient service;
+    ${nameTemplate}RestClient service;
 
     @Override
-    public Uni<${nameProductTemplate}Model> getById(Long id) {
-        log.debugf("${nameProductTemplate}RestClientWrapper.getById %d", id);
+    public Uni<${nameTemplate}Model> getById(Long id) {
+        log.debugf("${nameTemplate}RestClientWrapper.getById %d", id);
         return service.getById(id);
     }
 
     @Override
-    public Uni<${nameProductTemplate}Model> create(${nameProductTemplate}Model model) {
-        log.debug("${nameProductTemplate}RestClientWrapper.create");
+    public Uni<${nameTemplate}Model> create(${nameTemplate}Model model) {
+        log.debug("${nameTemplate}RestClientWrapper.create");
         return service.create(model);
     }
 
     @Override
-    public Uni<${nameProductTemplate}Model> update(${nameProductTemplate}Model model) {
-        log.debugf("${nameProductTemplate}RestClientWrapper.update %d", model.getId());
+    public Uni<${nameTemplate}Model> update(${nameTemplate}Model model) {
+        log.debugf("${nameTemplate}RestClientWrapper.update %d", model.getId());
         return service.update(model);
     }
 
     @Override
     public Uni<Boolean> deleteById(Long id) {
-        log.debugf("${nameProductTemplate}RestClientWrapper.deleteById %d", id);
+        log.debugf("${nameTemplate}RestClientWrapper.deleteById %d", id);
         return service.deleteById(id);
     }
 }

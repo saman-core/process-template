@@ -64,9 +64,9 @@ public class GeneratorUtil {
         return templateName.concat(fileName).concat(javaSuffix);
     }
 
-    public String makePathDestination(String productName, String templateName, String templatePackageName, String fileName) {
+    public String makePathDestination(String templateName, String templatePackageName, String fileName) {
         fileName = fileName.replace(velocityFileSuffix, "");
-        var javaFileName = getJavaFileNameDestination(fileName, productName.concat(templateName));
+        var javaFileName = getJavaFileNameDestination(fileName, templateName);
         if (templatePackageName == null || templatePackageName.isEmpty()) {
             return javaFileName;
         } else {
@@ -212,7 +212,7 @@ public class GeneratorUtil {
             String templateName = mangleTypeIdentifier(template.getName());
             String productName = mangleTypeIdentifier(template.getProductName());
             var templatePackageName = mangle(template.getPackageName()).concat(".").concat(productName.toLowerCase(Locale.ROOT));
-            var outputFilePathDestination = makePathDestination(productName, templateName, templatePackageName, templateFileName);
+            var outputFilePathDestination = makePathDestination(templateName, templatePackageName, templateFileName);
 
             OutputFile outputFile = new OutputFile();
             outputFile.path = outputFilePathDestination;
