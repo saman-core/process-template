@@ -25,7 +25,7 @@ jobs:
           TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           base64 -d -i <<<$(echo $SETTINGS_XML) > settings.xml
-          sed -i -e 's/OWNER/${{ env.ACTOR }}/g' -e 's/REPOSITORY/${{ env.REPOSITORY }}/g' -e 's/TOKEN/${{ env.TOKEN }}/g' ./settings.xml
+          sed -i -e 's/OWNER/${{ env.ACTOR }}/g' -e 's/TOKEN/${{ env.TOKEN }}/g' ./settings.xml
 
       - name: Deploy app
         run: |
