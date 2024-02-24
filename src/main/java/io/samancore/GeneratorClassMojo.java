@@ -79,6 +79,8 @@ public class GeneratorClassMojo extends AbstractMojo {
                 module = "client";
             }else if(project.getArtifactId().toLowerCase(Locale.ROOT).contains("application")){
                 module = "application";
+            }else if(project.getArtifactId().toLowerCase(Locale.ROOT).contains("data")){
+                module = "data";
             }
 
             if(module != null) {
