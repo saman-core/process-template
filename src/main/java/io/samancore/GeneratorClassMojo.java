@@ -26,7 +26,7 @@ import java.util.Properties;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES;
 
-@Mojo(name = "generator-class", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "generate-code", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class GeneratorClassMojo extends AbstractMojo {
 
     private static final GeneratorUtil generator = new GeneratorUtil();
