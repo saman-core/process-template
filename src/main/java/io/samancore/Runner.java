@@ -8,7 +8,6 @@ import io.samancore.model.Field;
 import io.samancore.model.Template;
 import io.samancore.util.GeneratorUtil;
 import io.samancore.util.JsonUtil;
-import io.samancore.util.MongoUtil;
 import lombok.SneakyThrows;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -26,7 +25,6 @@ public class Runner {
 
     public static final String COMPONENTS = "components";
     private static GeneratorUtil generator = new GeneratorUtil();
-    private static MongoUtil mongoUtil = new MongoUtil();
 
     @SneakyThrows
     public static void main(String[] args) {
@@ -66,8 +64,6 @@ public class Runner {
                 File resourcesFileDestination = new File(destinationPath);
                 outputFile.writeToDestination( null, resourcesFileDestination);
             }
-
-            mongoUtil.execute(jsonForm);
         } catch (Exception error) {
             throw new MojoExecutionException(error.getMessage(), error);
         }

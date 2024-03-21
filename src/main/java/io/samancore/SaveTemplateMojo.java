@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.samancore.util.MongoUtil;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -17,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.Locale;
 import java.util.Properties;
 
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES;
@@ -28,8 +26,6 @@ public class SaveTemplateMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     MavenProject project;
-
-    MongoUtil mongoUtil = new MongoUtil();
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -54,9 +50,6 @@ public class SaveTemplateMojo extends AbstractMojo {
             ((ObjectNode) json).put("templateName", templateProps.getProperty("templateName"));
             ((ObjectNode) json).put("productName", templateProps.getProperty("productName"));
 
-            if (project.getArtifactId().toLowerCase(Locale.ROOT).contains("application")) {
-                mongoUtil.execute(json);
-            }
         } catch (Exception error) {
             getLog().error("error", error);
             throw new MojoExecutionException(error.getMessage(), error);

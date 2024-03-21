@@ -18,5 +18,6 @@ public class Field {
     boolean isRequired;
     boolean isUnique;
     boolean isDecimal;
+    boolean isMultiple;
     int decimalLimit;
 }

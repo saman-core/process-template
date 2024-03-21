@@ -11,11 +11,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
-#foreach($field in $template.getFields())
-#set ($objectType = ${this.getObjectType($field)})
-#if($this.getImport($objectType))
-import $this.getImport($objectType);
-#end
+#set ($imports = ${this.getImports($template.getFields())})
+#foreach($import in $imports)
+import $import;
 #end
 
 @Entity
@@ -34,10 +32,14 @@ public class ${nameTemplate}Entity implements Serializable {
 
 #foreach ($field in $template.getFields())
 #if($field.isPersistent())
+#if($this.validateIfHasElementCollection($field))
+    @ElementCollection(fetch = FetchType.LAZY)
+    ${this.getEntityElementCollection( "${nameTemplateLowerCase}", $field)}
+#end
 #if($this.validateIfHasColumnDefinition($field))
     ${this.getEntityColumnDefinition($field)}
 #end
-    private ${this.getObjectType($field)} ${this.mangle($field.getKey())};
+    private ${this.getObjectTypeToEntity($field)} ${this.mangle($field.getKey())};
 
 #end
 #end

@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 #foreach($field in $template.getFields())
-#set ($objectType = ${this.getObjectType($field)})
+#set ($objectType = ${this.getObjectTypeToModel($field)})
 #if($this.getImport($objectType))
 import $this.getImport($objectType);
 #end
@@ -24,6 +24,6 @@ import $this.getImport($objectType);
 public class ${nameTemplate}Model {
     Long id;
 #foreach ($field in $template.getFields())
-    ${this.getObjectType($field)} ${this.mangle($field.getKey())};
+    ${this.getObjectTypeToModel($field)} ${this.mangle($field.getKey())};
 #end
 }

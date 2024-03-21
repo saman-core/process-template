@@ -9,6 +9,7 @@ import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerC
 import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.service.${nameTemplate}Service;
 import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.transformer.${nameTemplate}Transformer;
 import io.smallrye.mutiny.Uni;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,24 +23,28 @@ public class ${nameTemplate}ServiceImpl implements ${nameTemplate}Service {
     @Inject
     ${nameTemplate}Transformer transformer;
 
+    @WithSession
     @Override
     public Uni<${nameTemplate}Model> getById(Long id) {
         return repository.getById(id)
         .onItem().transform(entity -> transformer.toModel(entity));
     }
 
+    @WithSession
     @Override
     public Uni<${nameTemplate}Model> create(${nameTemplate}Model model) {
         return repository.create(transformer.toEntity(model))
         .onItem().transform(entity -> transformer.toModel(entity));
     }
 
+    @WithSession
     @Override
     public Uni<${nameTemplate}Model> update(${nameTemplate}Model model) {
         return repository.update(transformer.toEntity(model))
         .onItem().transform(entity -> transformer.toModel(entity));
     }
 
+    @WithSession
     @Override
     public Uni<Boolean> deleteById(Long id) {
         return repository.delete(id);

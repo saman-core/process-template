@@ -11,8 +11,8 @@ import java.util.Objects;
 public class JsonUtil {
 
     public static final String COMPONENTS = "components";
-    public static final int DEFUALT_DECIMAL_PLACES = 2;
-    public static final int DEFUALT_CURRENCY_PLACES = 4;
+    public static final int DEFAULT_DECIMAL_PLACES = 2;
+    public static final int DEFAULT_CURRENCY_PLACES = 4;
 
     public static List<Field> getFieldsOfComponent(ArrayNode componentsArrayNode) {
         List<Field> fieldList = new ArrayList<>();
@@ -44,6 +44,7 @@ public class JsonUtil {
         fieldBuilder.setDataType(dataType);
         fieldBuilder.setIsPersistent(jsonNodeComponent.get("persistent") == null);
         fieldBuilder.setIsUnique(jsonNodeComponent.get("unique") != null);
+        fieldBuilder.setIsMultiple(jsonNodeComponent.get("multiple") != null);
 
         if (dataType.equalsIgnoreCase("number")) {
             var isDecimal = jsonNodeComponent.get("requireDecimal").asBoolean();
@@ -52,13 +53,13 @@ public class JsonUtil {
                 if (jsonNodeComponent.get("decimalLimit") != null) {
                     fieldBuilder.setDecimalLimit(jsonNodeComponent.get("decimalLimit").asInt());
                 } else {
-                    fieldBuilder.setDecimalLimit(DEFUALT_DECIMAL_PLACES);
+                    fieldBuilder.setDecimalLimit(DEFAULT_DECIMAL_PLACES);
                 }
             }
         }
 
         if (dataType.equalsIgnoreCase("currency")) {
-            fieldBuilder.setDecimalLimit(DEFUALT_CURRENCY_PLACES);
+            fieldBuilder.setDecimalLimit(DEFAULT_CURRENCY_PLACES);
         }
 
         JsonNode jsonNodeValidations = jsonNodeComponent.get("validate");

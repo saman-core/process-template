@@ -32,9 +32,31 @@ public class GeneratorUtil {
             Map.entry("RestClient", "client/rest/microprofile"),
             Map.entry("RestClientWrapper", "client/rest"));
     public static final String BIG_DECIMAL = "BigDecimal";
-    public static final Map<String, String> DATA_IMPORT_TYPE_MAP = Map.of(BIG_DECIMAL, "java.math.BigDecimal", "Date", "java.util.Date");
+    public static final Map<String, String> DATA_IMPORT_TYPE_MAP = Map.of(BIG_DECIMAL, "java.math.BigDecimal", "Date", "java.util.Date", "List", "java.util.List", "List<String>", "java.util.List", "Set<String>", "java.util.Set");
     public static final String STRING = "String";
-    public static final Map<String, String> DATA_TYPE_MAP = Map.of("textfield", STRING, "textarea", STRING, "password", STRING, "email", STRING, "url", STRING, "radio", STRING, "currency", BIG_DECIMAL, "checkbox", "Boolean", "select", STRING);
+    public static final Map<String, String> DATA_TYPE_MAP = getDataTypeMap();
+    public static final List<String> COMPONENTS_ALLOWED = List.of("textfield", "textarea", "password", "email", "url", "radio", "currency", "checkbox", "select", "datetime", "number", "phonenumber", "time");
+    public static final Map<String, String> DATA_TYPE_MULTIPLE_MAP_TO_ENTITY = Map.of( "select", "Set<String>");
+    public static final Map<String, String> DATA_TYPE_MULTIPLE_MAP_TO_MODEL = Map.of( "select", "Set<String>");
+    public static final Map<String, String> DATA_TYPE_WITH_SPECIAL_PAIR = Map.of( );
+    public static final Map<String, String> DATA_TYPE_DEFINITION_TYPE_MAP = Map.of( "String[]", "CustomStringArrayType.class");
+
+    public static HashMap getDataTypeMap(){
+        var dataTypeMap = new HashMap<>();
+        dataTypeMap.put("textfield", STRING);
+        dataTypeMap.put("textarea", STRING);
+        dataTypeMap.put("password", STRING);
+        dataTypeMap.put("email", STRING);
+        dataTypeMap.put("url", STRING);
+        dataTypeMap.put("radio", STRING);
+        dataTypeMap.put("currency", BIG_DECIMAL);
+        dataTypeMap.put("checkbox", "Boolean");
+        dataTypeMap.put("select", STRING);
+        dataTypeMap.put("datetime", "Date");
+        dataTypeMap.put("phoneNumber", STRING);
+        dataTypeMap.put("time", STRING);
+        return dataTypeMap;
+    }
 
     public static final Set<String> RESERVED_WORDS = new HashSet<>(Arrays.asList(
             // Keywords from Section 3.9 can't be used as identifiers.
@@ -129,7 +151,27 @@ public class GeneratorUtil {
         velocityEngine.setProperty("parser.space_gobbling", "bc");
     }
 
-    public static String getObjectType(Field field) {
+    public static String getObjectTypeToEntity(Field field) {
+        if(field.isMultiple()){
+            return DATA_TYPE_MULTIPLE_MAP_TO_ENTITY.get(field.getDataType());
+        }else
+        if (DATA_TYPE_MAP.containsKey(field.getDataType())) {
+            return DATA_TYPE_MAP.get(field.getDataType());
+        }
+        if (field.getDataType().equalsIgnoreCase("number")) {
+            if (field.isDecimal()) {
+                return BIG_DECIMAL;
+            } else {
+                return "Integer";
+            }
+        }
+        throw new RuntimeException("Not valid objectType for field: " + field.getKey());
+    }
+
+    public static String getObjectTypeToModel(Field field) {
+        if(field.isMultiple()){
+            return DATA_TYPE_MULTIPLE_MAP_TO_MODEL.get(field.getDataType());
+        }else
         if (DATA_TYPE_MAP.containsKey(field.getDataType())) {
             return DATA_TYPE_MAP.get(field.getDataType());
         }
@@ -148,6 +190,23 @@ public class GeneratorUtil {
         return DATA_IMPORT_TYPE_MAP.get(dataType);
     }
 
+    public static List<String> getImports(List<Field> fields) {
+        var imports = new ArrayList<String>();
+        for(var field : fields){
+            if(DATA_IMPORT_TYPE_MAP.containsKey(getObjectTypeToEntity(field)))
+                imports.add(DATA_IMPORT_TYPE_MAP.get(getObjectTypeToEntity(field)));
+        }
+        return imports;
+    }
+
+    public static Boolean validateIfHasElementCollection(Field field) {
+        return (field.isMultiple());
+    }
+
+    public static String getEntityElementCollection(String templateName, Field field) {
+        return String.format("@CollectionTable(name = \"%s__%s\", joinColumns = @JoinColumn(name = \"%s_id\", nullable = false), uniqueConstraints = @UniqueConstraint(columnNames = {\"%s_id\", \"%s\"}))",templateName, field.getKey(), templateName, templateName, field.getKey());
+    }
+
     public static String getEntityColumnDefinition(Field field) {
         String unique = "unique = true, ";
         String required = "nullable = false, ";
@@ -164,13 +223,56 @@ public class GeneratorUtil {
         if (field.isRequired()) {
             columnDescription = columnDescription.concat(required);
         }
-        columnDescription = columnDescription.substring(0, columnDescription.lastIndexOf(","));
-        columnDescription = columnDescription.concat(")");
-        return columnDescription;
+        return columnDescription.substring(0, columnDescription.lastIndexOf(",")).concat(")");
     }
 
     public static Boolean validateIfHasColumnDefinition(Field field) {
         return (field.isUnique() || field.isRequired() || field.isDecimal());
+    }
+
+    public static String getTranformerPairToEntityDefinition(Field field) {
+        String pairDescription = null;
+        if(DATA_TYPE_WITH_SPECIAL_PAIR.containsKey(field.getDataType())){
+            pairDescription = String.format("var pair%s = Pair.of(\"%s\", (Function<List<String>, ?>) list -> list.toArray(String[]::new));", mangleTypeIdentifier(field.getKey()),  mangle(field.getKey()).toLowerCase(Locale.ROOT));
+        }
+        return pairDescription;
+    }
+
+    public static String getTranformerPairToModelDefinition(Field field) {
+        String pairDescription = null;
+        if(DATA_TYPE_WITH_SPECIAL_PAIR.containsKey(field.getDataType())){
+            pairDescription = String.format("var pair%s = Pair.of(\"%s\", (Function<String[], ?>) array -> Arrays.stream(array).collect(Collectors.toList()));", mangleTypeIdentifier(field.getKey()),  mangle(field.getKey()).toLowerCase(Locale.ROOT));
+        }
+        return pairDescription;
+    }
+
+    public static String getTranformerToEntityDefinition(List<Field> fields) {
+        String tranformerToEntityDescription = "return transformToEntity(model, ";
+        for (var field: fields){
+            if(DATA_TYPE_WITH_SPECIAL_PAIR.containsKey(field.getDataType())){
+                tranformerToEntityDescription = tranformerToEntityDescription.concat(String.format(" pair%s, ", mangleTypeIdentifier(field.getKey())));
+            }
+        }
+        return tranformerToEntityDescription.substring(0, tranformerToEntityDescription.lastIndexOf(",")).concat(")");
+    }
+
+    public static String getTranformerToModelDefinition(List<Field> fields) {
+        String tranformerToEntityDescription = "return transformToModel(entity, ";
+        for (var field: fields){
+            if(DATA_TYPE_WITH_SPECIAL_PAIR.containsKey(field.getDataType())){
+                tranformerToEntityDescription = tranformerToEntityDescription.concat(String.format(" pair%s, ", mangleTypeIdentifier(field.getKey())));
+            }
+        }
+        return tranformerToEntityDescription.substring(0, tranformerToEntityDescription.lastIndexOf(",")).concat(")");
+    }
+
+    public static Boolean getIfAnyFieldNeedPair(List<Field> fields) {
+        for (var field: fields){
+            if(field.isMultiple()){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static String getAnotation(String validation, String dataType) {
@@ -198,10 +300,11 @@ public class GeneratorUtil {
     }
 
     public List<OutputFile> compile(io.samancore.model.Template template, String module) {
+        var templateWithFieldsAllowed = getTemplateWithFieldsAllowed(template);
         List<OutputFile> outputFiles = new ArrayList<>();
         VelocityContext context = new VelocityContext();
         context.put("this", this);
-        context.put("template", template);
+        context.put("template", templateWithFieldsAllowed);
 
         String templateDir = System.getProperty("velocity.templates.".concat(module),
                 "/velocity/templates/".concat(module).concat(File.separator));
@@ -210,9 +313,9 @@ public class GeneratorUtil {
         for (String templateFileName : templatesToGenerateList) {
             var output = renderTemplate(templateDir.concat(templateFileName), context);
 
-            String templateName = mangleTypeIdentifier(template.getName());
-            String productName = mangleTypeIdentifier(template.getProductName());
-            var templatePackageName = mangle(template.getPackageName()).concat(".").concat(productName.toLowerCase(Locale.ROOT));
+            String templateName = mangleTypeIdentifier(templateWithFieldsAllowed.getName());
+            String productName = mangleTypeIdentifier(templateWithFieldsAllowed.getProductName());
+            var templatePackageName = mangle(templateWithFieldsAllowed.getPackageName()).concat(".").concat(productName.toLowerCase(Locale.ROOT));
             var outputFilePathDestination = makePathDestination(templateName, templatePackageName, templateFileName);
 
             OutputFile outputFile = new OutputFile();
@@ -221,6 +324,11 @@ public class GeneratorUtil {
             outputFiles.add(outputFile);
         }
         return outputFiles;
+    }
+
+    private static io.samancore.model.Template getTemplateWithFieldsAllowed(io.samancore.model.Template template) {
+        var fieldFiltered = template.getFields().stream().filter(field -> COMPONENTS_ALLOWED.contains(field.getDataType().toLowerCase(Locale.ROOT))).toList();
+        return template.toBuilder().setFields(fieldFiltered).build();
     }
 
     public String toLowerCase(String str) {
