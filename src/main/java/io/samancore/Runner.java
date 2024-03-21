@@ -52,12 +52,12 @@ public class Runner {
             File jsonFile = new File(jsonResourcePath);
             JsonNode jsonForm = jsonMapper.readValue(jsonFile, JsonNode.class);
 
-            ArrayNode components = (ArrayNode) jsonForm.get("components");
+            ArrayNode components = (ArrayNode) jsonForm.get(COMPONENTS);
 
             List<Field> fieldList = JsonUtil.getFieldsOfComponent(components);
             templateBuilder.setFields(fieldList);
 
-            String module = "application";
+            String module = "model";
             List<GeneratorUtil.OutputFile> outputFiles = generator.compile(templateBuilder.build(), module);
             String destinationPath = "src/main/java/";
             for (GeneratorUtil.OutputFile outputFile : outputFiles) {

@@ -19,6 +19,7 @@ public class JsonUtil {
         for (JsonNode jsonNodeComponent : componentsArrayNode) {
             ArrayNode jsonNodeComponentColumns = (ArrayNode) jsonNodeComponent.get("columns");
             ArrayNode jsonNodeComponentChildren = (ArrayNode) jsonNodeComponent.get(COMPONENTS);
+            ArrayNode jsonNodeComponentRows = (ArrayNode) jsonNodeComponent.get("rows");
             if (jsonNodeComponentColumns != null) {
                 for (JsonNode jsonNodeColumn : jsonNodeComponentColumns) {
                     ArrayNode componentsFromColumn = (ArrayNode) jsonNodeColumn.get(COMPONENTS);
@@ -26,6 +27,10 @@ public class JsonUtil {
                 }
             } else if (jsonNodeComponentChildren != null) {
                 fieldList.addAll(getFieldsOfComponent(jsonNodeComponentChildren));
+            } else if (jsonNodeComponentRows != null) {
+                for (JsonNode jsonNodeRows : jsonNodeComponentRows) {
+                    fieldList.addAll(getFieldsOfComponent((ArrayNode)jsonNodeRows));
+                }
             } else {
                 fieldList.add(getField(jsonNodeComponent));
             }
