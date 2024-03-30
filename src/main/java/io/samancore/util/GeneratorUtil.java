@@ -35,11 +35,11 @@ public class GeneratorUtil {
     public static final Map<String, String> DATA_IMPORT_TYPE_MAP = Map.of(BIG_DECIMAL, "java.math.BigDecimal", "Date", "java.util.Date", "List", "java.util.List", "List<String>", "java.util.List", "Set<String>", "java.util.Set");
     public static final String STRING = "String";
     public static final Map<String, String> DATA_TYPE_MAP = getDataTypeMap();
-    public static final List<String> COMPONENTS_ALLOWED = List.of("textfield", "textarea", "password", "email", "url", "radio", "currency", "checkbox", "select", "datetime", "number", "phonenumber", "time");
+    public static final List<String> COMPONENTS_ALLOWED = List.of("textfield", "textarea", "password", "email", "url", "radio", "currency", "checkbox", "select", "datetime", "number", "phonenumber", "time", "signature");
     public static final Map<String, String> DATA_TYPE_MULTIPLE_MAP_TO_ENTITY = Map.of( "select", "Set<String>");
     public static final Map<String, String> DATA_TYPE_MULTIPLE_MAP_TO_MODEL = Map.of( "select", "Set<String>");
     public static final Map<String, String> DATA_TYPE_WITH_SPECIAL_PAIR = Map.of( );
-    public static final Map<String, String> DATA_TYPE_DEFINITION_TYPE_MAP = Map.of( "String[]", "CustomStringArrayType.class");
+    public static final Map<String, String> DATA_TYPE_WITH_SPECIAL_TYPE = Map.of( "signature", "text");
 
     public static HashMap getDataTypeMap(){
         var dataTypeMap = new HashMap<>();
@@ -55,6 +55,7 @@ public class GeneratorUtil {
         dataTypeMap.put("datetime", "Date");
         dataTypeMap.put("phoneNumber", STRING);
         dataTypeMap.put("time", STRING);
+        dataTypeMap.put("signature", STRING);
         return dataTypeMap;
     }
 
@@ -214,6 +215,8 @@ public class GeneratorUtil {
         String scale = String.format("scale = %d, ", field.getDecimalLimit());
         String columnDescription = "@Column(";
 
+        var columnDescriptionBlobType ="@Column(name = \"%s\", columnDefinition=\"%s\",";
+
         if (field.isDecimal()) {
             columnDescription = columnDescription.concat(precisionScale).concat(scale);
         }
@@ -223,11 +226,14 @@ public class GeneratorUtil {
         if (field.isRequired()) {
             columnDescription = columnDescription.concat(required);
         }
+        if(DATA_TYPE_WITH_SPECIAL_TYPE.containsKey(field.getDataType())){
+            columnDescription = String.format(columnDescriptionBlobType, field.getKey(), DATA_TYPE_WITH_SPECIAL_TYPE.get(field.getDataType()));
+        }
         return columnDescription.substring(0, columnDescription.lastIndexOf(",")).concat(")");
     }
 
     public static Boolean validateIfHasColumnDefinition(Field field) {
-        return (field.isUnique() || field.isRequired() || field.isDecimal());
+        return (field.isUnique() || field.isRequired() || field.isDecimal() || DATA_TYPE_WITH_SPECIAL_TYPE.containsKey(field.getDataType()));
     }
 
     public static String getTranformerPairToEntityDefinition(Field field) {
@@ -268,7 +274,7 @@ public class GeneratorUtil {
 
     public static Boolean getIfAnyFieldNeedPair(List<Field> fields) {
         for (var field: fields){
-            if(field.isMultiple()){
+            if(DATA_TYPE_WITH_SPECIAL_PAIR.containsKey(field.getDataType())){
                 return true;
             }
         }

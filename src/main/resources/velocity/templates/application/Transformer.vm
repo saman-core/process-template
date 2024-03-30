@@ -9,7 +9,6 @@ import io.samancore.common.transformer.GenericTransformer;
 import io.samancore.common.error.message.TechnicalExceptionsEnum;
 import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.entity.${nameTemplate}Entity;
 import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
-
 #if($this.getIfAnyFieldNeedPair($template.getFields()))
 import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.function.Function;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 #end
-
 import io.samancore.common.error.util.ExceptionHandler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
