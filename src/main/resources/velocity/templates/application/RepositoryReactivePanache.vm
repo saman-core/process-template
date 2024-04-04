@@ -12,7 +12,9 @@ import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${name
 import io.smallrye.mutiny.Uni;
 import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
 import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.transformer.${nameTemplate}Transformer;
-
+#if($this.validateIfAnyElementIsCollection($template.getFields()))
+import org.hibernate.reactive.mutiny.Mutiny;
+#end
 import jakarta.inject.Inject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
@@ -33,6 +35,9 @@ public class ${nameTemplate}RepositoryReactivePanache implements PanacheReposito
     @Override
     public Uni<${nameTemplate}Entity> getById(Long id) {
         return findById(id)
+        #if($this.validateIfAnyElementIsCollection($template.getFields()))
+            ${this.getFetchFromFieldIsCollection($template.getFields())}
+        #end
         .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e))
         .onItem().ifNull().failWith(NotFoundException::new);
     }

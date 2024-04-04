@@ -10,6 +10,7 @@ import org.apache.velocity.app.VelocityEngine;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -202,6 +203,22 @@ public class GeneratorUtil {
 
     public static Boolean validateIfHasElementCollection(Field field) {
         return (field.isMultiple());
+    }
+
+    public static Boolean validateIfAnyElementIsCollection(List<Field> fields) {
+        for (var field: fields){
+            if(field.isMultiple()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String getFetchFromFieldIsCollection(List<Field> fields) {
+        var mutinyFetch = ".onItem().call(auto1Entity -> Mutiny.fetch(auto1Entity.get%s()))";
+        return fields.stream().filter(Field::isMultiple)
+                .map(field -> String.format(mutinyFetch, mangleTypeIdentifier(field.getKey())))
+                .collect(Collectors.joining(""));
     }
 
     public static String getEntityElementCollection(String templateName, Field field) {
