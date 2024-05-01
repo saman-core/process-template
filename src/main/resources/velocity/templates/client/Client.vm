@@ -1,19 +1,15 @@
-#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
-#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
-#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
-package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.client;
+package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.client;
 
-import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
 import io.smallrye.mutiny.Uni;
 
-public interface ${nameTemplate}Client {
+public interface ${template.getNameFormatted()}Client {
 
-    Uni<${nameTemplate}Model> getById(Long id);
+    Uni<${template.getNameFormatted()}Model> getById(Long id);
 
-    Uni<${nameTemplate}Model> create(${nameTemplate}Model model);
+    Uni<${template.getNameFormatted()}Model> create(${template.getNameFormatted()}Model model);
 
-    Uni<${nameTemplate}Model> update(${nameTemplate}Model model);
+    Uni<${template.getNameFormatted()}Model> update(${template.getNameFormatted()}Model model);
 
     Uni<Boolean> deleteById(Long id);
 }

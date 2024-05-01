@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import io.samancore.model.Field;
-import io.samancore.model.Template;
-import io.samancore.util.GeneratorUtil;
+import io.samancore.component.Template;
+import io.samancore.component.base.Field;
+import io.samancore.util.GeneralConstant;
+import io.samancore.util.GeneratorClass;
 import io.samancore.util.JsonUtil;
 import lombok.SneakyThrows;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -24,19 +25,21 @@ import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD
 public class Runner {
 
     public static final String COMPONENTS = "components";
-    private static GeneratorUtil generator = new GeneratorUtil();
+    private static GeneratorClass generator = new GeneratorClass();
 
     @SneakyThrows
     public static void main(String[] args) {
         try {
             String absolutePath = Paths.get("").toAbsolutePath().toString();
-            var templateResourcePath = absolutePath.concat("/").concat(ConstantUtil.TEMPLATE_FILE_NAME);
+            var templateResourcePath = absolutePath.concat("/").concat(GeneralConstant.TEMPLATE_FILE_NAME);
             File templateFile = new File(templateResourcePath);
             InputStream templateInputStream = new FileInputStream(templateFile);
 
             Properties templateProperties = new Properties();
             templateProperties.load(templateInputStream);
 
+            var templateName = templateProperties.getProperty("templateName");
+            var productName = templateProperties.getProperty("productName");
             var templateBuilder = Template.newBuilder()
                     .setPackageName(templateProperties.getProperty("packageName"))
                     .setName(templateProperties.getProperty("templateName"))
@@ -48,21 +51,21 @@ public class Runner {
                     .configure(MapperFeature.ALLOW_EXPLICIT_PROPERTY_RENAMING, true)
                     .build();
 
-            var jsonResourcePath = absolutePath.concat("/").concat(ConstantUtil.JSON_FILE_NAME);
+            var jsonResourcePath = absolutePath.concat("/").concat(GeneralConstant.JSON_FILE_NAME);
             File jsonFile = new File(jsonResourcePath);
             JsonNode jsonForm = jsonMapper.readValue(jsonFile, JsonNode.class);
 
             ArrayNode components = (ArrayNode) jsonForm.get(COMPONENTS);
 
-            List<Field> fieldList = JsonUtil.getFieldsOfComponent(components);
+            List<Field> fieldList = JsonUtil.getFieldsOfComponent(productName, templateName, components);
             templateBuilder.setFields(fieldList);
 
             String module = "model";
-            List<GeneratorUtil.OutputFile> outputFiles = generator.compile(templateBuilder.build(), module);
+            List<GeneratorClass.OutputFile> outputFiles = generator.compile(templateBuilder.build(), module);
             String destinationPath = "src/main/java/";
-            for (GeneratorUtil.OutputFile outputFile : outputFiles) {
+            for (GeneratorClass.OutputFile outputFile : outputFiles) {
                 File resourcesFileDestination = new File(destinationPath);
-                outputFile.writeToDestination( null, resourcesFileDestination);
+                outputFile.writeToDestination(null, resourcesFileDestination);
             }
         } catch (Exception error) {
             throw new MojoExecutionException(error.getMessage(), error);

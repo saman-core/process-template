@@ -1,45 +1,47 @@
-#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
-#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
-#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
-package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.service.impl;
+package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.service.impl;
 
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.repository.${nameTemplate}Repository;
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.service.${nameTemplate}Service;
-import ${template.getPackageName()}.${nameProductLowerCase}.${nameTemplateLowerCase}.transformer.${nameTemplate}Transformer;
+import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
+import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.repository.${template.getNameFormatted()}Repository;
+import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.service.${template.getNameFormatted()}Service;
+import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.transformer.${template.getNameFormatted()}Transformer;
 import io.smallrye.mutiny.Uni;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
-public class ${nameTemplate}ServiceImpl implements ${nameTemplate}Service {
+public class ${template.getNameFormatted()}ServiceImpl implements ${template.getNameFormatted()}Service {
 
     @Inject
-    ${nameTemplate}Repository repository;
+    ${template.getNameFormatted()}Repository repository;
 
     @Inject
-    ${nameTemplate}Transformer transformer;
+    ${template.getNameFormatted()}Transformer transformer;
+
+    @Inject
+    Logger log;
+
 
     @WithSession
     @Override
-    public Uni<${nameTemplate}Model> getById(Long id) {
+    public Uni<${template.getNameFormatted()}Model> getById(Long id) {
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.getById %d ", id);
         return repository.getById(id)
         .onItem().transform(entity -> transformer.toModel(entity));
     }
 
     @WithSession
     @Override
-    public Uni<${nameTemplate}Model> create(${nameTemplate}Model model) {
+    public Uni<${template.getNameFormatted()}Model> create(${template.getNameFormatted()}Model model) {
         return repository.create(transformer.toEntity(model))
         .onItem().transform(entity -> transformer.toModel(entity));
     }
 
     @WithSession
     @Override
-    public Uni<${nameTemplate}Model> update(${nameTemplate}Model model) {
+    public Uni<${template.getNameFormatted()}Model> update(${template.getNameFormatted()}Model model) {
         return repository.update(transformer.toEntity(model))
         .onItem().transform(entity -> transformer.toModel(entity));
     }

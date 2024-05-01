@@ -1,49 +1,50 @@
-#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
-#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
-#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
-package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.repository.reactive.panache;
+package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.repository.reactive.panache;
 
 import io.samancore.common.error.message.TechnicalExceptionsEnum;
 import io.samancore.common.error.util.ExceptionHandler;
 
-import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.repository.${nameTemplate}Repository;
-import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.entity.${nameTemplate}Entity;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.repository.${template.getNameFormatted()}Repository;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.entity.${template.getNameFormatted()}Entity;
 import io.smallrye.mutiny.Uni;
 import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
-import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.transformer.${nameTemplate}Transformer;
-#if($this.validateIfAnyElementIsCollection($template.getFields()))
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.transformer.${template.getNameFormatted()}Transformer;
+#if($template.evaluateIfAnyFieldIsMultiple())
 import org.hibernate.reactive.mutiny.Mutiny;
 #end
 import jakarta.inject.Inject;
+import org.jboss.logging.Logger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
-public class ${nameTemplate}RepositoryReactivePanache implements PanacheRepositoryBase<${nameTemplate}Entity, Long>, ${nameTemplate}Repository {
+public class ${template.getNameFormatted()}RepositoryReactivePanache implements PanacheRepositoryBase<${template.getNameFormatted()}Entity, Long>, ${template.getNameFormatted()}Repository {
 
     @Inject
-    ${nameTemplate}Transformer transformer;
+    ${template.getNameFormatted()}Transformer transformer;
+
+    @Inject
+    Logger log;
 
     @Override
-    public Uni<${nameTemplate}Entity> create(${nameTemplate}Entity entity) {
+    public Uni<${template.getNameFormatted()}Entity> create(${template.getNameFormatted()}Entity entity) {
         entity.setId(null);
         return persistAndFlush(entity)
         .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e));
     }
 
     @Override
-    public Uni<${nameTemplate}Entity> getById(Long id) {
+    public Uni<${template.getNameFormatted()}Entity> getById(Long id) {
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.getById %d ", id);
         return findById(id)
-        #if($this.validateIfAnyElementIsCollection($template.getFields()))
-            ${this.getFetchFromFieldIsCollection($template.getFields())}
+        #if($template.evaluateIfAnyFieldIsMultiple())
+            ${template.getFetchFromFieldIsCollection()}
         #end
         .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e))
         .onItem().ifNull().failWith(NotFoundException::new);
     }
 
     @Override
-    public Uni<${nameTemplate}Entity> update(${nameTemplate}Entity entity) {
+    public Uni<${template.getNameFormatted()}Entity> update(${template.getNameFormatted()}Entity entity) {
         return getById(entity.getId())
         .onItem().transform(attached -> transformer.copyToAttached(entity, attached))
         .onItem().transformToUni(this::persistAndFlush)

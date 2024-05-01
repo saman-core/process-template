@@ -8,7 +8,7 @@
     <packaging>maven-plugin</packaging>
     <version>0.0.1</version>
 
-    <name>counter-maven-plugin Maven Mojo</name>
+    <name>process-template-plugin Maven Mojo</name>
     <url>http://maven.apache.org</url>
     <properties>
         <maven.compiler.target>17</maven.compiler.target>

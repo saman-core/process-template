@@ -1,11 +1,7 @@
-#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
-#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
-#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
-package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.api;
+package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.api;
 
-import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
-import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.service.${nameTemplate}Service;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.service.${template.getNameFormatted()}Service;
 import io.smallrye.mutiny.Uni;
 import org.jboss.logging.Logger;
 
@@ -17,10 +13,10 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriInfo;
 
-@Path("/${nameTemplateLowerCase}s")
+@Path("/${template.getNameFormattedLowerCase()}s")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ${nameTemplate}Api {
+public class ${template.getNameFormatted()}Api {
 
     @Inject
     Logger log;
@@ -29,13 +25,13 @@ public class ${nameTemplate}Api {
     UriInfo uriInfo;
 
     @Inject
-    ${nameTemplate}Service service;
+    ${template.getNameFormatted()}Service service;
 
     @GET
     @Path("/getById/{id}")
     @RolesAllowed({"ms_client"})
-    public Uni<${nameTemplate}Model> getById(@PathParam("id") long id) {
-        log.debugf("${nameTemplate}Api.getById %d ", id);
+    public Uni<${template.getNameFormatted()}Model> getById(@PathParam("id") long id) {
+        log.debugf("${template.getNameFormatted()}Api.getById %d ", id);
         return service.getById(id);
     }
 
@@ -43,23 +39,23 @@ public class ${nameTemplate}Api {
     @Path("/deleteById/{id}")
     @RolesAllowed({"ms_client"})
     public Uni<Boolean> deleteById(@PathParam("id") Long id) {
-        log.debugf("${nameTemplate}Api.deleteById %d ", id);
+        log.debugf("${template.getNameFormatted()}Api.deleteById %d ", id);
         return service.deleteById(id);
     }
 
    @POST
    @Path("/create")
    @RolesAllowed({"ms_client"})
-   public Uni<${nameTemplate}Model> create(@Valid ${nameTemplate}Model ${this.mangleObjectIdentifier($nameTemplate)}Model) {
-        log.debug("${nameTemplate}Api.create");
-        return service.create(${this.mangleObjectIdentifier($nameTemplate)}Model);
+   public Uni<${template.getNameFormatted()}Model> create(@Valid ${template.getNameFormatted()}Model ${template.getNameFormattedLowerCase()}Model) {
+        log.debug("${template.getNameFormatted()}Api.create");
+        return service.create(${template.getNameFormattedLowerCase()}Model);
    }
 
    @PUT
    @Path("/update")
    @RolesAllowed({"ms_client"})
-   public Uni<${nameTemplate}Model> update(@Valid ${nameTemplate}Model ${this.mangleObjectIdentifier($nameTemplate)}Model) {
-        log.debug("${nameTemplate}Api.update");
-        return service.update(${this.mangleObjectIdentifier($nameTemplate)}Model);
+   public Uni<${template.getNameFormatted()}Model> update(@Valid ${template.getNameFormatted()}Model ${template.getNameFormattedLowerCase()}Model) {
+        log.debug("${template.getNameFormatted()}Api.update");
+        return service.update(${template.getNameFormattedLowerCase()}Model);
    }
 }

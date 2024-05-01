@@ -1,11 +1,7 @@
-#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
-#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
-#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
-package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.client.rest.microprofile;
+package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.client.rest.microprofile;
 
 import io.smallrye.mutiny.Uni;
-import ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model.${nameTemplate}Model;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -13,24 +9,24 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 @ApplicationScoped
-@RegisterRestClient(configKey = "cde-${nameProductLowerCase}-${nameTemplateLowerCase}-api")
+@RegisterRestClient(configKey = "cde-${template.getProductNameFormattedLowerCase()}-${template.getNameFormattedLowerCase()}-api")
 @RegisterClientHeaders
-@Path("/${nameTemplateLowerCase}s")
+@Path("/${template.getNameFormattedLowerCase()}s")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public interface ${nameTemplate}RestClient {
+public interface ${template.getNameFormatted()}RestClient {
 
     @GET
     @Path("/getById/{id}")
-    Uni<${nameTemplate}Model> getById(@PathParam("id") Long id);
+    Uni<${template.getNameFormatted()}Model> getById(@PathParam("id") Long id);
 
     @POST
     @Path("/create")
-    Uni<${nameTemplate}Model> create(${nameTemplate}Model model);
+    Uni<${template.getNameFormatted()}Model> create(${template.getNameFormatted()}Model model);
 
     @PUT
     @Path("/update")
-    Uni<${nameTemplate}Model> update(${nameTemplate}Model model);
+    Uni<${template.getNameFormatted()}Model> update(${template.getNameFormatted()}Model model);
 
     @DELETE
     @Path("/deleteById/{id}")

@@ -1,8 +1,4 @@
-#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
-#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
-#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
-package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.entity;
+package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,49 +7,43 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
-#set ($imports = ${this.getImports($template.getFields())})
-#foreach($import in $imports)
-import $import;
-#end
 
 @Entity
 @Getter
 @Setter
-@Table(name = "${nameProductLowerCase}_${nameTemplateLowerCase}")
-public class ${nameTemplate}Entity implements Serializable {
+@Table(name = "${template.getProductNameFormattedLowerCase()}_${template.getNameFormattedLowerCase()}"
+#if($template.evaluateIfAnyFieldIsIndex())
+    , indexes = {
+         ${template.getAllIndexFromField()}
+    }
+#end
+)
+public class ${template.getNameFormatted()}Entity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_${nameProductLowerCase}_${nameTemplateLowerCase}")
-    @Column(name = "${nameTemplateLowerCase}_id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_${template.getProductNameFormattedLowerCase()}_${template.getNameFormattedLowerCase()}")
+    @Column(name = "${template.getNameFormattedLowerCase()}_id", unique = true, nullable = false)
     private Long id;
 
-#foreach ($field in $template.getFields())
-#if($field.isPersistent())
-#if($this.validateIfHasElementCollection($field))
-    @ElementCollection(fetch = FetchType.LAZY)
-    ${this.getEntityElementCollection( "${nameTemplateLowerCase}", $field)}
+#foreach ($field in $template.getAllFieldToPersist())
+#set ($annotations = ${field.getAllAnnotationToEntity()})
+#foreach($annotation in $annotations)
+    $annotation
 #end
-#if($this.validateIfHasColumnDefinition($field))
-    ${this.getEntityColumnDefinition($field)}
-#end
-    private ${this.getObjectTypeToEntity($field)} ${this.mangle($field.getKey())};
-
-#end
+    private ${field.getObjectTypeToEntity()} ${field.getKeyMangle()};
 #end
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ${nameTemplate}Entity that = (${nameTemplate}Entity) o;
+        ${template.getNameFormatted()}Entity that = (${template.getNameFormatted()}Entity) o;
         return new EqualsBuilder().append(id, that.id)
-#foreach ($field in $template.getFields())
-#if($field.isPersistent())
-                .append(${this.mangle($field.getKey())}, that.${this.mangle($field.getKey())})
-#end
+#foreach ($field in $template.getAllFieldToPersist())
+                .append(${field.getKeyMangle()}, that.${field.getKeyMangle()})
 #end
                 .isEquals();
     }
@@ -62,9 +52,9 @@ public class ${nameTemplate}Entity implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
-#foreach ($field in $template.getFields())
-#if(${field.isPersistent()})
-                .append(${this.mangle($field.getKey())})
+#foreach ($field in $template.getAllFieldToPersist())
+#if(${field.getIsPersistent()})
+                .append(${field.getKeyMangle()})
 #end
 #end
                 .toHashCode();

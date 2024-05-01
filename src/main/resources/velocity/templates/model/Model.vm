@@ -1,17 +1,11 @@
-#set ($nameTemplate = ${this.mangleTypeIdentifier($template.getName())})
-#set ($nameProduct = ${this.mangleTypeIdentifier($template.getProductName())})
-#set ($nameTemplateLowerCase = ${this.toLowerCase($nameTemplate)})
-#set ($nameProductLowerCase = ${this.toLowerCase($nameProduct)})
-package ${this.mangle($template.getPackageName())}.${nameProductLowerCase}.${nameTemplateLowerCase}.model;
+package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model;
 
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-#foreach($field in $template.getFields())
-#set ($objectType = ${this.getObjectTypeToModel($field)})
-#if($this.getImport($objectType))
-import $this.getImport($objectType);
-#end
+#if($template.validateIfAnyFieldHasValidation())
+import jakarta.validation.constraints.*;
+import io.samancore.common.validation.*;
 #end
 
 @Value
@@ -21,9 +15,13 @@ import $this.getImport($objectType);
     builderMethodName = "newBuilder",
     toBuilder = true
 )
-public class ${nameTemplate}Model {
+public class ${template.getNameFormatted()}Model {
     Long id;
 #foreach ($field in $template.getFields())
-    ${this.getObjectTypeToModel($field)} ${this.mangle($field.getKey())};
+    #set ($validations = ${field.getValidationToModel()})
+    #foreach($validation in $validations)
+    $validation
+    #end
+    ${field.getObjectTypeToModel()} ${field.getKeyMangle()};
 #end
 }
