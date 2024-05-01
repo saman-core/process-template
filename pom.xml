@@ -6,7 +6,7 @@
     <groupId>io.samancore</groupId>
     <artifactId>process-template</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 
     <name>process-template-plugin Maven Mojo</name>
     <url>http://maven.apache.org</url>
@@ -74,7 +74,6 @@
             <scope>provided</scope>
             <version>1.18.24</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.jboss.logging/jboss-logging -->
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
