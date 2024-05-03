@@ -124,13 +124,17 @@ public class Number extends Component implements Field {
     }
 
     @Override
+    public String getMethodEncrypt() {
+        return "return encrypt.encrypt(element.toString());";
+    }
+
+    @Override
     public List<String> getMethodTransformToEntity() {
         var list = new ArrayList<String>();
-        list.add(String.format(PRIVATE_OBJECT_TRANSFORM_S_TO_ENTITY_OBJECT_ELEMENT, getKeyFormatted()));
+        list.add(String.format(PRIVATE_S_TRANSFORM_S_TO_ENTITY_S_ELEMENT, getObjectTypeToEntity(), getKeyFormatted(), getObjectTypeToModel()));
         if (getIsEncrypted()) {
             list.add(getMethodEncrypt());
-        }
-        list.add(RETURN_ELEMENT);
+        } else list.add(RETURN_ELEMENT);
         list.add(CLOSE_KEY);
         return list;
     }
@@ -138,14 +142,21 @@ public class Number extends Component implements Field {
     @Override
     public List<String> getMethodTransformToModel() {
         var list = new ArrayList<String>();
-        list.add(String.format(PRIVATE_OBJECT_TRANSFORM_S_TO_MODEL_OBJECT_ELEMENT, getKeyFormatted()));
+        list.add(String.format(PRIVATE_S_TRANSFORM_S_TO_MODEL_S_ELEMENT, getObjectTypeToModel(), getKeyFormatted(), getObjectTypeToEntity()));
+        var object = "element";
         if (getIsEncrypted()) {
             list.add(getMethodDecrypt());
+            object = "newElement";
         }
         if (getDisplayMask() != null) {
-            list.add(ELEMENT_MASKER_APPLY_ELEMENT);
+            list.add(String.format(S_MASKER_APPLY_S, object, object));
         }
-        list.add(RETURN_ELEMENT);
+        var objectType = getObjectTypeToModel();
+        String descriptionReturn = String.format("%s.valueOf", objectType);
+        if (objectType.equals(DATA_TYPE_BIG_DECIMAL)) {
+            descriptionReturn = String.format("new %s", objectType);
+        }
+        list.add(String.format("return %s(%s);", descriptionReturn, object));
         list.add(CLOSE_KEY);
         return list;
     }

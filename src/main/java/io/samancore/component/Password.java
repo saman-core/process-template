@@ -66,7 +66,7 @@ public class Password extends Component implements Field {
     @Override
     public List<String> getMethodTransformToEntity() {
         var list = new ArrayList<String>();
-        list.add(String.format(PRIVATE_OBJECT_TRANSFORM_S_TO_ENTITY_OBJECT_ELEMENT, getKeyFormatted()));
+        list.add(String.format(PRIVATE_S_TRANSFORM_S_TO_ENTITY_S_ELEMENT, getObjectTypeToEntity(), getKeyFormatted(), getObjectTypeToModel()));
         if (!getCaseType().equals(CaseType.NONE)) {
             list.add(String.format(ELEMENT_STRING_ELEMENT_TO_S_JAVA_UTIL_LOCALE_ROOT, getCaseType().getDescription()));
         }
@@ -75,8 +75,7 @@ public class Password extends Component implements Field {
         }
         if (getIsEncrypted()) {
             list.add(getMethodEncrypt());
-        }
-        list.add(RETURN_ELEMENT);
+        } else list.add(RETURN_ELEMENT);
         list.add(CLOSE_KEY);
         return list;
     }
@@ -84,20 +83,22 @@ public class Password extends Component implements Field {
     @Override
     public List<String> getMethodTransformToModel() {
         var list = new ArrayList<String>();
-        list.add(String.format(PRIVATE_OBJECT_TRANSFORM_S_TO_MODEL_OBJECT_ELEMENT, getKeyFormatted()));
+        list.add(String.format(PRIVATE_S_TRANSFORM_S_TO_MODEL_S_ELEMENT, getObjectTypeToModel(), getKeyFormatted(), getObjectTypeToEntity()));
+        var object = "element";
         if (getIsEncrypted()) {
             list.add(getMethodDecrypt());
+            object = "newElement";
         }
         if (!getCaseType().equals(CaseType.NONE)) {
-            list.add(String.format(ELEMENT_STRING_ELEMENT_TO_S_JAVA_UTIL_LOCALE_ROOT, getCaseType().getDescription()));
+            list.add(String.format(S_S_TO_S_JAVA_UTIL_LOCALE_ROOT, object, object, getCaseType().getDescription()));
         }
         if (getIsTruncateMultipleSpaces()) {
-            list.add(ELEMENT_STRING_ELEMENT_TRIM_REPLACE_ALL_S_2_G);
+            list.add(String.format(S_S_TRIM_REPLACE_ALL_S_2_G, object, object));
         }
         if (getDisplayMask() != null) {
-            list.add(ELEMENT_MASKER_APPLY_ELEMENT);
+            list.add(String.format(S_MASKER_APPLY_S, object, object));
         }
-        list.add(RETURN_ELEMENT);
+        list.add(String.format(RETURN_S, object));
         list.add(CLOSE_KEY);
         return list;
     }

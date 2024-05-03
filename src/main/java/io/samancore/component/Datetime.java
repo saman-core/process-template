@@ -55,4 +55,14 @@ public class Datetime extends Component implements Field {
         }
         return annotations;
     }
+
+    @Override
+    public String getMethodEncrypt() {
+        return "return encrypt.encrypt(String.valueOf(element.getTime()));";
+    }
+
+    @Override
+    public String getMethodDecrypt() {
+        return "var newElement = new java.util.Date(Long.valueOf(encrypt.decrypt(element)));";
+    }
 }

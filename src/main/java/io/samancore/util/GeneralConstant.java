@@ -86,12 +86,16 @@ public class GeneralConstant {
     public static final String INJECT = "@Inject";
     public static final String PAIR_S = "pair%s";
     public static final String RETURN_ELEMENT = " return element;";
+    public static final String RETURN_S = " return %s;";
     public static final String CLOSE_KEY = "}";
     public static final String ELEMENT_STRING_ELEMENT_TRIM_REPLACE_ALL_S_2_G = "element = ((String)element).trim().replaceAll(\"^ +| +$|( )+\", \"$1\");";
+    public static final String S_S_TRIM_REPLACE_ALL_S_2_G = "%s = (%s).trim().replaceAll(\"^ +| +$|( )+\", \"$1\");";
     public static final String ELEMENT_MASKER_APPLY_ELEMENT = "element = masker.apply(element);";
+    public static final String S_MASKER_APPLY_S = "%s = masker.apply(%s);";
     public static final String ELEMENT_STRING_ELEMENT_TO_S_JAVA_UTIL_LOCALE_ROOT = "element = ((String)element).to%s(java.util.Locale.ROOT);";
-    public static final String PRIVATE_OBJECT_TRANSFORM_S_TO_ENTITY_OBJECT_ELEMENT = "private Object transform%sToEntity(Object element){";
-    public static final String PRIVATE_OBJECT_TRANSFORM_S_TO_MODEL_OBJECT_ELEMENT = "private Object transform%sToModel(Object element){";
+    public static final String S_S_TO_S_JAVA_UTIL_LOCALE_ROOT = "%s = (%s).to%s(java.util.Locale.ROOT);";
+    public static final String PRIVATE_S_TRANSFORM_S_TO_ENTITY_S_ELEMENT = "private %s transform%sToEntity(%s element){";
+    public static final String PRIVATE_S_TRANSFORM_S_TO_MODEL_S_ELEMENT = "private %s transform%sToModel(%s element){";
     public static final String NOT_BLANK = "@NotBlank";
     public static final String NOT_EMPTY = "@NotEmpty";
     public static final String NOT_NULL = "@NotNull";

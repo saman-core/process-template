@@ -75,20 +75,20 @@ public abstract class Component implements Input {
 
     @Override
     public String getMethodEncrypt() {
-        return "element = encrypt.encrypt(element);";
+        return "return encrypt.encrypt(element);";
     }
 
     @Override
     public String getMethodDecrypt() {
-        return "element = encrypt.decrypt(element);";
+        return "var newElement = encrypt.decrypt(element);";
     }
 
 
     @Override
     public String getPairTransformToEntity() {
         String pairDefinition = "var pair%s = org.apache.commons.lang3.tuple.Pair.of(\"%s\", (java.util.function.Function<%s, ?>) _%s -> _%s!=null ? transform%sToEntity(_%s) : null);";
-        String keyFormatted = getKeyFormatted();
-        return String.format(pairDefinition, keyFormatted, getKey(), getObjectTypeToEntity(), keyFormatted, keyFormatted, keyFormatted, keyFormatted);
+        String keyFormatted = getKeyMangle();
+        return String.format(pairDefinition, getKeyFormatted(), getKey(), getObjectTypeToModel(), keyFormatted, keyFormatted, getKeyFormatted(), keyFormatted);
     }
 
     @Override
@@ -99,8 +99,8 @@ public abstract class Component implements Input {
     @Override
     public String getPairTransformToModel() {
         String pairDefinition = "var pair%s = org.apache.commons.lang3.tuple.Pair.of(\"%s\", (java.util.function.Function<%s, ?>) _%s -> _%s!=null ? transform%sToModel(_%s) : null);";
-        String keyFormatted = getKeyFormatted();
-        return String.format(pairDefinition, keyFormatted, getKey(), getObjectTypeToModel(), keyFormatted, keyFormatted, keyFormatted, keyFormatted);
+        String keyFormatted = getKeyMangle();
+        return String.format(pairDefinition, getKeyFormatted(), getKey(), getObjectTypeToEntity(), keyFormatted, keyFormatted, getKeyFormatted(), keyFormatted);
     }
 
     @Override
@@ -111,11 +111,10 @@ public abstract class Component implements Input {
     @Override
     public List<String> getMethodTransformToEntity() {
         var list = new ArrayList<String>();
-        list.add(String.format(PRIVATE_OBJECT_TRANSFORM_S_TO_ENTITY_OBJECT_ELEMENT, getKeyFormatted()));
+        list.add(String.format(PRIVATE_S_TRANSFORM_S_TO_ENTITY_S_ELEMENT, getObjectTypeToEntity(), getKeyFormatted(), getObjectTypeToModel()));
         if (getIsEncrypted()) {
             list.add(getMethodEncrypt());
-        }
-        list.add(RETURN_ELEMENT);
+        } else list.add(RETURN_ELEMENT);
         list.add(CLOSE_KEY);
         return list;
     }
@@ -123,12 +122,12 @@ public abstract class Component implements Input {
     @Override
     public List<String> getMethodTransformToModel() {
         var list = new ArrayList<String>();
-        list.add(String.format(PRIVATE_OBJECT_TRANSFORM_S_TO_MODEL_OBJECT_ELEMENT, getKeyFormatted()));
         if (getIsEncrypted()) {
+            list.add(String.format(PRIVATE_S_TRANSFORM_S_TO_MODEL_S_ELEMENT, getObjectTypeToModel(), getKeyFormatted(), getObjectTypeToEntity()));
             list.add(getMethodDecrypt());
+            list.add("return newElement;");
+            list.add(CLOSE_KEY);
         }
-        list.add(RETURN_ELEMENT);
-        list.add(CLOSE_KEY);
         return list;
     }
 }
