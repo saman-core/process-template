@@ -1,9 +1,11 @@
 package io.samancore.util;
 
 public class GeneralConstant {
+
+    public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssX";
     public static final int DEFAULT_DECIMAL_PLACES = 2; //TODO read from property
     public static final int DEFAULT_INTEGER_PLACES = 30; //TODO read from property
-
+    public static final String DEFAULT_NAME_NUMBER = "1";
     public static final String TEMPLATE_FILE_NAME = "template-details";
     public static final String JSON_FILE_NAME = "form.json";
     public static final String ARBITRARY_PRECISION = "arbitraryPrecision";
@@ -103,7 +105,8 @@ public class GeneralConstant {
     public static final String DATA_SRC_RESOURCE = "resource";
     public static final String UNIQUE_TRUE = "unique = true, ";
     public static final String NULLABLE_FALSE = "nullable = false, ";
-    public static final String COLUMN = "@Column(";
+    public static final String COLUMN_NAME_S = "@Column( name= \"%s\"";
+    public static final String COLUMN_ID = "_id";
 
 
     private GeneralConstant() {

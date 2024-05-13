@@ -65,4 +65,10 @@ public class Datetime extends Component implements Field {
     public String getMethodDecrypt() {
         return "var newElement = new java.util.Date(Long.valueOf(encrypt.decrypt(element)));";
     }
+
+    @Override
+    public String getConversionFromStringToObjectType(String value) {
+        var objectType = getObjectTypeToModel();
+        return String.format("DateUtils.parseDate( %s.getFirst(\"%s\"), \"%s\")", value, getKey(), DATE_FORMAT);
+    }
 }

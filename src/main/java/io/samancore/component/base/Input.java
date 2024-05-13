@@ -26,4 +26,8 @@ public interface Input {
     List<String> getMethodTransformToEntity();
 
     List<String> getMethodTransformToModel();
+
+    Boolean evaluateIfNeedDefineIndex();
+
+    String getConversionFromStringToObjectType(String value);
 }

@@ -25,7 +25,7 @@ public class ${template.getNameFormatted()}Entity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_${template.getProductNameFormattedLowerCase()}_${template.getNameFormattedLowerCase()}")
-    @Column(name = "${template.getNameFormattedLowerCase()}_id", unique = true, nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
 #foreach ($field in $template.getAllFieldToPersist())

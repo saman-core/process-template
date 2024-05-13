@@ -1,15 +1,19 @@
 package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.service.impl;
 
-import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
-import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.repository.${template.getNameFormatted()}Repository;
-import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.service.${template.getNameFormatted()}Service;
-import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.transformer.${template.getNameFormatted()}Transformer;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}RequestParameter;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.repository.${template.getNameFormatted()}Repository;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.service.${template.getNameFormatted()}Service;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.transformer.${template.getNameFormatted()}Transformer;
 import io.smallrye.mutiny.Uni;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
+import io.samancore.common.model.PageData;
+import io.samancore.common.page.PageRequest;
+import io.samancore.common.page.PageUtil;
 
 @ApplicationScoped
 public class ${template.getNameFormatted()}ServiceImpl implements ${template.getNameFormatted()}Service {
@@ -35,6 +39,7 @@ public class ${template.getNameFormatted()}ServiceImpl implements ${template.get
     @WithSession
     @Override
     public Uni<${template.getNameFormatted()}Model> create(${template.getNameFormatted()}Model model) {
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.create %s ", model);
         return repository.create(transformer.toEntity(model))
         .onItem().transform(entity -> transformer.toModel(entity));
     }
@@ -42,6 +47,7 @@ public class ${template.getNameFormatted()}ServiceImpl implements ${template.get
     @WithSession
     @Override
     public Uni<${template.getNameFormatted()}Model> update(${template.getNameFormatted()}Model model) {
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.update %s ", model);
         return repository.update(transformer.toEntity(model))
         .onItem().transform(entity -> transformer.toModel(entity));
     }
@@ -49,6 +55,15 @@ public class ${template.getNameFormatted()}ServiceImpl implements ${template.get
     @WithSession
     @Override
     public Uni<Boolean> deleteById(Long id) {
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.deleteById %d ", id);
         return repository.delete(id);
+    }
+
+    @WithSession
+    @Override
+    public Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest){
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.getAllByPage %s ", pageRequest);
+        return repository.getAllByPage(requestParameter, pageRequest)
+                           .onItem().transform(page -> PageUtil.toPageModel(page, transformer::toModel));
     }
 }

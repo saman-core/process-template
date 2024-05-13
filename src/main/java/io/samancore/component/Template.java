@@ -42,16 +42,21 @@ public class Template {
     }
 
     public Boolean evaluateIfAnyFieldIsIndex() {
-        return fields.stream().anyMatch(Field::getHasDbIndex);
+        return fields.stream().anyMatch(Field::evaluateIfNeedDefineIndex);
     }
 
     public String getAllIndexFromField() {
         String indexDefinition = "@Index(columnList = \"%s\")";
         return getAllFieldToPersist().stream()
-                .filter(field -> !(field instanceof Multivalue) || !((Multivalue) field).getIsMultiple())
-                .filter(field -> !((Component) field).getIsEncrypted())
-                .map(field -> String.format(indexDefinition, field.getKey()))
+                .filter(Input::evaluateIfNeedDefineIndex)
+                .map(field -> String.format(indexDefinition, ((Component) field).getKeyToColumn()))
                 .collect(Collectors.joining(", "));
+    }
+
+    public List<Field> getAllFieldIndexed() {
+        return getAllFieldToPersist().stream()
+                .filter(Input::evaluateIfNeedDefineIndex)
+                .toList();
     }
 
     public List<Field> getAllFieldToPersist() {

@@ -60,7 +60,7 @@ public class Runner {
             List<Field> fieldList = JsonUtil.getFieldsOfComponent(productName, templateName, components);
             templateBuilder.setFields(fieldList);
 
-            String module = "model";
+            String module = "data";
             List<GeneratorClass.OutputFile> outputFiles = generator.compile(templateBuilder.build(), module);
             String destinationPath = "src/main/java/";
             for (GeneratorClass.OutputFile outputFile : outputFiles) {

@@ -32,4 +32,10 @@ public class Checkbox extends Component implements Field {
     public List<String> getValidationToModel() {
         return List.of();
     }
+
+    @Override
+    public String getConversionFromStringToObjectType(String value) {
+        var objectType = getObjectTypeToModel();
+        return String.format("%s.valueOf( %s.getFirst(\"%s\"))", objectType, value, getKey());
+    }
 }

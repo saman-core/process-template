@@ -5,16 +5,22 @@ import io.samancore.common.error.util.ExceptionHandler;
 
 import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.repository.${template.getNameFormatted()}Repository;
 import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.entity.${template.getNameFormatted()}Entity;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}RequestParameter;
 import io.smallrye.mutiny.Uni;
 import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
 import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.transformer.${template.getNameFormatted()}Transformer;
 #if($template.evaluateIfAnyFieldIsMultiple())
 import org.hibernate.reactive.mutiny.Mutiny;
 #end
+import io.samancore.common.model.PageData;
+import io.samancore.common.page.PageRequest;
+import io.samancore.common.page.PageUtil;
+import io.samancore.common.page.PagePanacheUtil;
 import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
+import java.util.HashMap;
 
 @ApplicationScoped
 public class ${template.getNameFormatted()}RepositoryReactivePanache implements PanacheRepositoryBase<${template.getNameFormatted()}Entity, Long>, ${template.getNameFormatted()}Repository {
@@ -27,6 +33,7 @@ public class ${template.getNameFormatted()}RepositoryReactivePanache implements 
 
     @Override
     public Uni<${template.getNameFormatted()}Entity> create(${template.getNameFormatted()}Entity entity) {
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.create %s ", entity);
         entity.setId(null);
         return persistAndFlush(entity)
         .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e));
@@ -45,6 +52,7 @@ public class ${template.getNameFormatted()}RepositoryReactivePanache implements 
 
     @Override
     public Uni<${template.getNameFormatted()}Entity> update(${template.getNameFormatted()}Entity entity) {
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.update %s ", entity);
         return getById(entity.getId())
         .onItem().transform(attached -> transformer.copyToAttached(entity, attached))
         .onItem().transformToUni(this::persistAndFlush)
@@ -53,8 +61,37 @@ public class ${template.getNameFormatted()}RepositoryReactivePanache implements 
 
     @Override
     public Uni<Boolean> delete(Long id) {
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.delete %d ", id);
         return deleteById(id)
         .onItem().call(this::flush)
         .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e));
+    }
+
+    @Override
+    public Uni<PageData<${template.getNameFormatted()}Entity>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest){
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.getAllByPage %s %s ", requestParameter,  pageRequest);
+        var params = new HashMap<String, Object>();
+        var condition = "";
+        if (requestParameter.getId() != null) {
+            condition = condition.concat(" a.id = (:id) ");
+            params.put("id", requestParameter.getId());
+        }
+        #foreach ($field in $template.getAllFieldIndexed())
+        if (requestParameter.get${field.getKeyFormatted()}() != null) {
+            if(!condition.isEmpty()){
+                condition = " AND ".concat(condition);
+            }
+            condition = condition.concat(" a.${field.getKey()} = :${field.getKey()} ");
+            params.put("${field.getKey()}", requestParameter.get${field.getKeyFormatted()}());
+        }
+        #end
+        var sql = " select a from ${template.getNameFormatted()}Entity a";
+        if (!condition.isEmpty()) {
+            sql = sql.concat(" WHERE ").concat(condition);
+        }
+
+        var query = this.find(sql, PagePanacheUtil.generateSort(pageRequest), params);
+        var list = query.page(PagePanacheUtil.generatePage(pageRequest)).list();
+        return list.onItem().transform(entityList -> PageData.<${template.getNameFormatted()}Entity>newBuilder().setData(entityList).setCount(entityList.size()).build());
     }
 }

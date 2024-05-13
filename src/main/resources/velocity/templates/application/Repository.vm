@@ -2,6 +2,9 @@ package ${template.getPackageNameFormatted()}.${template.getProductNameFormatted
 
 import io.smallrye.mutiny.Uni;
 import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.entity.${template.getNameFormatted()}Entity;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}RequestParameter;
+import io.samancore.common.model.PageData;
+import io.samancore.common.page.PageRequest;
 
 public interface ${template.getNameFormatted()}Repository {
 
@@ -12,4 +15,6 @@ public interface ${template.getNameFormatted()}Repository {
     Uni<${template.getNameFormatted()}Entity> update(${template.getNameFormatted()}Entity entity);
 
     Uni<Boolean> delete(Long id);
+
+    Uni<PageData<${template.getNameFormatted()}Entity>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest);
 }

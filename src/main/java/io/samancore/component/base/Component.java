@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static io.samancore.util.GeneralConstant.*;
 
@@ -35,19 +36,20 @@ public abstract class Component implements Input {
 
     @Override
     public List<String> getAllAnnotationToEntity() {
+        var columnDescription = String.format(COLUMN_NAME_S, getKeyToColumn());
         if (getIsUnique() || getIsRequired()) {
             String unique = UNIQUE_TRUE;
             String required = NULLABLE_FALSE;
-            String columnDescription = COLUMN;
+            columnDescription = columnDescription.concat(", ");
             if (getIsUnique()) {
                 columnDescription = columnDescription.concat(unique);
             }
             if (getIsRequired()) {
                 columnDescription = columnDescription.concat(required);
             }
-            return List.of(columnDescription.substring(0, columnDescription.lastIndexOf(",")).concat(")"));
-        }
-        return List.of();
+            columnDescription = columnDescription.substring(0, columnDescription.lastIndexOf(",")).concat(")");
+        } else columnDescription = columnDescription.concat(")");
+        return List.of(columnDescription);
     }
 
     public String getKeyFormatted() {
@@ -56,6 +58,14 @@ public abstract class Component implements Input {
 
     public String getKeyMangle() {
         return GeneralUtil.mangle(getKey());
+    }
+
+    public String getKeyLowerCase() {
+        return getKey().toLowerCase(Locale.ROOT);
+    }
+
+    public String getKeyToColumn() {
+        return getKey().toLowerCase(Locale.ROOT).concat(DEFAULT_NAME_NUMBER);
     }
 
     @Override
@@ -129,5 +139,15 @@ public abstract class Component implements Input {
             list.add(CLOSE_KEY);
         }
         return list;
+    }
+
+    @Override
+    public Boolean evaluateIfNeedDefineIndex() {
+        return isPersistent && !isEncrypted && hasDbIndex;
+    }
+
+    @Override
+    public String getConversionFromStringToObjectType(String value) {
+        return String.format("%s.getFirst(\"%s\")", value, key);
     }
 }

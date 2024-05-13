@@ -18,16 +18,12 @@ public class Signature extends Component implements Field {
 
     @Override
     public List<String> getAllAnnotationToEntity() {
-        String required = NULLABLE_FALSE;
-        String columnDescription = COLUMN;
-
-        var columnDescriptionTextType = "name = \"%s\", columnDefinition=\"%s\",";
-
+        var columnDescription = COLUMN_NAME_S;
+        var columnDescriptionTextType = ", columnDefinition=\"%s\",";
         if (getIsRequired()) {
-            columnDescription = columnDescription.concat(required);
+            columnDescription = columnDescription.concat(", ").concat(NULLABLE_FALSE);
         }
-        columnDescription = String.format(columnDescription.concat(columnDescriptionTextType), getKey(), DATABASE_TYPE_TEXT);
-
+        columnDescription = String.format(columnDescription.concat(columnDescriptionTextType), getKeyToColumn(), DATABASE_TYPE_TEXT);
         return List.of(columnDescription.substring(0, columnDescription.lastIndexOf(",")).concat(")"));
     }
 

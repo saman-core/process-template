@@ -1,14 +1,18 @@
 package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.client.rest;
 
-import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.client.${template.getNameFormatted()}Client;
-import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.client.rest.microprofile.${template.getNameFormatted()}RestClient;
-import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.client.${template.getNameFormatted()}Client;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.client.rest.microprofile.${template.getNameFormatted()}RestClient;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}RequestParameter;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import io.samancore.common.model.PageData;
+import io.samancore.common.page.PageRequest;
+
 
 @ApplicationScoped
 public class ${template.getNameFormatted()}RestClientWrapper implements ${template.getNameFormatted()}Client {
@@ -42,5 +46,11 @@ public class ${template.getNameFormatted()}RestClientWrapper implements ${templa
     public Uni<Boolean> deleteById(Long id) {
         log.debugf("${template.getNameFormatted()}RestClientWrapper.deleteById %d", id);
         return service.deleteById(id);
+    }
+
+    @Override
+    public Uni<PageData<Auto11Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest){
+        log.debugf("${template.getNameFormatted()}RestClientWrapper.getAllByPage requestParameter: %s , pageRequest: %s", requestParameter, pageRequest);
+            return service.getAllByPage(requestParameter, pageRequest);
     }
 }

@@ -1,10 +1,14 @@
 package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.api;
 
 import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}RequestParameter;
 import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.service.${template.getNameFormatted()}Service;
+import io.samancore.common.error.message.TechnicalExceptionsEnum;
+import io.samancore.common.error.util.ExceptionHandler;
+import org.apache.commons.lang3.time.DateUtils;
 import io.smallrye.mutiny.Uni;
 import org.jboss.logging.Logger;
-
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -12,6 +16,9 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriInfo;
+import io.samancore.common.model.PageData;
+import io.samancore.common.page.PageRequest;
+import io.samancore.common.page.PageUtil;
 
 @Path("/${template.getNameFormattedLowerCase()}s")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -28,34 +35,62 @@ public class ${template.getNameFormatted()}Api {
     ${template.getNameFormatted()}Service service;
 
     @GET
-    @Path("/getById/{id}")
-    @RolesAllowed({"ms_client"})
+    @Path("/{id}")
+    @RolesAllowed({"admin"})
     public Uni<${template.getNameFormatted()}Model> getById(@PathParam("id") long id) {
         log.debugf("${template.getNameFormatted()}Api.getById %d ", id);
         return service.getById(id);
     }
 
     @DELETE
-    @Path("/deleteById/{id}")
-    @RolesAllowed({"ms_client"})
+    @Path("/{id}")
+    @RolesAllowed({"admin"})
     public Uni<Boolean> deleteById(@PathParam("id") Long id) {
         log.debugf("${template.getNameFormatted()}Api.deleteById %d ", id);
         return service.deleteById(id);
     }
 
    @POST
-   @Path("/create")
-   @RolesAllowed({"ms_client"})
+   @Path("/")
+   @RolesAllowed({"admin"})
    public Uni<${template.getNameFormatted()}Model> create(@Valid ${template.getNameFormatted()}Model ${template.getNameFormattedLowerCase()}Model) {
         log.debug("${template.getNameFormatted()}Api.create");
         return service.create(${template.getNameFormattedLowerCase()}Model);
    }
 
    @PUT
-   @Path("/update")
-   @RolesAllowed({"ms_client"})
+   @Path("/")
+   @RolesAllowed({"admin"})
    public Uni<${template.getNameFormatted()}Model> update(@Valid ${template.getNameFormatted()}Model ${template.getNameFormattedLowerCase()}Model) {
         log.debug("${template.getNameFormatted()}Api.update");
         return service.update(${template.getNameFormattedLowerCase()}Model);
+   }
+
+   @GET
+   @Path("/")
+   @RolesAllowed({"admin"})
+   public Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage() {
+       log.debug("${template.getNameFormatted()}Api.getAllByPage");
+       var queryParameters = uriInfo.getQueryParameters();
+       var pageRequest = PageUtil.getPage(queryParameters);
+       return service.getAllByPage(getRequestParameter(queryParameters), pageRequest);
+   }
+
+   private ${template.getNameFormatted()}RequestParameter getRequestParameter(MultivaluedMap<String, String> queryParameters){
+        try{
+            var requestParameterBuilder = ${template.getNameFormatted()}RequestParameter.newBuilder();
+            if (queryParameters.containsKey("id")){
+                requestParameterBuilder.setId(Long.valueOf(queryParameters.getFirst("id")));
+            }
+            #foreach ($field in $template.getAllFieldIndexed())
+            if (queryParameters.containsKey("${field.getKey()}")){
+                requestParameterBuilder.set${field.getKeyFormatted()}($field.getConversionFromStringToObjectType("queryParameters"));
+            }
+            #end
+            return requestParameterBuilder.build();
+        }catch(Exception e){
+            log.error("${template.getNameFormatted()}Api.getRequestParameter", e);
+            throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.INVALID_REQUEST, e);
+        }
    }
 }

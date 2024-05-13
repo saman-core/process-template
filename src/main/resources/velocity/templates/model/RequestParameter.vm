@@ -1,0 +1,23 @@
+package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model;
+
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
+#if($template.validateIfAnyFieldHasValidation())
+import jakarta.validation.constraints.*;
+import io.samancore.common.validation.*;
+#end
+
+@Value
+@Jacksonized
+@Builder(
+    setterPrefix = "set",
+    builderMethodName = "newBuilder",
+    toBuilder = true
+)
+public class ${template.getNameFormatted()}RequestParameter {
+    Long id;
+#foreach ($field in $template.getAllFieldIndexed())
+    ${field.getObjectTypeToModel()} ${field.getKeyMangle()};
+#end
+}

@@ -1,7 +1,10 @@
 package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.service;
 
-import ${template.getPackageName()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}RequestParameter;
 import io.smallrye.mutiny.Uni;
+import io.samancore.common.model.PageData;
+import io.samancore.common.page.PageRequest;
 
 public interface ${template.getNameFormatted()}Service {
 
@@ -12,4 +15,6 @@ public interface ${template.getNameFormatted()}Service {
     Uni<${template.getNameFormatted()}Model> update(${template.getNameFormatted()}Model model);
 
     Uni<Boolean> deleteById(Long id);
+
+    Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest);
 }

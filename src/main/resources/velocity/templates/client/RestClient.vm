@@ -2,11 +2,14 @@ package ${template.getPackageNameFormatted()}.${template.getProductNameFormatted
 
 import io.smallrye.mutiny.Uni;
 import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
+import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}RequestParameter;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import io.samancore.common.model.PageData;
+import io.samancore.common.page.PageRequest;
 
 @ApplicationScoped
 @RegisterRestClient(configKey = "cde-${template.getProductNameFormattedLowerCase()}-${template.getNameFormattedLowerCase()}-api")
@@ -17,18 +20,22 @@ import jakarta.ws.rs.core.MediaType;
 public interface ${template.getNameFormatted()}RestClient {
 
     @GET
-    @Path("/getById/{id}")
+    @Path("/{id}")
     Uni<${template.getNameFormatted()}Model> getById(@PathParam("id") Long id);
 
     @POST
-    @Path("/create")
+    @Path("/")
     Uni<${template.getNameFormatted()}Model> create(${template.getNameFormatted()}Model model);
 
     @PUT
-    @Path("/update")
+    @Path("/")
     Uni<${template.getNameFormatted()}Model> update(${template.getNameFormatted()}Model model);
 
     @DELETE
-    @Path("/deleteById/{id}")
+    @Path("/{id}")
     Uni<Boolean> deleteById(@PathParam("id") Long id);
+
+    @GET
+    @Path("/")
+    Uni<PageData<Auto11Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest);
 }

@@ -17,13 +17,14 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class GeneratorClass {
 
     public static final List<String> DATA_TEMPLATES_LIST = List.of("Entity.vm");
-    public static final List<String> MODEL_TEMPLATES_LIST = List.of("Model.vm");
+    public static final List<String> MODEL_TEMPLATES_LIST = List.of("Model.vm", "RequestParameter.vm");
     public static final List<String> CLIENT_TEMPLATES_LIST = List.of("Client.vm", "RestClient.vm", "RestClientWrapper.vm");
     public static final List<String> APPLICATION_TEMPLATES_LIST = List.of("Api.vm", "Repository.vm", "RepositoryReactivePanache.vm", "Service.vm", "ServiceImpl.vm", "Transformer.vm");
     public static final Map<String, List<String>> FILES_MODULE_GENERATOR_MAP = Map.of("model", MODEL_TEMPLATES_LIST, "application", APPLICATION_TEMPLATES_LIST, "client", CLIENT_TEMPLATES_LIST, "data", DATA_TEMPLATES_LIST);
     public static final Map<String, String> ROUTE_PACKAGE_OUTPUT_MAP = Map.ofEntries(
             Map.entry("Api", "api"),
             Map.entry("Model", "model"),
+            Map.entry("RequestParameter", "request/parameter"),
             Map.entry("Entity", "entity"),
             Map.entry("Repository", "repository"),
             Map.entry("Service", "service"),
@@ -63,9 +64,6 @@ public class GeneratorClass {
 
     private void initializeVelocity() {
         this.velocityEngine = new VelocityEngine();
-
-        // These properties tell Velocity to use its own classpath-based
-        // loader, then drop down to check the root and the current folder
         velocityEngine.addProperty("resource.loaders", "class, file");
         velocityEngine.addProperty("resource.loader.class.class",
                 "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
@@ -73,9 +71,6 @@ public class GeneratorClass {
                 "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
         velocityEngine.addProperty("resource.loader.file.path", "/, ., ");
         velocityEngine.setProperty("runtime.strict_mode.enable", true);
-
-        // Set whitespace gobbling to Backward Compatible (BC)
-        // https://velocity.apache.org/engine/2.0/developer-guide.html#space-gobbling
         velocityEngine.setProperty("parser.space_gobbling", "bc");
     }
 

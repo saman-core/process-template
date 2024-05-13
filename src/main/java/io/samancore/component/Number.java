@@ -66,12 +66,13 @@ public class Number extends Component implements Field {
 
     @Override
     public List<String> getAllAnnotationToEntity() {
+        String columnDescription = String.format(COLUMN_NAME_S, getKeyToColumn());
         if (getIsUnique() || getIsRequired() || this.requireDecimal) {
             String unique = UNIQUE_TRUE;
             String required = NULLABLE_FALSE;
             String precisionScale = String.format("precision = %d, ", DEFAULT_INTEGER_PLACES);
             String scale = String.format("scale = %d, ", decimalLimit);
-            String columnDescription = COLUMN;
+            columnDescription = columnDescription.concat(", ");
             if (requireDecimal) {
                 columnDescription = columnDescription.concat(precisionScale).concat(scale);
             }
@@ -81,9 +82,9 @@ public class Number extends Component implements Field {
             if (getIsRequired()) {
                 columnDescription = columnDescription.concat(required);
             }
-            return List.of(columnDescription.substring(0, columnDescription.lastIndexOf(",")).concat(")"));
-        }
-        return List.of();
+            columnDescription = columnDescription.substring(0, columnDescription.lastIndexOf(",")).concat(")");
+        } else columnDescription = columnDescription.concat(")");
+        return List.of(columnDescription);
     }
 
     @Override
@@ -159,5 +160,15 @@ public class Number extends Component implements Field {
         list.add(String.format("return %s(%s);", descriptionReturn, object));
         list.add(CLOSE_KEY);
         return list;
+    }
+
+    @Override
+    public String getConversionFromStringToObjectType(String value) {
+        var objectType = getObjectTypeToModel();
+        String descriptionReturn = String.format("%s.valueOf", objectType);
+        if (objectType.equals(DATA_TYPE_BIG_DECIMAL)) {
+            descriptionReturn = String.format("new %s", objectType);
+        }
+        return String.format(" %s(%s.getFirst(\"%s\"))", descriptionReturn, value, getKey());
     }
 }

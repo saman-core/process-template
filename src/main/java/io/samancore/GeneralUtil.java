@@ -13,17 +13,15 @@ public class GeneralUtil {
     }
 
     public static final Set<String> RESERVED_WORDS = new HashSet<>(Arrays.asList(
-            // Keywords from Section 3.9 can't be used as identifiers.
-            "_", "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue", "create",
+            "_", "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue",
             "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for", "goto", "if",
             "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package", "private",
             "protected", "public", "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this",
             "throw", "throws", "transient", "try", "void", "volatile", "while",
-            // Literals from Section 3.10 can't be used as identifiers.
             "true", "false", "null",
-            // Note that module-related restricted keywords can still be used.
-            // Class names used internally by the avro code generator
-            "Builder"));
+            "exports", "module", "non-sealed\n", "open", "opens", "permits",
+            "provides", "record", "requires", "sealed", "to", "transitive", "uses",
+            "var", "when", "with", "yield"));
 
 
     public static String mangleObjectIdentifier(String word) {
