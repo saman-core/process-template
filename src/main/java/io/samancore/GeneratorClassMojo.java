@@ -27,7 +27,6 @@ import java.util.Properties;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES;
 import static io.samancore.GeneralUtil.validateLengthName;
-import static io.samancore.util.GeneralConstant.MAX_LENGTH_NAME_ALLOWED;
 
 @Mojo(name = "generate-code", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class GeneratorClassMojo extends AbstractMojo {

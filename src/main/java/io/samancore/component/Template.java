@@ -44,6 +44,7 @@ public class Template {
     public Boolean evaluateIfAnyFieldIsIndex() {
         return fields.stream().anyMatch(Field::evaluateIfNeedDefineIndex);
     }
+
     public Boolean evaluateIfAnyFieldNeedFilter() {
         return fields.stream().anyMatch(Field::evaluateIfNeedDefineFilter);
     }

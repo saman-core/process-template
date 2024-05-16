@@ -44,7 +44,7 @@ public abstract class Multivalue extends Component {
             var name = getKeyToColumn();
             allAnnotations.add("@ElementCollection(fetch = FetchType.EAGER)");
             var indexDesc = "";
-            if(getHasDbIndex()){
+            if (getHasDbIndex()) {
                 indexDesc = String.format(", indexes = {@Index(columnList = \"%s\")}", name);
             }
             allAnnotations.add(String.format("@CollectionTable(name = \"%s_%s__%s\", joinColumns = @JoinColumn(name = \"%s_id\", nullable = false), uniqueConstraints = @UniqueConstraint(columnNames = {\"%s_id\", \"%s\"})".concat(indexDesc).concat(")"), productName.toLowerCase(Locale.ROOT), templateName.toLowerCase(Locale.ROOT), getKeyLowerCase(), templateName.toLowerCase(Locale.ROOT), templateName.toLowerCase(Locale.ROOT), name));

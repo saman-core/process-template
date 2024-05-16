@@ -37,7 +37,7 @@ public class JsonUtil {
                 }
             } else {
                 var field = getField(productName, templateName, jsonNodeComponent);
-                if (field != null && field.getKey()!=null && !field.getKey().isEmpty()) {
+                if (field != null && field.getKey() != null && !field.getKey().isEmpty()) {
                     validateIfNameIsAReservedWord(field.getKey());
                     validateLengthName(field.getKey(), "component's name length should be max 20 characters");
                     validateIfNameContainAnySymbol(field.getKey());
