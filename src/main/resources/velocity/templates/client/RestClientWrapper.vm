@@ -13,7 +13,6 @@ import jakarta.inject.Inject;
 import io.samancore.common.model.PageData;
 import io.samancore.common.page.PageRequest;
 
-
 @ApplicationScoped
 public class ${template.getNameFormatted()}RestClientWrapper implements ${template.getNameFormatted()}Client {
 
@@ -49,8 +48,8 @@ public class ${template.getNameFormatted()}RestClientWrapper implements ${templa
     }
 
     @Override
-    public Uni<PageData<Auto11Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest){
+    public Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest) {
         log.debugf("${template.getNameFormatted()}RestClientWrapper.getAllByPage requestParameter: %s , pageRequest: %s", requestParameter, pageRequest);
-            return service.getAllByPage(requestParameter, pageRequest);
+        return service.getAllByPage(requestParameter, pageRequest);
     }
 }

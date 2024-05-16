@@ -15,12 +15,11 @@ public class  ${template.getNameFormatted()}Transformer extends GenericTransform
     @Inject
     Logger log;
 
-
-    #set ($injects = ${template.getInjectToTransform()})
-    #foreach($inject in $injects)
-        @Inject
-        $inject
-    #end
+#set ($injects = ${template.getInjectToTransform()})
+#foreach($inject in $injects)
+    @Inject
+    $inject
+#end
 
     public ${template.getNameFormatted()}Entity toEntity(${template.getNameFormatted()}Model model) {
         try {
@@ -51,8 +50,8 @@ public class  ${template.getNameFormatted()}Transformer extends GenericTransform
             return transformToModel(entity);
             #end
         } catch (Exception e) {
-        log.error(e.getMessage(), e);
-        throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.TRANSFORMER_OBJECT_ERROR, e);
+            log.error(e.getMessage(), e);
+            throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.TRANSFORMER_OBJECT_ERROR, e);
         }
     }
 

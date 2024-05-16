@@ -16,5 +16,5 @@ public interface ${template.getNameFormatted()}Client {
 
     Uni<Boolean> deleteById(Long id);
 
-    Uni<PageData<Auto11Model>> getAllByPage(Auto11RequestParameter requestParameter, PageRequest pageRequest);
+    Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest);
 }

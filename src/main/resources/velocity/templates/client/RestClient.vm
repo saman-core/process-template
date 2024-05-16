@@ -37,5 +37,5 @@ public interface ${template.getNameFormatted()}RestClient {
 
     @GET
     @Path("/")
-    Uni<PageData<Auto11Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest);
+    Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest);
 }

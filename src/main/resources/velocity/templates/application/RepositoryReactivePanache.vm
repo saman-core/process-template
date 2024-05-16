@@ -36,37 +36,37 @@ public class ${template.getNameFormatted()}RepositoryReactivePanache implements 
         log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.create %s ", entity);
         entity.setId(null);
         return persistAndFlush(entity)
-        .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e));
+                .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
     }
 
     @Override
     public Uni<${template.getNameFormatted()}Entity> getById(Long id) {
         log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.getById %d ", id);
         return findById(id)
-        .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e))
-        .onItem().ifNull().failWith(NotFoundException::new);
+                .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e))
+                .onItem().ifNull().failWith(NotFoundException::new);
     }
 
     @Override
     public Uni<${template.getNameFormatted()}Entity> update(${template.getNameFormatted()}Entity entity) {
         log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.update %s ", entity);
         return getById(entity.getId())
-        .onItem().transform(attached -> transformer.copyToAttached(entity, attached))
-        .onItem().transformToUni(this::persistAndFlush)
-        .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e));
+                .onItem().transform(attached -> transformer.copyToAttached(entity, attached))
+                .onItem().transformToUni(this::persistAndFlush)
+                .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
     }
 
     @Override
     public Uni<Boolean> delete(Long id) {
         log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.delete %d ", id);
         return deleteById(id)
-        .onItem().call(this::flush)
-        .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e));
+                .onItem().call(this::flush)
+                .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
     }
 
     @Override
-    public Uni<PageData<${template.getNameFormatted()}Entity>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest){
-        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.getAllByPage %s %s ", requestParameter,  pageRequest);
+    public Uni<PageData<${template.getNameFormatted()}Entity>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest) {
+        log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.getAllByPage %s %s ", requestParameter, pageRequest);
         var params = new HashMap<String, Object>();
         var condition = "";
         if (requestParameter.getId() != null) {
@@ -89,6 +89,7 @@ public class ${template.getNameFormatted()}RepositoryReactivePanache implements 
 
         var query = this.find(sql, PagePanacheUtil.generateSort(pageRequest), params);
         var list = query.page(PagePanacheUtil.generatePage(pageRequest)).list();
-        return list.onItem().transform(entityList -> PageData.<${template.getNameFormatted()}Entity>newBuilder().setData(entityList).setCount(entityList.size()).build());
+        return list
+                .onItem().transform(entityList -> PageData.<${template.getNameFormatted()}Entity>newBuilder().setData(entityList).setCount(entityList.size()).build());
     }
 }

@@ -27,13 +27,12 @@ public class ${template.getNameFormatted()}ServiceImpl implements ${template.get
     @Inject
     Logger log;
 
-
     @WithSession
     @Override
     public Uni<${template.getNameFormatted()}Model> getById(Long id) {
         log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.getById %d ", id);
         return repository.getById(id)
-        .onItem().transform(entity -> transformer.toModel(entity));
+                .onItem().transform(entity -> transformer.toModel(entity));
     }
 
     @WithSession
@@ -41,7 +40,7 @@ public class ${template.getNameFormatted()}ServiceImpl implements ${template.get
     public Uni<${template.getNameFormatted()}Model> create(${template.getNameFormatted()}Model model) {
         log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.create %s ", model);
         return repository.create(transformer.toEntity(model))
-        .onItem().transform(entity -> transformer.toModel(entity));
+                .onItem().transform(entity -> transformer.toModel(entity));
     }
 
     @WithSession
@@ -49,7 +48,7 @@ public class ${template.getNameFormatted()}ServiceImpl implements ${template.get
     public Uni<${template.getNameFormatted()}Model> update(${template.getNameFormatted()}Model model) {
         log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.update %s ", model);
         return repository.update(transformer.toEntity(model))
-        .onItem().transform(entity -> transformer.toModel(entity));
+                .onItem().transform(entity -> transformer.toModel(entity));
     }
 
     @WithSession
@@ -61,9 +60,9 @@ public class ${template.getNameFormatted()}ServiceImpl implements ${template.get
 
     @WithSession
     @Override
-    public Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest){
+    public Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest) {
         log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.getAllByPage %s ", pageRequest);
         return repository.getAllByPage(requestParameter, pageRequest)
-                           .onItem().transform(page -> PageUtil.toPageModel(page, transformer::toModel));
+                .onItem().transform(page -> PageUtil.toPageModel(page, transformer::toModel));
     }
 }

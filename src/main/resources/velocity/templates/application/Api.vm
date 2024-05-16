@@ -76,19 +76,19 @@ public class ${template.getNameFormatted()}Api {
        return service.getAllByPage(getRequestParameter(queryParameters), pageRequest);
    }
 
-   private ${template.getNameFormatted()}RequestParameter getRequestParameter(MultivaluedMap<String, String> queryParameters){
-        try{
+   private ${template.getNameFormatted()}RequestParameter getRequestParameter(MultivaluedMap<String, String> queryParameters) {
+        try {
             var requestParameterBuilder = ${template.getNameFormatted()}RequestParameter.newBuilder();
-            if (queryParameters.containsKey("id")){
+            if (queryParameters.containsKey("id")) {
                 requestParameterBuilder.setId(Long.valueOf(queryParameters.getFirst("id")));
             }
             #foreach ($field in $template.getAllFieldToFilter())
-            if (queryParameters.containsKey("${field.getKey()}")){
+            if (queryParameters.containsKey("${field.getKey()}")) {
                 requestParameterBuilder.set${field.getKeyFormatted()}($field.getConversionFromStringToObjectType("queryParameters"));
             }
             #end
             return requestParameterBuilder.build();
-        }catch(Exception e){
+        } catch(Exception e) {
             log.error("${template.getNameFormatted()}Api.getRequestParameter", e);
             throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.INVALID_REQUEST, e);
         }
