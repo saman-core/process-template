@@ -42,8 +42,12 @@ public abstract class Multivalue extends Component {
         var allAnnotations = new ArrayList<String>();
         if (getIsMultiple()) {
             var name = getKeyToColumn();
-            allAnnotations.add("@ElementCollection(fetch = FetchType.LAZY)");
-            allAnnotations.add(String.format("@CollectionTable(name = \"%s_%s__%s\", joinColumns = @JoinColumn(name = \"%s_id\", nullable = false), uniqueConstraints = @UniqueConstraint(columnNames = {\"%s_id\", \"%s\"}))", productName.toLowerCase(Locale.ROOT), templateName.toLowerCase(Locale.ROOT), getKeyLowerCase(), templateName.toLowerCase(Locale.ROOT), templateName.toLowerCase(Locale.ROOT), name));
+            allAnnotations.add("@ElementCollection(fetch = FetchType.EAGER)");
+            var indexDesc = "";
+            if(getHasDbIndex()){
+                indexDesc = String.format(", indexes = {@Index(columnList = \"%s\")}", name);
+            }
+            allAnnotations.add(String.format("@CollectionTable(name = \"%s_%s__%s\", joinColumns = @JoinColumn(name = \"%s_id\", nullable = false), uniqueConstraints = @UniqueConstraint(columnNames = {\"%s_id\", \"%s\"})".concat(indexDesc).concat(")"), productName.toLowerCase(Locale.ROOT), templateName.toLowerCase(Locale.ROOT), getKeyLowerCase(), templateName.toLowerCase(Locale.ROOT), templateName.toLowerCase(Locale.ROOT), name));
             allAnnotations.add(String.format(COLUMN_NAME_S, name).concat(")"));
         } else {
             allAnnotations.add(String.format(COLUMN_NAME_S, getKeyToColumn()).concat(")"));
@@ -55,5 +59,10 @@ public abstract class Multivalue extends Component {
     @Override
     public Boolean evaluateIfNeedDefineIndex() {
         return !isMultiple && super.evaluateIfNeedDefineIndex();
+    }
+
+    @Override
+    public String getConversionFromStringToObjectType(String value) {
+        return String.format(" %s.get(\"%s\").stream().collect(java.util.stream.Collectors.toSet())", value, getKey());
     }
 }

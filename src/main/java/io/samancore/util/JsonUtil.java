@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static io.samancore.GeneralUtil.RESERVED_WORDS;
+import static io.samancore.GeneralUtil.*;
 import static io.samancore.util.GeneralConstant.*;
 
 public class JsonUtil {
@@ -37,10 +37,11 @@ public class JsonUtil {
                 }
             } else {
                 var field = getField(productName, templateName, jsonNodeComponent);
-                if (field != null) {
-                    if (RESERVED_WORDS.contains(field.getKey().toLowerCase(Locale.ROOT))) {
-                        throw new RuntimeException("There is a component with name not allowed. Name=".concat(field.getKey()));
-                    }
+                if (field != null && field.getKey()!=null && !field.getKey().isEmpty()) {
+                    validateIfNameIsAReservedWord(field.getKey());
+                    validateLengthName(field.getKey(), "component's name length should be max 20 characters");
+                    validateIfNameContainAnySymbol(field.getKey());
+                    validateIfNameBeginWithLowerCase(field.getKey());
                     fieldList.add(field);
                 }
             }
@@ -62,8 +63,8 @@ public class JsonUtil {
             case COMPONENT_PHONENUMBER, COMPONENT_SAMANPHONENUMBER -> new Phonenumber(jsonNodeComponent);
             case COMPONENT_TIME, COMPONENT_SAMANTIME -> new Time(jsonNodeComponent);
             case COMPONENT_SIGNATURE, COMPONENT_SAMANSIGNATURE -> new Signature(jsonNodeComponent);
-//            case COMPONENT_SELECT, COMPONENT_SAMANSELECT -> new Select(productName, templateName, jsonNodeComponent);
-//            case COMPONENT_TAGS, COMPONENT_SAMANTAGS -> new Tags(productName, templateName, jsonNodeComponent);
+            case COMPONENT_SELECT, COMPONENT_SAMANSELECT -> new Select(productName, templateName, jsonNodeComponent);
+            case COMPONENT_TAGS, COMPONENT_SAMANTAGS -> new Tags(productName, templateName, jsonNodeComponent);
             case COMPONENT_HIDDEN, COMPONENT_SAMANHIDDEN -> new Hidden(jsonNodeComponent);
             default -> null;
 

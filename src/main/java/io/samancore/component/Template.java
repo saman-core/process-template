@@ -44,6 +44,9 @@ public class Template {
     public Boolean evaluateIfAnyFieldIsIndex() {
         return fields.stream().anyMatch(Field::evaluateIfNeedDefineIndex);
     }
+    public Boolean evaluateIfAnyFieldNeedFilter() {
+        return fields.stream().anyMatch(Field::evaluateIfNeedDefineFilter);
+    }
 
     public String getAllIndexFromField() {
         String indexDefinition = "@Index(columnList = \"%s\")";
@@ -56,6 +59,12 @@ public class Template {
     public List<Field> getAllFieldIndexed() {
         return getAllFieldToPersist().stream()
                 .filter(Input::evaluateIfNeedDefineIndex)
+                .toList();
+    }
+
+    public List<Field> getAllFieldToFilter() {
+        return getAllFieldToPersist().stream()
+                .filter(Input::evaluateIfNeedDefineFilter)
                 .toList();
     }
 

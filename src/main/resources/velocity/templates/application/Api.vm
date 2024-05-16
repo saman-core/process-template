@@ -82,7 +82,7 @@ public class ${template.getNameFormatted()}Api {
             if (queryParameters.containsKey("id")){
                 requestParameterBuilder.setId(Long.valueOf(queryParameters.getFirst("id")));
             }
-            #foreach ($field in $template.getAllFieldIndexed())
+            #foreach ($field in $template.getAllFieldToFilter())
             if (queryParameters.containsKey("${field.getKey()}")){
                 requestParameterBuilder.set${field.getKeyFormatted()}($field.getConversionFromStringToObjectType("queryParameters"));
             }

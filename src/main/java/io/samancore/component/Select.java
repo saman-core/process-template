@@ -58,4 +58,22 @@ public class Select extends Multivalue implements Field {
         }
         return List.of();
     }
+
+
+    @Override
+    public String getConversionFromStringToObjectType(String value) {
+        var result = "";
+        if (getIsMultiple()) {
+            if (getDataSrc() != null && getDataSrc().equalsIgnoreCase(DATA_SRC_RESOURCE)) {
+                result = String.format(" %s.get(\"%s\").stream().map(s -> Long.valueOf(s)).collect(java.util.stream.Collectors.toSet())", value, getKey());
+            } else {
+                result = String.format(" %s.get(\"%s\").stream().collect(java.util.stream.Collectors.toSet())", value, getKey());
+            }
+        } else if (getDataSrc() != null && getDataSrc().equalsIgnoreCase(DATA_SRC_RESOURCE)) {
+            result = String.format(" Long.valueOf(%s.getFirst(\"%s\"))", value, getKey());
+        } else {
+            result = String.format(" %s.getFirst(\"%s\")", value, getKey());
+        }
+        return result;
+    }
 }

@@ -29,5 +29,7 @@ public interface Input {
 
     Boolean evaluateIfNeedDefineIndex();
 
+    Boolean evaluateIfNeedDefineFilter();
+
     String getConversionFromStringToObjectType(String value);
 }

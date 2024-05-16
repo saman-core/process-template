@@ -1,7 +1,10 @@
 package io.samancore.util;
 
-public class GeneralConstant {
+import java.util.regex.Pattern;
 
+public class GeneralConstant {
+    public static final Pattern PATTERN_LETTER_NUMBER = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+    public static final int MAX_LENGTH_NAME_ALLOWED = 20;
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssX";
     public static final int DEFAULT_DECIMAL_PLACES = 2; //TODO read from property
     public static final int DEFAULT_INTEGER_PLACES = 30; //TODO read from property
@@ -74,8 +77,6 @@ public class GeneralConstant {
     public static final String COMPONENT_SAMANTAGS = "samantags";
     public static final String COMPONENT_HIDDEN = "hidden";
     public static final String COMPONENT_SAMANHIDDEN = "samanhidden";
-    public static final String ENABLE_MIN_DATE_INPUT = "enableMinDateInput";
-    public static final String ENABLE_MAX_DATE_INPUT = "enableMaxDateInput";
     public static final String INPUT_MASK = "inputMask";
     public static final String WIDGET = "widget";
     public static final String FORMAT = "format";
@@ -85,14 +86,12 @@ public class GeneralConstant {
     public static final String DISABLE_WEEKENDS = "disableWeekends";
     public static final String DISABLED_DATES = "disabledDates";
     public static final String DELIMITER = "delimiter";
-    public static final String INJECT = "@Inject";
     public static final String PAIR_S = "pair%s";
     public static final String RETURN_ELEMENT = " return element;";
     public static final String RETURN_S = " return %s;";
     public static final String CLOSE_KEY = "}";
     public static final String ELEMENT_STRING_ELEMENT_TRIM_REPLACE_ALL_S_2_G = "element = ((String)element).trim().replaceAll(\"^ +| +$|( )+\", \"$1\");";
     public static final String S_S_TRIM_REPLACE_ALL_S_2_G = "%s = (%s).trim().replaceAll(\"^ +| +$|( )+\", \"$1\");";
-    public static final String ELEMENT_MASKER_APPLY_ELEMENT = "element = masker.apply(element);";
     public static final String S_MASKER_APPLY_S = "%s = masker.apply(%s);";
     public static final String ELEMENT_STRING_ELEMENT_TO_S_JAVA_UTIL_LOCALE_ROOT = "element = ((String)element).to%s(java.util.Locale.ROOT);";
     public static final String S_S_TO_S_JAVA_UTIL_LOCALE_ROOT = "%s = (%s).to%s(java.util.Locale.ROOT);";

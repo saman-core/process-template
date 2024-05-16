@@ -17,7 +17,7 @@ import io.samancore.common.validation.*;
 )
 public class ${template.getNameFormatted()}RequestParameter {
     Long id;
-#foreach ($field in $template.getAllFieldIndexed())
+#foreach ($field in $template.getAllFieldToFilter())
     ${field.getObjectTypeToModel()} ${field.getKeyMangle()};
 #end
 }

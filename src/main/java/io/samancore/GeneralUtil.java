@@ -5,7 +5,11 @@ import org.apache.commons.text.CaseUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
+
+import static io.samancore.util.GeneralConstant.MAX_LENGTH_NAME_ALLOWED;
+import static io.samancore.util.GeneralConstant.PATTERN_LETTER_NUMBER;
 
 public class GeneralUtil {
 
@@ -59,5 +63,27 @@ public class GeneralUtil {
         return word;
     }
 
+    public static void validateIfNameIsAReservedWord(String name) {
+        if (RESERVED_WORDS.contains(name.toLowerCase(Locale.ROOT))) {
+            throw new RuntimeException("There is a component with name not allowed. Name=".concat(name));
+        }
+    }
 
+    public static void validateLengthName(String name, String message) {
+        if(name !=null && name.length()> MAX_LENGTH_NAME_ALLOWED){
+            throw new RuntimeException(message);
+        }
+    }
+
+    public static void validateIfNameContainAnySymbol(String name) {
+        if(PATTERN_LETTER_NUMBER.matcher(name).find()){
+            throw new RuntimeException("There is a component with name with a character not allowed. Name=".concat(name));
+        }
+    }
+
+    public static void validateIfNameBeginWithLowerCase(String name) {
+        if(!Character.isLowerCase(name.charAt(0))){
+            throw new RuntimeException("There is a component with name begin without a lower case letter. Name=".concat(name));
+        }
+    }
 }

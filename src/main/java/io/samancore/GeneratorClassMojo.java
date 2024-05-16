@@ -26,6 +26,8 @@ import java.util.Properties;
 
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES;
+import static io.samancore.GeneralUtil.validateLengthName;
+import static io.samancore.util.GeneralConstant.MAX_LENGTH_NAME_ALLOWED;
 
 @Mojo(name = "generate-code", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class GeneratorClassMojo extends AbstractMojo {
@@ -54,6 +56,10 @@ public class GeneratorClassMojo extends AbstractMojo {
 
             var templateName = templateProperties.getProperty("templateName");
             var productName = templateProperties.getProperty("productName");
+
+            validateLengthName(templateName, "template's name length should be max 20 characters");
+            validateLengthName(productName, "product's name length should be max 20 characters");
+
             var templateBuilder = Template.newBuilder()
                     .setPackageName(templateProperties.getProperty("packageName"))
                     .setName(templateProperties.getProperty("templateName"))
@@ -102,6 +108,4 @@ public class GeneratorClassMojo extends AbstractMojo {
             throw new MojoExecutionException(error.getMessage(), error);
         }
     }
-
-
 }

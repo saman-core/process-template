@@ -38,14 +38,12 @@ public abstract class Component implements Input {
     public List<String> getAllAnnotationToEntity() {
         var columnDescription = String.format(COLUMN_NAME_S, getKeyToColumn());
         if (getIsUnique() || getIsRequired()) {
-            String unique = UNIQUE_TRUE;
-            String required = NULLABLE_FALSE;
             columnDescription = columnDescription.concat(", ");
             if (getIsUnique()) {
-                columnDescription = columnDescription.concat(unique);
+                columnDescription = columnDescription.concat(UNIQUE_TRUE);
             }
             if (getIsRequired()) {
-                columnDescription = columnDescription.concat(required);
+                columnDescription = columnDescription.concat(NULLABLE_FALSE);
             }
             columnDescription = columnDescription.substring(0, columnDescription.lastIndexOf(",")).concat(")");
         } else columnDescription = columnDescription.concat(")");
@@ -143,6 +141,11 @@ public abstract class Component implements Input {
 
     @Override
     public Boolean evaluateIfNeedDefineIndex() {
+        return isPersistent && !isEncrypted && hasDbIndex;
+    }
+
+    @Override
+    public Boolean evaluateIfNeedDefineFilter() {
         return isPersistent && !isEncrypted && hasDbIndex;
     }
 

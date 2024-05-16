@@ -43,9 +43,6 @@ public class ${template.getNameFormatted()}RepositoryReactivePanache implements 
     public Uni<${template.getNameFormatted()}Entity> getById(Long id) {
         log.debugf("${template.getNameFormatted()}RepositoryReactivePanache.getById %d ", id);
         return findById(id)
-        #if($template.evaluateIfAnyFieldIsMultiple())
-            ${template.getFetchFromFieldIsCollection()}
-        #end
         .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR,e))
         .onItem().ifNull().failWith(NotFoundException::new);
     }
@@ -76,7 +73,7 @@ public class ${template.getNameFormatted()}RepositoryReactivePanache implements 
             condition = condition.concat(" a.id = (:id) ");
             params.put("id", requestParameter.getId());
         }
-        #foreach ($field in $template.getAllFieldIndexed())
+        #foreach ($field in $template.getAllFieldToFilter())
         if (requestParameter.get${field.getKeyFormatted()}() != null) {
             if(!condition.isEmpty()){
                 condition = " AND ".concat(condition);
