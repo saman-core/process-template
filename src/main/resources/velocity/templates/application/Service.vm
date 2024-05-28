@@ -1,20 +1,20 @@
-package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.service;
+package ${template.getPackageComplete()}.service;
 
-import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
-import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}RequestParameter;
+import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}Model;
+import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}RequestParameter;
 import io.smallrye.mutiny.Uni;
 import io.samancore.common.model.PageData;
 import io.samancore.common.page.PageRequest;
 
-public interface ${template.getNameFormatted()}Service {
+public interface ${template.getNameCapitalize()}Service {
 
-    Uni<${template.getNameFormatted()}Model> getById(Long id);
+    Uni<${template.getNameCapitalize()}Model> getById(Long id);
 
-    Uni<${template.getNameFormatted()}Model> create(${template.getNameFormatted()}Model model);
+    Uni<${template.getNameCapitalize()}Model> create(${template.getNameCapitalize()}Model model);
 
-    Uni<${template.getNameFormatted()}Model> update(${template.getNameFormatted()}Model model);
+    Uni<${template.getNameCapitalize()}Model> update(${template.getNameCapitalize()}Model model);
 
     Uni<Boolean> deleteById(Long id);
 
-    Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest);
+    Uni<PageData<${template.getNameCapitalize()}Model>> getPage(${template.getNameCapitalize()}RequestParameter requestParameter, PageRequest pageRequest);
 }

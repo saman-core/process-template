@@ -1,12 +1,8 @@
-package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model;
+package ${template.getPackageComplete()}.model;
 
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-#if($template.validateIfAnyFieldHasValidation())
-import jakarta.validation.constraints.*;
-import io.samancore.common.validation.*;
-#end
 
 @Value
 @Jacksonized
@@ -15,9 +11,9 @@ import io.samancore.common.validation.*;
     builderMethodName = "newBuilder",
     toBuilder = true
 )
-public class ${template.getNameFormatted()}RequestParameter {
+public class ${template.getNameCapitalize()}RequestParameter {
     Long id;
 #foreach ($field in $template.getAllFieldToFilter())
-    ${field.getObjectTypeToModel()} ${field.getKeyMangle()};
+    ${field.getObjectTypeToModel()} ${field.getKey()};
 #end
 }

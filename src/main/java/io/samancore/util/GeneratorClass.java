@@ -1,6 +1,5 @@
 package io.samancore.util;
 
-import io.samancore.GeneralUtil;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -16,10 +15,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class GeneratorClass {
 
-    public static final List<String> DATA_TEMPLATES_LIST = List.of("Entity.vm");
+    public static final List<String> DATA_TEMPLATES_LIST = List.of("Entity.vm", "Repository.vm", "RepositoryReactivePanache.vm", "Transformer.vm");
     public static final List<String> MODEL_TEMPLATES_LIST = List.of("Model.vm", "RequestParameter.vm");
     public static final List<String> CLIENT_TEMPLATES_LIST = List.of("Client.vm", "RestClient.vm", "RestClientWrapper.vm");
-    public static final List<String> APPLICATION_TEMPLATES_LIST = List.of("Api.vm", "Repository.vm", "RepositoryReactivePanache.vm", "Service.vm", "ServiceImpl.vm", "Transformer.vm");
+    public static final List<String> APPLICATION_TEMPLATES_LIST = List.of("Api.vm", "Service.vm", "ServiceImpl.vm");
     public static final Map<String, List<String>> FILES_MODULE_GENERATOR_MAP = Map.of("model", MODEL_TEMPLATES_LIST, "application", APPLICATION_TEMPLATES_LIST, "client", CLIENT_TEMPLATES_LIST, "data", DATA_TEMPLATES_LIST);
     public static final Map<String, String> ROUTE_PACKAGE_OUTPUT_MAP = Map.ofEntries(
             Map.entry("Api", "api"),
@@ -99,11 +98,7 @@ public class GeneratorClass {
         var templatesToGenerateList = FILES_MODULE_GENERATOR_MAP.get(module);
         for (String templateFileName : templatesToGenerateList) {
             var output = renderTemplate(templateDir.concat(templateFileName), context);
-
-            String templateName = GeneralUtil.mangleTypeIdentifier(template.getName());
-            String productName = GeneralUtil.mangleTypeIdentifier(template.getProductName());
-            var templatePackageName = GeneralUtil.mangle(template.getPackageName()).concat(".").concat(productName.toLowerCase(Locale.ROOT));
-            var outputFilePathDestination = makePathDestination(templateName, templatePackageName, templateFileName);
+            var outputFilePathDestination = makePathDestination(template.getNameCapitalize(), template.getPackageWithProduct(), templateFileName);
 
             OutputFile outputFile = new OutputFile();
             outputFile.path = outputFilePathDestination;

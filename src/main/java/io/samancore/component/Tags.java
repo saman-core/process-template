@@ -3,6 +3,8 @@ package io.samancore.component;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.samancore.component.base.Field;
 import io.samancore.component.base.Multivalue;
+import io.samancore.type.CaseType;
+import io.samancore.type.EncryptType;
 import lombok.Getter;
 
 import java.util.List;
@@ -13,10 +15,10 @@ import static io.samancore.util.GeneralConstant.SET_STRING;
 @Getter
 public class Tags extends Multivalue implements Field {
 
-    public Tags(String productName, String templateName, JsonNode jsonNodeComponent) {
-        super(productName, templateName, jsonNodeComponent);
+    public Tags(String productName, String templateName, CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+        super(productName, templateName, columnCaseSensitive, jsonNodeComponent);
         this.setIsMultiple(true);
-        setIsEncrypted(false);
+        setEncryptType(EncryptType.NONE);
     }
 
     @Override

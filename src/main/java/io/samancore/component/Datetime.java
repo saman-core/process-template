@@ -3,6 +3,7 @@ package io.samancore.component;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.samancore.component.base.Component;
 import io.samancore.component.base.Field;
+import io.samancore.type.CaseType;
 import io.samancore.util.JsonFormIoUtil;
 import lombok.Getter;
 
@@ -22,8 +23,8 @@ public class Datetime extends Component implements Field {
     private String maxDate = null;
 
 
-    public Datetime(JsonNode jsonNodeComponent) {
-        super(jsonNodeComponent);
+    public Datetime(CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+        super(columnCaseSensitive, jsonNodeComponent);
         disableWeekdays = JsonFormIoUtil.getBooleanPropertyFromWidget(jsonNodeComponent, DISABLE_WEEKDAYS);
         disableWeekends = JsonFormIoUtil.getBooleanPropertyFromWidget(jsonNodeComponent, DISABLE_WEEKENDS);
         disabledDates = JsonFormIoUtil.getStringPropertyFromWidget(jsonNodeComponent, DISABLED_DATES);
@@ -58,12 +59,12 @@ public class Datetime extends Component implements Field {
 
     @Override
     public String getMethodEncrypt() {
-        return "return encrypt.encrypt(String.valueOf(element.getTime()));";
+        return String.format("return encrypt.%s(String.valueOf(element.getTime()));", getEncryptType().getEncryptMethod());
     }
 
     @Override
     public String getMethodDecrypt() {
-        return "var newElement = new java.util.Date(Long.valueOf(encrypt.decrypt(element)));";
+        return String.format("var newElement = new java.util.Date(Long.valueOf(encrypt.%s(element)));", getEncryptType().getDecryptMethod());
     }
 
     @Override

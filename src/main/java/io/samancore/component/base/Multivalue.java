@@ -1,6 +1,7 @@
 package io.samancore.component.base;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.samancore.type.CaseType;
 import io.samancore.util.JsonFormIoUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,8 +21,8 @@ public abstract class Multivalue extends Component {
     private String templateName = null;
     private String dataSrc = null;
 
-    public Multivalue(String productName, String templateName, JsonNode jsonNodeComponent) {
-        super(jsonNodeComponent);
+    public Multivalue(String productName, String templateName, CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+        super(columnCaseSensitive, jsonNodeComponent);
         this.isMultiple = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, MULTIPLE);
         this.productName = productName;
         this.templateName = templateName;
@@ -30,11 +31,14 @@ public abstract class Multivalue extends Component {
 
     @Override
     public String getKeyToColumn() {
-        var name = super.getKeyToColumn();
+        var nameColumn = super.getKeyToColumn();
         if (getDataSrc() != null && getDataSrc().equalsIgnoreCase(DATA_SRC_RESOURCE)) {
-            name = getKeyLowerCase().concat(COLUMN_ID);
+            nameColumn = getKey().concat(COLUMN_ID);
         }
-        return name;
+        if (getDbElementCaseSensitive().equals(CaseType.LOWERCASE)) {
+            return nameColumn.toLowerCase(Locale.ROOT);
+        }
+        return nameColumn.toUpperCase(Locale.ROOT);
     }
 
     @Override
@@ -42,12 +46,23 @@ public abstract class Multivalue extends Component {
         var allAnnotations = new ArrayList<String>();
         if (getIsMultiple()) {
             var name = getKeyToColumn();
+            var tableName = PREFIX_TABLENAME_CE.concat(productName).concat(UNDERSCORE).concat(templateName).concat(UNDERSCORE).concat(UNDERSCORE).concat(getKey());
+            var columnId = templateName.concat(UNDERSCORE).concat("id");
+            if (getDbElementCaseSensitive().equals(CaseType.UPPERCASE)) {
+                tableName = tableName.toUpperCase(Locale.ROOT);
+                name = name.toUpperCase(Locale.ROOT);
+                columnId = columnId.toUpperCase(Locale.ROOT);
+            } else {
+                tableName = tableName.toLowerCase(Locale.ROOT);
+                name = name.toLowerCase(Locale.ROOT);
+                columnId = columnId.toLowerCase(Locale.ROOT);
+            }
             allAnnotations.add("@ElementCollection(fetch = FetchType.EAGER)");
             var indexDesc = "";
             if (getHasDbIndex()) {
                 indexDesc = String.format(", indexes = {@Index(columnList = \"%s\")}", name);
             }
-            allAnnotations.add(String.format("@CollectionTable(name = \"%s_%s__%s\", joinColumns = @JoinColumn(name = \"%s_id\", nullable = false), uniqueConstraints = @UniqueConstraint(columnNames = {\"%s_id\", \"%s\"})".concat(indexDesc).concat(")"), productName.toLowerCase(Locale.ROOT), templateName.toLowerCase(Locale.ROOT), getKeyLowerCase(), templateName.toLowerCase(Locale.ROOT), templateName.toLowerCase(Locale.ROOT), name));
+            allAnnotations.add(String.format("@CollectionTable(name = \"%s\", joinColumns = @JoinColumn(name = \"%s\", nullable = false), uniqueConstraints = @UniqueConstraint(columnNames = {\"%s\", \"%s\"})".concat(indexDesc).concat(")"), tableName, columnId, columnId, name));
             allAnnotations.add(String.format(COLUMN_NAME_S, name).concat(")"));
         } else {
             allAnnotations.add(String.format(COLUMN_NAME_S, getKeyToColumn()).concat(")"));
@@ -64,5 +79,10 @@ public abstract class Multivalue extends Component {
     @Override
     public String getConversionFromStringToObjectType(String value) {
         return String.format(" %s.get(\"%s\").stream().collect(java.util.stream.Collectors.toSet())", value, getKey());
+    }
+
+    @Override
+    public Boolean evaluateIfFilterNeedDefineJoin() {
+        return isMultiple;
     }
 }

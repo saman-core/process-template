@@ -3,7 +3,7 @@ package io.samancore.component;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.samancore.component.base.Component;
 import io.samancore.component.base.Field;
-import io.samancore.component.type.CaseType;
+import io.samancore.type.CaseType;
 import io.samancore.util.JsonFormIoUtil;
 import lombok.Getter;
 
@@ -19,18 +19,17 @@ public class Textfield extends Component implements Field {
     private String pattern = null;
     private String displayMask = null;
     private Integer minLength = null;
-    private Integer maxLength = null;
     private Integer minWords = null;
     private Integer maxWords = null;
 
-    public Textfield(JsonNode jsonNodeComponent) {
-        super(jsonNodeComponent);
+    public Textfield(CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+        super(columnCaseSensitive, jsonNodeComponent);
         this.isTruncateMultipleSpaces = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, TRUNCATE_MULTIPLE_SPACES);
         this.displayMask = JsonFormIoUtil.getStringPropertyFromNode(jsonNodeComponent, DISPLAY_MASK);
         this.pattern = JsonFormIoUtil.getPattern(jsonNodeComponent);
         this.caseType = JsonFormIoUtil.getCaseType(jsonNodeComponent);
         this.minLength = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MIN_LENGTH);
-        this.maxLength = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MAX_LENGTH);
+        setMaxLength(JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MAX_LENGTH));
         this.minWords = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MIN_WORDS);
         this.maxWords = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MAX_WORDS);
     }
@@ -45,12 +44,12 @@ public class Textfield extends Component implements Field {
         if (pattern != null) {
             validation.add(String.format("@Pattern(regexp = \"%s\")", pattern));
         }
-        if (minLength != null && maxLength != null) {
-            validation.add(String.format("@Size(min = %d, max = %d)", minLength, maxLength));
+        if (minLength != null && getMaxLength() != null) {
+            validation.add(String.format("@Size(min = %d, max = %d)", minLength, getMaxLength()));
         } else if (minLength != null) {
             validation.add(String.format("@Size(min = %d)", minLength));
-        } else if (maxLength != null) {
-            validation.add(String.format("@Size(max = %d)", maxLength));
+        } else if (getMaxLength() != null) {
+            validation.add(String.format("@Size(max = %d)", getMaxLength()));
         }
         if (minWords != null && maxWords != null) {
             validation.add(String.format("@WordLimit(min = %d, max = %d)", minWords, maxWords));

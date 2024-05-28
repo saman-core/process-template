@@ -3,6 +3,9 @@ package io.samancore.component.base;
 import java.util.List;
 
 public interface Input {
+
+    String getKeyCapitalize();
+
     List<String> getAllAnnotationToEntity();
 
     Boolean evaluateIfNeedPairToEntity();
@@ -32,4 +35,6 @@ public interface Input {
     Boolean evaluateIfNeedDefineFilter();
 
     String getConversionFromStringToObjectType(String value);
+
+    Boolean evaluateIfFilterNeedDefineJoin();
 }

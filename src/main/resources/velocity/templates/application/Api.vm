@@ -1,8 +1,8 @@
-package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.api;
+package ${template.getPackageComplete()}.api;
 
-import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
-import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}RequestParameter;
-import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.service.${template.getNameFormatted()}Service;
+import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}Model;
+import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}RequestParameter;
+import ${template.getPackageComplete()}.service.${template.getNameCapitalize()}Service;
 import io.samancore.common.error.message.TechnicalExceptionsEnum;
 import io.samancore.common.error.util.ExceptionHandler;
 import org.apache.commons.lang3.time.DateUtils;
@@ -23,7 +23,7 @@ import io.samancore.common.page.PageUtil;
 @Path("")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ${template.getNameFormatted()}Api {
+public class ${template.getNameCapitalize()}Api {
 
     @Inject
     Logger log;
@@ -32,13 +32,13 @@ public class ${template.getNameFormatted()}Api {
     UriInfo uriInfo;
 
     @Inject
-    ${template.getNameFormatted()}Service service;
+    ${template.getNameCapitalize()}Service service;
 
     @GET
     @Path("/{id}")
     @RolesAllowed({"admin"})
-    public Uni<${template.getNameFormatted()}Model> getById(@PathParam("id") long id) {
-        log.debugf("${template.getNameFormatted()}Api.getById %d ", id);
+    public Uni<${template.getNameCapitalize()}Model> getById(@PathParam("id") long id) {
+        log.debugf("${template.getNameCapitalize()}Api.getById %d ", id);
         return service.getById(id);
     }
 
@@ -46,39 +46,39 @@ public class ${template.getNameFormatted()}Api {
     @Path("/{id}")
     @RolesAllowed({"admin"})
     public Uni<Boolean> deleteById(@PathParam("id") Long id) {
-        log.debugf("${template.getNameFormatted()}Api.deleteById %d ", id);
+        log.debugf("${template.getNameCapitalize()}Api.deleteById %d ", id);
         return service.deleteById(id);
     }
 
    @POST
    @Path("/")
    @RolesAllowed({"admin"})
-   public Uni<${template.getNameFormatted()}Model> create(@Valid ${template.getNameFormatted()}Model ${template.getNameFormattedLowerCase()}Model) {
-        log.debug("${template.getNameFormatted()}Api.create");
-        return service.create(${template.getNameFormattedLowerCase()}Model);
+   public Uni<${template.getNameCapitalize()}Model> create(@Valid ${template.getNameCapitalize()}Model ${template.getNameLowerCase()}Model) {
+        log.debug("${template.getNameCapitalize()}Api.create");
+        return service.create(${template.getNameLowerCase()}Model);
    }
 
    @PUT
    @Path("/")
    @RolesAllowed({"admin"})
-   public Uni<${template.getNameFormatted()}Model> update(@Valid ${template.getNameFormatted()}Model ${template.getNameFormattedLowerCase()}Model) {
-        log.debug("${template.getNameFormatted()}Api.update");
-        return service.update(${template.getNameFormattedLowerCase()}Model);
+   public Uni<${template.getNameCapitalize()}Model> update(@Valid ${template.getNameCapitalize()}Model ${template.getNameLowerCase()}Model) {
+        log.debug("${template.getNameCapitalize()}Api.update");
+        return service.update(${template.getNameLowerCase()}Model);
    }
 
    @GET
    @Path("/")
    @RolesAllowed({"admin"})
-   public Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage() {
-       log.debug("${template.getNameFormatted()}Api.getAllByPage");
+   public Uni<PageData<${template.getNameCapitalize()}Model>> getPage() {
+       log.debug("${template.getNameCapitalize()}Api.getPage");
        var queryParameters = uriInfo.getQueryParameters();
        var pageRequest = PageUtil.getPage(queryParameters);
-       return service.getAllByPage(getRequestParameter(queryParameters), pageRequest);
+       return service.getPage(getRequestParameter(queryParameters), pageRequest);
    }
 
-   private ${template.getNameFormatted()}RequestParameter getRequestParameter(MultivaluedMap<String, String> queryParameters) {
+   private ${template.getNameCapitalize()}RequestParameter getRequestParameter(MultivaluedMap<String, String> queryParameters) {
         try {
-            var requestParameterBuilder = ${template.getNameFormatted()}RequestParameter.newBuilder();
+            var requestParameterBuilder = ${template.getNameCapitalize()}RequestParameter.newBuilder();
             if (queryParameters.containsKey("id")) {
                 requestParameterBuilder.setId(Long.valueOf(queryParameters.getFirst("id")));
             }
@@ -89,8 +89,8 @@ public class ${template.getNameFormatted()}Api {
             #end
             return requestParameterBuilder.build();
         } catch(Exception e) {
-            log.error("${template.getNameFormatted()}Api.getRequestParameter", e);
-            throw ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.INVALID_REQUEST, e);
+            log.error("${template.getNameCapitalize()}Api.getRequestParameter", e);
+            throw new BadRequestException("Any query parameter is invalid", e);
         }
    }
 }

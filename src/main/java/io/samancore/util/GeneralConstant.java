@@ -1,10 +1,25 @@
 package io.samancore.util;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class GeneralConstant {
+    public static final Set<String> RESERVED_WORDS = new HashSet<>(Arrays.asList(
+            "_", "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue",
+            "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for", "goto", "if",
+            "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package", "private",
+            "protected", "public", "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this",
+            "throw", "throws", "transient", "try", "void", "volatile", "while",
+            "true", "false", "null",
+            "exports", "module", "non-sealed\n", "open", "opens", "permits",
+            "provides", "record", "requires", "sealed", "to", "transitive", "uses",
+            "var", "when", "with", "yield"));
     public static final Pattern PATTERN_LETTER_NUMBER = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-    public static final int MAX_LENGTH_NAME_ALLOWED = 20;
+    public static final int MAX_LENGTH_NAME_ALLOWED = 19;
+    public static final int MAX_LENGTH_PHONE_NUMBER = 20;
+    public static final int MAX_LENGTH_TIME = 8;
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssX";
     public static final int DEFAULT_DECIMAL_PLACES = 2; //TODO read from property
     public static final int DEFAULT_INTEGER_PLACES = 30; //TODO read from property
@@ -92,7 +107,7 @@ public class GeneralConstant {
     public static final String CLOSE_KEY = "}";
     public static final String ELEMENT_STRING_ELEMENT_TRIM_REPLACE_ALL_S_2_G = "element = ((String)element).trim().replaceAll(\"^ +| +$|( )+\", \"$1\");";
     public static final String S_S_TRIM_REPLACE_ALL_S_2_G = "%s = (%s).trim().replaceAll(\"^ +| +$|( )+\", \"$1\");";
-    public static final String S_MASKER_APPLY_S = "%s = masker.apply(%s);";
+    public static final String S_MASKER_APPLY_S = "%s = masker.apply(%s, %s);";
     public static final String ELEMENT_STRING_ELEMENT_TO_S_JAVA_UTIL_LOCALE_ROOT = "element = ((String)element).to%s(java.util.Locale.ROOT);";
     public static final String S_S_TO_S_JAVA_UTIL_LOCALE_ROOT = "%s = (%s).to%s(java.util.Locale.ROOT);";
     public static final String PRIVATE_S_TRANSFORM_S_TO_ENTITY_S_ELEMENT = "private %s transform%sToEntity(%s element){";
@@ -106,6 +121,11 @@ public class GeneralConstant {
     public static final String NULLABLE_FALSE = "nullable = false, ";
     public static final String COLUMN_NAME_S = "@Column( name= \"%s\"";
     public static final String COLUMN_ID = "_id";
+    public static final String LENGTH_D = "length  = %d, ";
+    public static final String PREFIX_TABLENAME_CE = "CE_";
+    public static final String PREFIX_SEQUENCENAME_SQ = "SQ_";
+    public static final String UNDERSCORE = "_";
+    public static final String S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS = "%s name length should be max %s characters";
 
 
     private GeneralConstant() {

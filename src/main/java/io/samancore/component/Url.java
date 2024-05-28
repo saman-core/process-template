@@ -3,6 +3,7 @@ package io.samancore.component;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.samancore.component.base.Component;
 import io.samancore.component.base.Field;
+import io.samancore.type.CaseType;
 import io.samancore.util.JsonFormIoUtil;
 import lombok.Getter;
 
@@ -17,20 +18,34 @@ public class Url extends Component implements Field {
     private String pattern = null;
     private String displayMask = null;
     private Integer minLength = null;
-    private Integer maxLength = null;
 
-    public Url(JsonNode jsonNodeComponent) {
-        super(jsonNodeComponent);
+    public Url(CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+        super(columnCaseSensitive, jsonNodeComponent);
         this.isTruncateMultipleSpaces = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, TRUNCATE_MULTIPLE_SPACES);
         this.pattern = JsonFormIoUtil.getPattern(jsonNodeComponent);
         this.displayMask = JsonFormIoUtil.getStringPropertyFromNode(jsonNodeComponent, DISPLAY_MASK);
         this.minLength = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MIN_LENGTH);
-        this.maxLength = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MAX_LENGTH);
+        setMaxLength(JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MAX_LENGTH));
     }
 
     @Override
     public List<String> getValidationToModel() {
-        return getIsRequired() ? List.of(NOT_BLANK, NOT_EMPTY) : List.of();
+        var validation = new ArrayList<String>();
+        if (getIsRequired()) {
+            validation.add(NOT_BLANK);
+            validation.add(NOT_EMPTY);
+        }
+        if (pattern != null) {
+            validation.add(String.format("@Pattern(regexp = \"%s\")", pattern));
+        }
+        if (minLength != null && getMaxLength() != null) {
+            validation.add(String.format("@Size(min = %d, max = %d)", minLength, getMaxLength()));
+        } else if (minLength != null) {
+            validation.add(String.format("@Size(min = %d)", minLength));
+        } else if (getMaxLength() != null) {
+            validation.add(String.format("@Size(max = %d)", getMaxLength()));
+        }
+        return validation;
     }
 
 

@@ -1,16 +1,16 @@
-package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.transformer;
+package ${template.getPackageComplete()}.transformer;
 
 import org.jboss.logging.Logger;
 import io.samancore.common.transformer.GenericTransformer;
 import io.samancore.common.error.message.TechnicalExceptionsEnum;
-import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.entity.${template.getNameFormatted()}Entity;
-import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
+import ${template.getPackageComplete()}.entity.${template.getNameCapitalize()}Entity;
+import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}Model;
 import io.samancore.common.error.util.ExceptionHandler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-public class  ${template.getNameFormatted()}Transformer extends GenericTransformer<${template.getNameFormatted()}Entity, ${template.getNameFormatted()}Model> {
+public class  ${template.getNameCapitalize()}Transformer extends GenericTransformer<${template.getNameCapitalize()}Entity, ${template.getNameCapitalize()}Model> {
 
     @Inject
     Logger log;
@@ -21,9 +21,9 @@ public class  ${template.getNameFormatted()}Transformer extends GenericTransform
     $inject
 #end
 
-    public ${template.getNameFormatted()}Entity toEntity(${template.getNameFormatted()}Model model) {
+    public ${template.getNameCapitalize()}Entity toEntity(${template.getNameCapitalize()}Model model) {
         try {
-            log.debugf("${template.getNameFormatted()}Transformer.toEntity model: %s", model);
+            log.debugf("${template.getNameCapitalize()}Transformer.toEntity model: %s", model);
             #if(${template.evaluateIfAnyFieldNeedPairToEntity()})
             #foreach ($field in $template.getAllFieldWithPair())
             ${field.getPairTransformToEntity()}
@@ -38,9 +38,9 @@ public class  ${template.getNameFormatted()}Transformer extends GenericTransform
         }
     }
 
-    public ${template.getNameFormatted()}Model toModel(${template.getNameFormatted()}Entity entity) {
+    public ${template.getNameCapitalize()}Model toModel(${template.getNameCapitalize()}Entity entity) {
         try {
-            log.debugf("${template.getNameFormatted()}Transformer.toModel entity: %s", entity);
+            log.debugf("${template.getNameCapitalize()}Transformer.toModel entity: %s", entity);
             #if(${template.evaluateIfAnyFieldNeedPairToModel()})
             #foreach ($field in $template.getAllFieldWithPair())
             ${field.getPairTransformToModel()}
@@ -55,9 +55,9 @@ public class  ${template.getNameFormatted()}Transformer extends GenericTransform
         }
     }
 
-    public ${template.getNameFormatted()}Entity copyToAttached(${template.getNameFormatted()}Entity detached, ${template.getNameFormatted()}Entity attached) {
+    public ${template.getNameCapitalize()}Entity copyToAttached(${template.getNameCapitalize()}Entity detached, ${template.getNameCapitalize()}Entity attached) {
         try {
-            log.debugf("${template.getNameFormatted()}Transformer.copyToAttached");
+            log.debugf("${template.getNameCapitalize()}Transformer.copyToAttached");
             return transformCopyToAttached(detached, attached);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

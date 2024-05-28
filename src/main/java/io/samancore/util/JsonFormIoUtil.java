@@ -2,7 +2,8 @@ package io.samancore.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
-import io.samancore.component.type.CaseType;
+import io.samancore.type.CaseType;
+import io.samancore.type.EncryptType;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -29,6 +30,10 @@ public class JsonFormIoUtil {
 
     public static boolean getBooleanPropertyFromNode(JsonNode jsonNodeComponent, String propertyName) {
         return jsonNodeComponent.get(propertyName) != null && jsonNodeComponent.get(propertyName).asBoolean();
+    }
+
+    public static EncryptType getEncryptTypePropertyFromNode(JsonNode jsonNodeComponent, String propertyName) {
+        return jsonNodeComponent.get(propertyName) != null ? EncryptType.getByDescription(jsonNodeComponent.get(propertyName).asText()) : EncryptType.NONE;
     }
 
     public static boolean isTruncateMultipleSpaces(JsonNode jsonNodeComponent) {

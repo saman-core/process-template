@@ -3,6 +3,8 @@ package io.samancore.component;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.samancore.component.base.Field;
 import io.samancore.component.base.Multivalue;
+import io.samancore.type.CaseType;
+import io.samancore.type.EncryptType;
 import lombok.Getter;
 
 import java.util.List;
@@ -13,9 +15,9 @@ import static io.samancore.util.GeneralConstant.*;
 public class Select extends Multivalue implements Field {
 
 
-    public Select(String productName, String templateName, JsonNode jsonNodeComponent) {
-        super(productName, templateName, jsonNodeComponent);
-        setIsEncrypted(false);
+    public Select(String productName, String templateName, CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+        super(productName, templateName, columnCaseSensitive, jsonNodeComponent);
+        setEncryptType(EncryptType.NONE);
     }
 
     @Override

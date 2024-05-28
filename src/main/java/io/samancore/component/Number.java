@@ -3,6 +3,7 @@ package io.samancore.component;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.samancore.component.base.Component;
 import io.samancore.component.base.Field;
+import io.samancore.type.CaseType;
 import io.samancore.util.JsonFormIoUtil;
 import lombok.Getter;
 
@@ -24,8 +25,8 @@ public class Number extends Component implements Field {
     BigDecimal minValue = null;
     BigDecimal maxValue = null;
 
-    public Number(JsonNode jsonNodeComponent) {
-        super(jsonNodeComponent);
+    public Number(CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+        super(columnCaseSensitive, jsonNodeComponent);
         this.isArbitraryPrecision = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, ARBITRARY_PRECISION);
         this.delimiterThouzand = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, DELIMITER);
         this.displayMask = JsonFormIoUtil.getStringPropertyFromNode(jsonNodeComponent, DISPLAY_MASK);
@@ -126,7 +127,7 @@ public class Number extends Component implements Field {
 
     @Override
     public String getMethodEncrypt() {
-        return "return encrypt.encrypt(element.toString());";
+        return String.format("return encrypt.%s(element.toString());", getEncryptType().getEncryptMethod());
     }
 
     @Override

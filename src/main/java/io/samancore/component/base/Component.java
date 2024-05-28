@@ -1,10 +1,13 @@
 package io.samancore.component.base;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.samancore.GeneralUtil;
+import io.samancore.type.CaseType;
+import io.samancore.type.EncryptType;
 import io.samancore.util.JsonFormIoUtil;
+import io.samancore.validation.ValidationComponent;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,24 +17,36 @@ import static io.samancore.util.GeneralConstant.*;
 
 @Getter
 @Setter
-public abstract class Component implements Input {
+public abstract class Component extends ValidationComponent implements Input {
 
+    private final CaseType dbElementCaseSensitive;
     private final String key;
     private final Boolean isPersistent;
     private final Boolean isRequired;
     private final Boolean isUnique;
     private final Boolean isProtected;
     private final Boolean hasDbIndex;
-    private Boolean isEncrypted;
+    private EncryptType encryptType;
+    private Integer maxLength;
 
-    public Component(JsonNode jsonNodeComponent) {
+    public Component(CaseType dbElementCaseSensitive, JsonNode jsonNodeComponent) {
         this.key = JsonFormIoUtil.getKey(jsonNodeComponent);
+        validateIfNameIsAReservedWord(this.key);
+        validateLengthName(this.getKey(), String.format(S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS, Component.class.descriptorString(), MAX_LENGTH_NAME_ALLOWED));
+        validateIfNameBeginWithLowerCase(this.key);
+        validateIfNameContainAnySymbol(this.key);
+        this.dbElementCaseSensitive = dbElementCaseSensitive;
         this.isPersistent = JsonFormIoUtil.isPersistent(jsonNodeComponent);
         this.isUnique = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, UNIQUE);
         this.hasDbIndex = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, DB_INDEX);
         this.isProtected = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, PROTECTED);
         this.isRequired = JsonFormIoUtil.isRequired(jsonNodeComponent);
-        this.isEncrypted = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, ENCRYPTED);
+        this.encryptType = JsonFormIoUtil.getEncryptTypePropertyFromNode(jsonNodeComponent, ENCRYPTED);
+    }
+
+    @Override
+    public String getKeyCapitalize() {
+        return StringUtils.capitalize(getKey());
     }
 
     @Override
@@ -45,25 +60,28 @@ public abstract class Component implements Input {
             if (getIsRequired()) {
                 columnDescription = columnDescription.concat(NULLABLE_FALSE);
             }
+            if (getMaxLength() != null) {
+                columnDescription = columnDescription.concat(String.format(LENGTH_D, getMaxLength()));
+            }
             columnDescription = columnDescription.substring(0, columnDescription.lastIndexOf(",")).concat(")");
         } else columnDescription = columnDescription.concat(")");
         return List.of(columnDescription);
     }
 
     public String getKeyFormatted() {
-        return GeneralUtil.mangleTypeIdentifier(getKey());
-    }
-
-    public String getKeyMangle() {
-        return GeneralUtil.mangle(getKey());
-    }
-
-    public String getKeyLowerCase() {
-        return getKey().toLowerCase(Locale.ROOT);
+        return StringUtils.capitalize(getKey());
     }
 
     public String getKeyToColumn() {
-        return getKey().toLowerCase(Locale.ROOT).concat(DEFAULT_NAME_NUMBER);
+        var nameColumn = "F_".concat(key);
+        if (dbElementCaseSensitive.equals(CaseType.LOWERCASE)) {
+            return nameColumn.toLowerCase(Locale.ROOT);
+        }
+        return nameColumn.toUpperCase(Locale.ROOT);
+    }
+
+    public boolean getIsEncrypted() {
+        return !encryptType.equals(EncryptType.NONE);
     }
 
     @Override
@@ -83,20 +101,19 @@ public abstract class Component implements Input {
 
     @Override
     public String getMethodEncrypt() {
-        return "return encrypt.encrypt(element);";
+        return String.format("return encrypt.%s(element);", encryptType.getEncryptMethod());
     }
 
     @Override
     public String getMethodDecrypt() {
-        return "var newElement = encrypt.decrypt(element);";
+        return String.format("var newElement = encrypt.%s(element);", encryptType.getDecryptMethod());
     }
 
 
     @Override
     public String getPairTransformToEntity() {
         String pairDefinition = "var pair%s = org.apache.commons.lang3.tuple.Pair.of(\"%s\", (java.util.function.Function<%s, ?>) _%s -> _%s!=null ? transform%sToEntity(_%s) : null);";
-        String keyFormatted = getKeyMangle();
-        return String.format(pairDefinition, getKeyFormatted(), getKey(), getObjectTypeToModel(), keyFormatted, keyFormatted, getKeyFormatted(), keyFormatted);
+        return String.format(pairDefinition, getKeyFormatted(), getKey(), getObjectTypeToModel(), getKey(), getKey(), getKeyFormatted(), getKey());
     }
 
     @Override
@@ -107,8 +124,7 @@ public abstract class Component implements Input {
     @Override
     public String getPairTransformToModel() {
         String pairDefinition = "var pair%s = org.apache.commons.lang3.tuple.Pair.of(\"%s\", (java.util.function.Function<%s, ?>) _%s -> _%s!=null ? transform%sToModel(_%s) : null);";
-        String keyFormatted = getKeyMangle();
-        return String.format(pairDefinition, getKeyFormatted(), getKey(), getObjectTypeToEntity(), keyFormatted, keyFormatted, getKeyFormatted(), keyFormatted);
+        return String.format(pairDefinition, getKeyFormatted(), getKey(), getObjectTypeToEntity(), getKey(), getKey(), getKeyFormatted(), getKey());
     }
 
     @Override
@@ -141,16 +157,25 @@ public abstract class Component implements Input {
 
     @Override
     public Boolean evaluateIfNeedDefineIndex() {
-        return isPersistent && !isEncrypted && hasDbIndex;
+        return isPersistent && !getIsEncrypted() && hasDbIndex;
     }
 
     @Override
     public Boolean evaluateIfNeedDefineFilter() {
-        return isPersistent && !isEncrypted && hasDbIndex;
+        return isPersistent && !getIsEncrypted() && hasDbIndex;
+    }
+
+    @Override
+    public Boolean evaluateIfFilterNeedDefineJoin() {
+        return false;
     }
 
     @Override
     public String getConversionFromStringToObjectType(String value) {
         return String.format("%s.getFirst(\"%s\")", value, key);
+    }
+
+    public Integer getMaxLength() {
+        return encryptType.equals(EncryptType.NONE) ? maxLength : encryptType.getMaxLength();
     }
 }

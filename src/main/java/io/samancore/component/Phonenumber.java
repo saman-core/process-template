@@ -3,7 +3,7 @@ package io.samancore.component;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.samancore.component.base.Component;
 import io.samancore.component.base.Field;
-import io.samancore.component.type.CaseType;
+import io.samancore.type.CaseType;
 import io.samancore.util.JsonFormIoUtil;
 import lombok.Getter;
 
@@ -18,18 +18,26 @@ public class Phonenumber extends Component implements Field {
     private Boolean isTruncateMultipleSpaces = false;
     private String displayMask = null;
 
-    public Phonenumber(JsonNode jsonNodeComponent) {
-        super(jsonNodeComponent);
+    public Phonenumber(CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+        super(columnCaseSensitive, jsonNodeComponent);
         this.caseType = JsonFormIoUtil.getCaseType(jsonNodeComponent);
         this.isTruncateMultipleSpaces = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, TRUNCATE_MULTIPLE_SPACES);
         this.displayMask = JsonFormIoUtil.getStringPropertyFromNode(jsonNodeComponent, DISPLAY_MASK);
+        setMaxLength(MAX_LENGTH_PHONE_NUMBER);
     }
 
     @Override
     public List<String> getValidationToModel() {
-        return getIsRequired() ? List.of(NOT_BLANK, NOT_EMPTY) : List.of();
+        var validation = new ArrayList<String>();
+        if (getIsRequired()) {
+            validation.add(NOT_BLANK);
+            validation.add(NOT_EMPTY);
+        }
+        if (getMaxLength() != null) {
+            validation.add(String.format("@Size(max = %d)", getMaxLength()));
+        }
+        return validation;
     }
-
 
     @Override
     public Boolean evaluateIfNeedPairToEntity() {

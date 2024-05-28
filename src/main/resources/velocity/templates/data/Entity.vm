@@ -1,4 +1,4 @@
-package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.entity;
+package ${template.getPackageComplete()}.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,21 +11,21 @@ import java.io.Serializable;
 @Entity
 @Getter
 @Setter
-@Table(name = "${template.getProductNameFormattedLowerCase()}_${template.getNameFormattedLowerCase()}"
+@Table(name = "$template.getTableName()"
 #if($template.evaluateIfAnyFieldIsIndex())
     , indexes = {
          ${template.getAllIndexFromField()}
     }
 #end
 )
-public class ${template.getNameFormatted()}Entity implements Serializable {
+public class ${template.getNameCapitalize()}Entity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_${template.getProductNameFormattedLowerCase()}_${template.getNameFormattedLowerCase()}")
-    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "$template.getSequenceName()")
+    @Column(name = "$template.getIdColumn()", unique = true, nullable = false)
     private Long id;
 
 #foreach ($field in $template.getAllFieldToPersist())
@@ -33,17 +33,17 @@ public class ${template.getNameFormatted()}Entity implements Serializable {
 #foreach($annotation in $annotations)
     $annotation
 #end
-    private ${field.getObjectTypeToEntity()} ${field.getKeyMangle()};
+    private ${field.getObjectTypeToEntity()} ${field.getKey()};
 #end
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ${template.getNameFormatted()}Entity that = (${template.getNameFormatted()}Entity) o;
+        ${template.getNameCapitalize()}Entity that = (${template.getNameCapitalize()}Entity) o;
         return new EqualsBuilder().append(id, that.id)
 #foreach ($field in $template.getAllFieldToPersist())
-                .append(${field.getKeyMangle()}, that.${field.getKeyMangle()})
+                .append(${field.getKey()}, that.${field.getKey()})
 #end
                 .isEquals();
     }
@@ -54,7 +54,7 @@ public class ${template.getNameFormatted()}Entity implements Serializable {
                 .append(id)
 #foreach ($field in $template.getAllFieldToPersist())
 #if(${field.getIsPersistent()})
-                .append(${field.getKeyMangle()})
+                .append(${field.getKey()})
 #end
 #end
                 .toHashCode();

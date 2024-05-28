@@ -1,8 +1,8 @@
-package ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.client.rest.microprofile;
+package ${template.getPackageComplete()}.client.rest.microprofile;
 
 import io.smallrye.mutiny.Uni;
-import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}Model;
-import ${template.getPackageNameFormatted()}.${template.getProductNameFormattedLowerCase()}.${template.getNameFormattedLowerCase()}.model.${template.getNameFormatted()}RequestParameter;
+import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}Model;
+import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}RequestParameter;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,24 +12,24 @@ import io.samancore.common.model.PageData;
 import io.samancore.common.page.PageRequest;
 
 @ApplicationScoped
-@RegisterRestClient(configKey = "cde-${template.getProductNameFormattedLowerCase()}-${template.getNameFormattedLowerCase()}-api")
+@RegisterRestClient(configKey = "cde-${template.getProductNameLowerCase()}-${template.getNameLowerCase()}-api")
 @RegisterClientHeaders
-@Path("/${template.getNameFormattedLowerCase()}s")
+@Path("/${template.getNameLowerCase()}s")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public interface ${template.getNameFormatted()}RestClient {
+public interface ${template.getNameCapitalize()}RestClient {
 
     @GET
     @Path("/{id}")
-    Uni<${template.getNameFormatted()}Model> getById(@PathParam("id") Long id);
+    Uni<${template.getNameCapitalize()}Model> getById(@PathParam("id") Long id);
 
     @POST
     @Path("/")
-    Uni<${template.getNameFormatted()}Model> create(${template.getNameFormatted()}Model model);
+    Uni<${template.getNameCapitalize()}Model> create(${template.getNameCapitalize()}Model model);
 
     @PUT
     @Path("/")
-    Uni<${template.getNameFormatted()}Model> update(${template.getNameFormatted()}Model model);
+    Uni<${template.getNameCapitalize()}Model> update(${template.getNameCapitalize()}Model model);
 
     @DELETE
     @Path("/{id}")
@@ -37,5 +37,5 @@ public interface ${template.getNameFormatted()}RestClient {
 
     @GET
     @Path("/")
-    Uni<PageData<${template.getNameFormatted()}Model>> getAllByPage(${template.getNameFormatted()}RequestParameter requestParameter, PageRequest pageRequest);
+    Uni<PageData<${template.getNameCapitalize()}Model>> getPage(PageRequest pageRequest);
 }
