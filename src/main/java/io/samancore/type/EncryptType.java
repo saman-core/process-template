@@ -8,7 +8,7 @@ import java.util.Arrays;
 public enum EncryptType {
     NONE("false", null, null, null),
     SYMMETRIC("true", 2000, "encrypt", "decrypt"),
-    ASYMMETRIC("Asymmetric", 1000, "encryptAsymmetric", "decryptAsymmetric");
+    ASYMMETRIC("Asymmetric", 1000, "encrypt", "decrypt");
 
     private String description;
     private Integer maxLength;
