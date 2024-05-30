@@ -2,7 +2,7 @@ package ${template.getPackageComplete()}.repository.reactive.panache;
 
 import io.samancore.common.error.message.TechnicalExceptionsEnum;
 import io.samancore.common.error.util.ExceptionHandler;
-import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import ${template.getPackageComplete()}.repository.${template.getNameCapitalize()}Repository;
 import ${template.getPackageComplete()}.entity.${template.getNameCapitalize()}Entity;
 import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}RequestParameter;
@@ -31,6 +31,7 @@ public class ${template.getNameCapitalize()}RepositoryReactivePanache implements
     @Inject
     Logger log;
 
+    @WithSession
     @Override
     public Uni<${template.getNameCapitalize()}Entity> create(${template.getNameCapitalize()}Entity entity) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.create %s ", entity);
@@ -39,6 +40,7 @@ public class ${template.getNameCapitalize()}RepositoryReactivePanache implements
                 .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
     }
 
+    @WithSession
     @Override
     public Uni<${template.getNameCapitalize()}Entity> getById(Long id) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.getById %d ", id);
@@ -47,6 +49,7 @@ public class ${template.getNameCapitalize()}RepositoryReactivePanache implements
                 .onItem().ifNull().failWith(NotFoundException::new);
     }
 
+    @WithSession
     @Override
     public Uni<${template.getNameCapitalize()}Entity> update(${template.getNameCapitalize()}Entity entity) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.update %s ", entity);
@@ -56,6 +59,7 @@ public class ${template.getNameCapitalize()}RepositoryReactivePanache implements
                 .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
     }
 
+    @WithSession
     @Override
     public Uni<Boolean> delete(Long id) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.delete %d ", id);
@@ -64,7 +68,7 @@ public class ${template.getNameCapitalize()}RepositoryReactivePanache implements
                 .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
     }
 
-    @WithTransaction
+    @WithSession
     @Override
     public Uni<PageData<${template.getNameCapitalize()}Entity>> getPage(${template.getNameCapitalize()}RequestParameter requestParameter, PageRequest pageRequest) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.getPage %s %s ", requestParameter, pageRequest);
