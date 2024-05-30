@@ -2,7 +2,7 @@ package ${template.getPackageComplete()}.repository.reactive.panache;
 
 import io.samancore.common.error.message.TechnicalExceptionsEnum;
 import io.samancore.common.error.util.ExceptionHandler;
-
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import ${template.getPackageComplete()}.repository.${template.getNameCapitalize()}Repository;
 import ${template.getPackageComplete()}.entity.${template.getNameCapitalize()}Entity;
 import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}RequestParameter;
@@ -64,6 +64,7 @@ public class ${template.getNameCapitalize()}RepositoryReactivePanache implements
                 .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
     }
 
+    @WithTransaction
     @Override
     public Uni<PageData<${template.getNameCapitalize()}Entity>> getPage(${template.getNameCapitalize()}RequestParameter requestParameter, PageRequest pageRequest) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.getPage %s %s ", requestParameter, pageRequest);
@@ -93,13 +94,9 @@ public class ${template.getNameCapitalize()}RepositoryReactivePanache implements
         if (!condition.isEmpty()) {
             sql = sql.concat(" WHERE ").concat(condition);
         }
-
         var query = this.find(sql, PagePanacheUtil.generateSort(pageRequest), params);
         var list = query.page(PagePanacheUtil.generatePage(pageRequest)).list();
-        //var total = query.count();
-        //PageUtil.combineToPageData(list, total);
-
-        return list
-                .onItem().transform(entityList -> PageData.<${template.getNameCapitalize()}Entity>newBuilder().setData(entityList).setCount(entityList.size()).build());
+        var total = query.count();
+        return PageUtil.combineToPageData(list, total);
     }
 }
