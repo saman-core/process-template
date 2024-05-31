@@ -1,13 +1,11 @@
-package ${template.getPackageComplete()}.repository.reactive.panache;
+package ${template.getPackageComplete()}.repository.reactive;
 
 import io.samancore.common.error.message.TechnicalExceptionsEnum;
 import io.samancore.common.error.util.ExceptionHandler;
-import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import ${template.getPackageComplete()}.repository.${template.getNameCapitalize()}Repository;
 import ${template.getPackageComplete()}.entity.${template.getNameCapitalize()}Entity;
 import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}RequestParameter;
 import io.smallrye.mutiny.Uni;
-import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
 import ${template.getPackageComplete()}.transformer.${template.getNameCapitalize()}Transformer;
 #if($template.evaluateIfAnyFieldIsMultiple())
 import org.hibernate.reactive.mutiny.Mutiny;
@@ -17,13 +15,15 @@ import io.samancore.common.page.PageRequest;
 import io.samancore.common.page.PageUtil;
 import io.samancore.common.page.PagePanacheUtil;
 import jakarta.inject.Inject;
+import org.hibernate.reactive.mutiny.Mutiny;
 import org.jboss.logging.Logger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
 import java.util.HashMap;
+import java.util.List;
 
 @ApplicationScoped
-public class ${template.getNameCapitalize()}RepositoryReactivePanache implements PanacheRepositoryBase<${template.getNameCapitalize()}Entity, Long>, ${template.getNameCapitalize()}Repository {
+public class ${template.getNameCapitalize()}RepositoryReactive implements ${template.getNameCapitalize()}Repository {
 
     @Inject
     ${template.getNameCapitalize()}Transformer transformer;
@@ -31,44 +31,48 @@ public class ${template.getNameCapitalize()}RepositoryReactivePanache implements
     @Inject
     Logger log;
 
-    @WithSession
+    @Inject
+    Mutiny.SessionFactory sessionFactory;
+
     @Override
     public Uni<${template.getNameCapitalize()}Entity> create(${template.getNameCapitalize()}Entity entity) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.create %s ", entity);
         entity.setId(null);
-        return persistAndFlush(entity)
+        return sessionFactory.withTransaction(session -> session.persist(entity)
+                               .replaceWith(() -> entity))
                 .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
+
     }
 
-    @WithSession
     @Override
     public Uni<${template.getNameCapitalize()}Entity> getById(Long id) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.getById %d ", id);
-        return findById(id)
+        return sessionFactory.withSession(session -> session.find(${template.getNameCapitalize()}Entity.class, id))
                 .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e))
                 .onItem().ifNull().failWith(NotFoundException::new);
     }
 
-    @WithSession
     @Override
     public Uni<${template.getNameCapitalize()}Entity> update(${template.getNameCapitalize()}Entity entity) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.update %s ", entity);
-        return getById(entity.getId())
-                .onItem().transform(attached -> transformer.copyToAttached(entity, attached))
-                .onItem().transformToUni(this::persistAndFlush)
+        return sessionFactory.withTransaction(session ->
+                    session.find(${template.getNameCapitalize()}Entity.class, entity.getId())
+                     .onItem().ifNull().failWith(NotFoundException::new)
+                     .onItem().transform(attached -> transformer.copyToAttached(entity, attached))
+                     .onItem().transformToUni(entityToUpdate -> session.persist(entityToUpdate).replaceWith(() -> entityToUpdate)))
                 .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
     }
 
-    @WithSession
     @Override
     public Uni<Boolean> delete(Long id) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.delete %d ", id);
-        return deleteById(id)
-                .onItem().call(this::flush)
-                .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
+          return sessionFactory.withTransaction(session ->
+                     session.find(${template.getNameCapitalize()}Entity.class, id)
+                      .onItem().ifNull().failWith(NotFoundException::new)
+                      .onItem().transformToUni(entity -> session.remove(entity).replaceWith(() -> Boolean.TRUE)))
+                  .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
     }
 
-    @WithSession
     @Override
     public Uni<PageData<${template.getNameCapitalize()}Entity>> getPage(${template.getNameCapitalize()}RequestParameter requestParameter, PageRequest pageRequest) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.getPage %s %s ", requestParameter, pageRequest);
@@ -94,13 +98,30 @@ public class ${template.getNameCapitalize()}RepositoryReactivePanache implements
             params.put("${field.getKey()}", requestParameter.get${field.getKeyFormatted()}());
         }
         #end
-        var sql = " select a from ${template.getNameCapitalize()}Entity a ".concat(join);
+        var sql = "from ${template.getNameCapitalize()}Entity a ".concat(join);
         if (!condition.isEmpty()) {
             sql = sql.concat(" WHERE ").concat(condition);
         }
-        var query = this.find(sql, PagePanacheUtil.generateSort(pageRequest), params);
-        var list = query.page(PagePanacheUtil.generatePage(pageRequest)).list();
-        var total = query.count();
+        String finalSql = sql;
+        var list = sessionFactory.withSession(session -> getListPaged(pageRequest, session, finalSql, params))
+                    .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
+        var total = sessionFactory.withSession(session -> getCount(session, finalSql, params))
+                     .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.REPOSITORY_ERROR, e));
         return PageUtil.combineToPageData(list, total);
+    }
+
+    private static Uni<Long> getCount(Mutiny.Session session, String finalSql, HashMap<String, Object> params) {
+        var query = session.<Long>createQuery("select count(a) ".concat(finalSql));
+        params.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        return query.getSingleResult();
+    }
+
+    private static Uni<List<${template.getNameCapitalize()}Entity>> getListPaged(PageRequest pageRequest, Mutiny.Session s, String finalSql, HashMap<String, Object> params) {
+        var order = " order by ".concat(pageRequest.getSort()).concat(" ").concat(pageRequest.getOrder());
+        var query = s.<${template.getNameCapitalize()}Entity>createQuery(finalSql.concat(order));
+        params.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        return query.setFirstResult(pageRequest.getPage() * pageRequest.getLimit())
+                .setMaxResults(pageRequest.getLimit())
+                .getResultList();
     }
 }

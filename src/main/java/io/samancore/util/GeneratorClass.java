@@ -18,7 +18,7 @@ public class GeneratorClass {
     public static final List<String> DATA_TEMPLATES_LIST = List.of("Entity.vm");
     public static final List<String> MODEL_TEMPLATES_LIST = List.of("Model.vm", "RequestParameter.vm");
     public static final List<String> CLIENT_TEMPLATES_LIST = List.of("Client.vm", "RestClient.vm", "RestClientWrapper.vm");
-    public static final List<String> APPLICATION_TEMPLATES_LIST = List.of("Api.vm", "Service.vm", "ServiceImpl.vm", "Repository.vm", "RepositoryReactivePanache.vm", "Transformer.vm");
+    public static final List<String> APPLICATION_TEMPLATES_LIST = List.of("Api.vm", "Service.vm", "ServiceImpl.vm", "Repository.vm", "RepositoryReactive.vm", "Transformer.vm");
     public static final Map<String, List<String>> FILES_MODULE_GENERATOR_MAP = Map.of("model", MODEL_TEMPLATES_LIST, "application", APPLICATION_TEMPLATES_LIST, "client", CLIENT_TEMPLATES_LIST, "data", DATA_TEMPLATES_LIST);
     public static final Map<String, String> ROUTE_PACKAGE_OUTPUT_MAP = Map.ofEntries(
             Map.entry("Api", "api"),
@@ -28,7 +28,7 @@ public class GeneratorClass {
             Map.entry("Repository", "repository"),
             Map.entry("Service", "service"),
             Map.entry("ServiceImpl", "service/impl"),
-            Map.entry("RepositoryReactivePanache", "repository/reactive/panache"),
+            Map.entry("RepositoryReactive", "repository/reactive"),
             Map.entry("Transformer", "transformer"),
             Map.entry("Client", "client"),
             Map.entry("RestClient", "client/rest/microprofile"),
