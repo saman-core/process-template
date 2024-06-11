@@ -6,7 +6,15 @@ import ${template.getPackageComplete()}.repository.${template.getNameCapitalize(
 import ${template.getPackageComplete()}.service.${template.getNameCapitalize()}Service;
 import ${template.getPackageComplete()}.transformer.${template.getNameCapitalize()}Transformer;
 import io.smallrye.mutiny.Uni;
+import io.samancore.common.util.ConditionsUtil;
+import io.samancore.condition_template.client.ConditionTemplateClient;
+import io.samancore.common.error.message.TechnicalExceptionsEnum;
+import io.samancore.common.error.util.ExceptionHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.samancore.common.bean.jackson.CustomObjectMapper;
 
+import java.util.HashMap;
+import java.util.Map;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
@@ -26,6 +34,9 @@ public class ${template.getNameCapitalize()}ServiceImpl implements ${template.ge
     @Inject
     Logger log;
 
+    @Inject
+    ConditionTemplateClient conditionTemplateClient;
+
     @Override
     public Uni<${template.getNameCapitalize()}Model> getById(Long id) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.getById %d ", id);
@@ -36,14 +47,16 @@ public class ${template.getNameCapitalize()}ServiceImpl implements ${template.ge
     @Override
     public Uni<${template.getNameCapitalize()}Model> create(${template.getNameCapitalize()}Model model) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.create %s ", model);
-        return repository.create(transformer.toEntity(model))
+        return getModelUpdated(model)
+                .onItem().transformToUni(model1 -> repository.create(transformer.toEntity(model1)))
                 .onItem().transform(entity -> transformer.toModel(entity));
     }
 
     @Override
     public Uni<${template.getNameCapitalize()}Model> update(${template.getNameCapitalize()}Model model) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.update %s ", model);
-        return repository.update(transformer.toEntity(model))
+        return getModelUpdated(model)
+                .onItem().transformToUni(model1->  repository.update(transformer.toEntity(model1)))
                 .onItem().transform(entity -> transformer.toModel(entity));
     }
 
@@ -58,5 +71,15 @@ public class ${template.getNameCapitalize()}ServiceImpl implements ${template.ge
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.getPage %s ", pageRequest);
         return repository.getPage(requestParameter, pageRequest)
                 .onItem().transform(page -> PageUtil.toPageModel(page, transformer::toModel));
+    }
+
+    private Uni<${template.getNameCapitalize()}Model> getModelUpdated(${template.getNameCapitalize()}Model model) {
+        var  objectMapper = ConditionsUtil.getObjectMapper();
+        var modelMap = ConditionsUtil.getModelMap(model, objectMapper);
+        var conditionRequest = ConditionsUtil.getConditionRequest(modelMap);
+        return conditionTemplateClient.eval("${template.getProductNameLowerCase()}","${template.getNameLowerCase()}", conditionRequest)
+        .onItem().transform(conditions -> ConditionsUtil.getModelMapUpdatedWithConditions(modelMap, conditions))
+        .onItem().transform(modelMapChanged -> objectMapper.convertValue(modelMapChanged, ${template.getNameCapitalize()}Model.class))
+        .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.PROCESSING_CONDITION_ERROR, e));
     }
 }
