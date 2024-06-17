@@ -32,7 +32,7 @@ public class Textfield extends Component implements Field {
         setMaxLength(JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MAX_LENGTH));
         this.minWords = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MIN_WORDS);
         this.maxWords = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MAX_WORDS);
-        this.sensitiveDataMaskType = JsonFormIoUtil.getSensitiveDataMaskTypePropertyFromNode(jsonNodeComponent, "sensitiveDataMask");
+        this.sensitiveDataMaskType = JsonFormIoUtil.getSensitiveDataMaskTypePropertyFromNode(jsonNodeComponent, SENSITIVE_DATA_MASK);
     }
 
     @Override

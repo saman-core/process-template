@@ -29,7 +29,7 @@ public class Email extends Component implements Field {
         this.caseType = JsonFormIoUtil.getCaseType(jsonNodeComponent);
         this.minLength = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MIN_LENGTH);
         setMaxLength(JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MAX_LENGTH));
-        this.sensitiveDataMaskType = JsonFormIoUtil.getSensitiveDataMaskTypePropertyFromNode(jsonNodeComponent, "sensitiveDataMask");
+        this.sensitiveDataMaskType = JsonFormIoUtil.getSensitiveDataMaskTypePropertyFromNode(jsonNodeComponent, SENSITIVE_DATA_MASK);
     }
 
     @Override

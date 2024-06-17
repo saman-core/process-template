@@ -24,7 +24,7 @@ public class Phonenumber extends Component implements Field {
         this.caseType = JsonFormIoUtil.getCaseType(jsonNodeComponent);
         this.isTruncateMultipleSpaces = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, TRUNCATE_MULTIPLE_SPACES);
         setMaxLength(MAX_LENGTH_PHONE_NUMBER);
-        this.sensitiveDataMaskType = JsonFormIoUtil.getSensitiveDataMaskTypePropertyFromNode(jsonNodeComponent, "sensitiveDataMask");
+        this.sensitiveDataMaskType = JsonFormIoUtil.getSensitiveDataMaskTypePropertyFromNode(jsonNodeComponent, SENSITIVE_DATA_MASK);
     }
 
     @Override

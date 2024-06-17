@@ -126,6 +126,7 @@ public class GeneralConstant {
     public static final String UNDERSCORE = "_";
     public static final String S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS = "%s name length should be max %s characters";
     public static final String IO_SAMANCORE_COMMON_TRANSFORMER_MASKER_MASKER_S = "io.samancore.common.transformer.Masker masker%s;";
+    public static final String SENSITIVE_DATA_MASK = "sensitiveDataMask";
 
 
     private GeneralConstant() {
