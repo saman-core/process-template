@@ -50,7 +50,6 @@ public class GeneralConstant {
     public static final String PATTERN = "pattern";
     public static final String CASE = "case";
     public static final String PROTECTED = "protected";
-    public static final String DISPLAY_MASK = "displayMask";
     public static final String TRUNCATE_MULTIPLE_SPACES = "truncateMultipleSpaces";
     public static final String MIN_LENGTH = "minLength";
     public static final String MAX_LENGTH = "maxLength";
@@ -107,7 +106,7 @@ public class GeneralConstant {
     public static final String CLOSE_KEY = "}";
     public static final String ELEMENT_STRING_ELEMENT_TRIM_REPLACE_ALL_S_2_G = "element = ((String)element).trim().replaceAll(\"^ +| +$|( )+\", \"$1\");";
     public static final String S_S_TRIM_REPLACE_ALL_S_2_G = "%s = (%s).trim().replaceAll(\"^ +| +$|( )+\", \"$1\");";
-    public static final String S_MASKER_APPLY_S = "%s = masker.apply(%s, %s);";
+    public static final String S_MASKER_S_APPLY_S = "%s = masker%s.apply(%s);";
     public static final String ELEMENT_STRING_ELEMENT_TO_S_JAVA_UTIL_LOCALE_ROOT = "element = ((String)element).to%s(java.util.Locale.ROOT);";
     public static final String S_S_TO_S_JAVA_UTIL_LOCALE_ROOT = "%s = (%s).to%s(java.util.Locale.ROOT);";
     public static final String PRIVATE_S_TRANSFORM_S_TO_ENTITY_S_ELEMENT = "private %s transform%sToEntity(%s element){";
@@ -126,6 +125,7 @@ public class GeneralConstant {
     public static final String PREFIX_SEQUENCENAME_SQ = "SQ_";
     public static final String UNDERSCORE = "_";
     public static final String S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS = "%s name length should be max %s characters";
+    public static final String IO_SAMANCORE_COMMON_TRANSFORMER_MASKER_MASKER_S = "io.samancore.common.transformer.Masker masker%s;";
 
 
     private GeneralConstant() {

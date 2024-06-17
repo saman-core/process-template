@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static io.samancore.util.GeneralConstant.*;
@@ -22,11 +21,11 @@ import static io.samancore.util.GeneralConstant.*;
 @Getter
 public class Template extends Validation {
 
-    String packageName;
-    String name;
-    String productName;
-    CaseType dbElementCaseSensitive;
-    List<Field> fields;
+    private String packageName;
+    private String name;
+    private String productName;
+    private CaseType dbElementCaseSensitive;
+    private List<Field> fields;
 
     public Template(String packageName, String name, String productName, CaseType dbElementCaseSensitive) {
         this.name = name;
@@ -115,15 +114,23 @@ public class Template extends Validation {
         return getAllFieldToPersist().stream().anyMatch(field -> ((Component) field).getIsEncrypted());
     }
 
-    public Set<String> getInjectToTransform() {
+    public List<String> getInjectToTransform() {
         var injectTransforms = new ArrayList<String>();
         var allToPersist = getAllFieldToPersist();
         if (allToPersist.stream().anyMatch(field -> ((Component) field).getIsEncrypted())) {
+            injectTransforms.add("@Inject");
             injectTransforms.add("io.samancore.common.transformer.Encrypt encrypt;");
         }
-        allToPersist.forEach(field -> injectTransforms.addAll(field.getInjectToTransform()));
-        var injectNotRepeated = injectTransforms.stream().collect(Collectors.groupingBy(s -> s));
-        return injectNotRepeated.keySet();
+        allToPersist.forEach(field -> {
+            field.getInjectToTransform().stream().filter(inject -> !injectTransforms.contains(inject))
+                    .forEach(inject -> {
+                        if (inject.startsWith("@")) {
+                            injectTransforms.add("@Inject");
+                            injectTransforms.add(inject);
+                        } else injectTransforms.add(inject);
+                    });
+        });
+        return injectTransforms;
     }
 
     public Boolean evaluateIfAnyFieldNeedPairToEntity() {
@@ -134,8 +141,12 @@ public class Template extends Validation {
         return getAllFieldToPersist().stream().anyMatch(Input::evaluateIfNeedPairToModel);
     }
 
-    public List<Field> getAllFieldWithPair() {
+    public List<Field> getAllFieldWithPairToEntity() {
         return getAllFieldToPersist().stream().filter(Input::evaluateIfNeedPairToEntity).toList();
+    }
+
+    public List<Field> getAllFieldWithPairToModel() {
+        return getAllFieldToPersist().stream().filter(Input::evaluateIfNeedPairToModel).toList();
     }
 
     public String getTransformToEntity() {

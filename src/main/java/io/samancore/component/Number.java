@@ -15,21 +15,17 @@ import static io.samancore.util.GeneralConstant.*;
 
 @Getter
 public class Number extends Component implements Field {
-
-    Boolean requireDecimal = false;
-
-    Boolean isArbitraryPrecision = false;
-    Boolean delimiterThouzand = false;
-    String displayMask = null;
-    Integer decimalLimit = null;
-    BigDecimal minValue = null;
-    BigDecimal maxValue = null;
+    private Boolean requireDecimal = false;
+    private Boolean isArbitraryPrecision = false;
+    private Boolean delimiterThouzand = false;
+    private Integer decimalLimit = null;
+    private BigDecimal minValue = null;
+    private BigDecimal maxValue = null;
 
     public Number(CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
         super(columnCaseSensitive, jsonNodeComponent);
         this.isArbitraryPrecision = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, ARBITRARY_PRECISION);
         this.delimiterThouzand = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, DELIMITER);
-        this.displayMask = JsonFormIoUtil.getStringPropertyFromNode(jsonNodeComponent, DISPLAY_MASK);
         this.decimalLimit = JsonFormIoUtil.getDecimalLimit(jsonNodeComponent);
         this.requireDecimal = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, REQUIRE_DECIMAL);
         this.minValue = JsonFormIoUtil.getBigDecimalPropertyFromValidate(jsonNodeComponent, MIN);
@@ -114,7 +110,6 @@ public class Number extends Component implements Field {
         return validation;
     }
 
-
     @Override
     public Boolean evaluateIfNeedPairToEntity() {
         return getIsEncrypted();
@@ -122,7 +117,7 @@ public class Number extends Component implements Field {
 
     @Override
     public Boolean evaluateIfNeedPairToModel() {
-        return getIsEncrypted() || getDisplayMask() != null;
+        return getIsEncrypted();
     }
 
     @Override
@@ -149,9 +144,6 @@ public class Number extends Component implements Field {
         if (getIsEncrypted()) {
             list.add(getMethodDecrypt());
             object = "newElement";
-        }
-        if (getDisplayMask() != null) {
-            list.add(String.format(S_MASKER_APPLY_S, object, object));
         }
         var objectType = getObjectTypeToModel();
         String descriptionReturn = String.format("%s.valueOf", objectType);

@@ -16,14 +16,12 @@ import static io.samancore.util.GeneralConstant.*;
 public class Url extends Component implements Field {
     private Boolean isTruncateMultipleSpaces = false;
     private String pattern = null;
-    private String displayMask = null;
     private Integer minLength = null;
 
     public Url(CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
         super(columnCaseSensitive, jsonNodeComponent);
         this.isTruncateMultipleSpaces = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, TRUNCATE_MULTIPLE_SPACES);
         this.pattern = JsonFormIoUtil.getPattern(jsonNodeComponent);
-        this.displayMask = JsonFormIoUtil.getStringPropertyFromNode(jsonNodeComponent, DISPLAY_MASK);
         this.minLength = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MIN_LENGTH);
         setMaxLength(JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MAX_LENGTH));
     }
@@ -56,7 +54,7 @@ public class Url extends Component implements Field {
 
     @Override
     public Boolean evaluateIfNeedPairToModel() {
-        return getIsTruncateMultipleSpaces() || getIsEncrypted() || getDisplayMask() != null;
+        return getIsTruncateMultipleSpaces() || getIsEncrypted();
     }
 
     @Override
@@ -84,9 +82,6 @@ public class Url extends Component implements Field {
         }
         if (getIsTruncateMultipleSpaces()) {
             list.add(String.format(S_S_TRIM_REPLACE_ALL_S_2_G, object, object));
-        }
-        if (getDisplayMask() != null) {
-            list.add(String.format(S_MASKER_APPLY_S, object, object));
         }
         list.add(String.format(RETURN_S, object));
         list.add(CLOSE_KEY);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.samancore.component.base.Component;
 import io.samancore.component.base.Field;
 import io.samancore.type.CaseType;
+import io.samancore.type.SensitiveDataMaskType;
 import io.samancore.util.JsonFormIoUtil;
 import lombok.Getter;
 
@@ -18,17 +19,17 @@ public class Email extends Component implements Field {
     private Boolean isTruncateMultipleSpaces = false;
     private CaseType caseType = CaseType.NONE;
     private String pattern = null;
-    private String displayMask = null;
     private Integer minLength = null;
+    private SensitiveDataMaskType sensitiveDataMaskType = SensitiveDataMaskType.NONE;
 
     public Email(CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
         super(columnCaseSensitive, jsonNodeComponent);
         this.isTruncateMultipleSpaces = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, TRUNCATE_MULTIPLE_SPACES);
-        this.displayMask = JsonFormIoUtil.getStringPropertyFromNode(jsonNodeComponent, DISPLAY_MASK);
         this.pattern = JsonFormIoUtil.getPattern(jsonNodeComponent);
         this.caseType = JsonFormIoUtil.getCaseType(jsonNodeComponent);
         this.minLength = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MIN_LENGTH);
         setMaxLength(JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MAX_LENGTH));
+        this.sensitiveDataMaskType = JsonFormIoUtil.getSensitiveDataMaskTypePropertyFromNode(jsonNodeComponent, "sensitiveDataMask");
     }
 
     @Override
@@ -51,6 +52,13 @@ public class Email extends Component implements Field {
         validation.add("@Email");
         return validation;
     }
+
+
+    @Override
+    public Boolean evaluateIfNeedPairToModel() {
+        return getHasSensitiveDataMaskType();
+    }
+
 
     @Override
     public List<String> getMethodTransformToEntity() {
@@ -84,11 +92,20 @@ public class Email extends Component implements Field {
         if (getIsTruncateMultipleSpaces()) {
             list.add(String.format(S_S_TRIM_REPLACE_ALL_S_2_G, object, object));
         }
-        if (getDisplayMask() != null) {
-            list.add(String.format(S_MASKER_APPLY_S, object, object));
+        if (getHasSensitiveDataMaskType()) {
+            list.add(String.format(S_MASKER_S_APPLY_S, object, getSensitiveDataMaskType().getDescriptionCapitalize(), object));
         }
         list.add(String.format(RETURN_S, object));
         list.add(CLOSE_KEY);
         return list;
+    }
+
+    @Override
+    public List<String> getInjectToTransform() {
+        return getHasSensitiveDataMaskType() ? List.of(String.format("@Named(\"%s\")", getSensitiveDataMaskType().getDescription()), String.format(IO_SAMANCORE_COMMON_TRANSFORMER_MASKER_MASKER_S, getSensitiveDataMaskType().getDescriptionCapitalize())) : List.of();
+    }
+
+    public boolean getHasSensitiveDataMaskType() {
+        return !SensitiveDataMaskType.NONE.equals(sensitiveDataMaskType);
     }
 }

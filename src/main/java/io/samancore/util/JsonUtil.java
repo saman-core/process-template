@@ -46,35 +46,21 @@ public class JsonUtil {
 
     private static Field getField(Template template, JsonNode jsonNodeComponent) {
         return switch (jsonNodeComponent.get("type").asText().toLowerCase(Locale.ROOT)) {
-            case COMPONENT_TEXTFIELD, COMPONENT_SAMANTEXTFIELD ->
-                    new Textfield(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_TEXTAREA, COMPONENT_SAMANTEXTAREA ->
-                    new Textarea(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_PASSWORD, COMPONENT_SAMANPASSWORD ->
-                    new Password(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_EMAIL, COMPONENT_SAMANEMAIL ->
-                    new Email(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_TEXTFIELD, COMPONENT_SAMANTEXTFIELD -> new Textfield(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_TEXTAREA, COMPONENT_SAMANTEXTAREA -> new Textarea(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_PASSWORD, COMPONENT_SAMANPASSWORD -> new Password(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_EMAIL, COMPONENT_SAMANEMAIL -> new Email(template.getDbElementCaseSensitive(), jsonNodeComponent);
             case COMPONENT_URL, COMPONENT_SAMANURL -> new Url(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_RADIO, COMPONENT_SAMANRADIO ->
-                    new Radio(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_CHECKBOX, COMPONENT_SAMANCHECKBOX ->
-                    new Checkbox(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_DATETIME, COMPONENT_SAMANDATETIME ->
-                    new Datetime(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_NUMBER, COMPONENT_SAMANNUMBER ->
-                    new Number(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_PHONENUMBER, COMPONENT_SAMANPHONENUMBER ->
-                    new Phonenumber(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_TIME, COMPONENT_SAMANTIME ->
-                    new Time(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_SIGNATURE, COMPONENT_SAMANSIGNATURE ->
-                    new Signature(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_SELECT, COMPONENT_SAMANSELECT ->
-                    new Select(template.getProductName(), template.getName(), template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_TAGS, COMPONENT_SAMANTAGS ->
-                    new Tags(template.getProductName(), template.getName(), template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_HIDDEN, COMPONENT_SAMANHIDDEN ->
-                    new Hidden(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_RADIO, COMPONENT_SAMANRADIO -> new Radio(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_CHECKBOX, COMPONENT_SAMANCHECKBOX -> new Checkbox(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_DATETIME, COMPONENT_SAMANDATETIME -> new Datetime(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_NUMBER, COMPONENT_SAMANNUMBER -> new Number(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_PHONENUMBER, COMPONENT_SAMANPHONENUMBER -> new Phonenumber(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_TIME, COMPONENT_SAMANTIME -> new Time(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_SIGNATURE, COMPONENT_SAMANSIGNATURE -> new Signature(template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_SELECT, COMPONENT_SAMANSELECT -> new Select(template.getProductName(), template.getName(), template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_TAGS, COMPONENT_SAMANTAGS -> new Tags(template.getProductName(), template.getName(), template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_HIDDEN, COMPONENT_SAMANHIDDEN -> new Hidden(template.getDbElementCaseSensitive(), jsonNodeComponent);
             default -> null;
 
         };

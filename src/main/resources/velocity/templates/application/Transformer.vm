@@ -8,6 +8,7 @@ import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}Mod
 import io.samancore.common.error.util.ExceptionHandler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 @ApplicationScoped
 public class  ${template.getNameCapitalize()}Transformer extends GenericTransformer<${template.getNameCapitalize()}Entity, ${template.getNameCapitalize()}Model> {
@@ -17,7 +18,6 @@ public class  ${template.getNameCapitalize()}Transformer extends GenericTransfor
 
 #set ($injects = ${template.getInjectToTransform()})
 #foreach($inject in $injects)
-    @Inject
     $inject
 #end
 
@@ -25,7 +25,7 @@ public class  ${template.getNameCapitalize()}Transformer extends GenericTransfor
         try {
             log.debugf("${template.getNameCapitalize()}Transformer.toEntity model: %s", model);
             #if(${template.evaluateIfAnyFieldNeedPairToEntity()})
-            #foreach ($field in $template.getAllFieldWithPair())
+            #foreach ($field in $template.getAllFieldWithPairToEntity())
             ${field.getPairTransformToEntity()}
             #end
             ${template.getTransformToEntity()}
@@ -42,7 +42,7 @@ public class  ${template.getNameCapitalize()}Transformer extends GenericTransfor
         try {
             log.debugf("${template.getNameCapitalize()}Transformer.toModel entity: %s", entity);
             #if(${template.evaluateIfAnyFieldNeedPairToModel()})
-            #foreach ($field in $template.getAllFieldWithPair())
+            #foreach ($field in $template.getAllFieldWithPairToModel())
             ${field.getPairTransformToModel()}
             #end
             ${template.getTransformToModel()}
@@ -65,11 +65,13 @@ public class  ${template.getNameCapitalize()}Transformer extends GenericTransfor
         }
     }
 
-    #foreach ($field in $template.getAllFieldWithPair())
+    #foreach ($field in $template.getAllFieldWithPairToEntity())
     #set ($transformMethod = ${field.getMethodTransformToEntity()})
     #foreach($transformMethodLine in $transformMethod)
         $transformMethodLine
     #end
+    #end
+    #foreach ($field in $template.getAllFieldWithPairToModel())
     #set ($transformMethod_ = ${field.getMethodTransformToModel()})
     #foreach($transformMethodLine_ in $transformMethod_)
         $transformMethodLine_

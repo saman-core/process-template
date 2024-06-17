@@ -19,13 +19,11 @@ public class Password extends Component implements Field {
     private Boolean isTruncateMultipleSpaces = false;
     private CaseType caseType = CaseType.NONE;
     private String pattern = null;
-    private String displayMask = null;
     private Integer minLength = null;
 
     public Password(CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
         super(columnCaseSensitive, jsonNodeComponent);
         this.isTruncateMultipleSpaces = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, TRUNCATE_MULTIPLE_SPACES);
-        this.displayMask = JsonFormIoUtil.getStringPropertyFromNode(jsonNodeComponent, DISPLAY_MASK);
         this.caseType = JsonFormIoUtil.getCaseType(jsonNodeComponent);
         this.pattern = JsonFormIoUtil.getPattern(jsonNodeComponent);
         this.minLength = JsonFormIoUtil.getIntegerPropertyFromValidate(jsonNodeComponent, MIN_LENGTH);
@@ -61,7 +59,7 @@ public class Password extends Component implements Field {
 
     @Override
     public Boolean evaluateIfNeedPairToModel() {
-        return getIsTruncateMultipleSpaces() || !getCaseType().equals(CaseType.NONE) || getIsEncrypted() || getDisplayMask() != null;
+        return getIsTruncateMultipleSpaces() || !getCaseType().equals(CaseType.NONE) || getIsEncrypted();
     }
 
     @Override
@@ -95,9 +93,6 @@ public class Password extends Component implements Field {
         }
         if (getIsTruncateMultipleSpaces()) {
             list.add(String.format(S_S_TRIM_REPLACE_ALL_S_2_G, object, object));
-        }
-        if (getDisplayMask() != null) {
-            list.add(String.format(S_MASKER_APPLY_S, object, object));
         }
         list.add(String.format(RETURN_S, object));
         list.add(CLOSE_KEY);

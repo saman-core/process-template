@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import io.samancore.type.CaseType;
 import io.samancore.type.EncryptType;
+import io.samancore.type.SensitiveDataMaskType;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -34,6 +35,10 @@ public class JsonFormIoUtil {
 
     public static EncryptType getEncryptTypePropertyFromNode(JsonNode jsonNodeComponent, String propertyName) {
         return jsonNodeComponent.get(propertyName) != null ? EncryptType.getByDescription(jsonNodeComponent.get(propertyName).asText()) : EncryptType.NONE;
+    }
+
+    public static SensitiveDataMaskType getSensitiveDataMaskTypePropertyFromNode(JsonNode jsonNodeComponent, String propertyName) {
+        return jsonNodeComponent.get(propertyName) != null ? SensitiveDataMaskType.getByDescription(jsonNodeComponent.get(propertyName).asText()) : SensitiveDataMaskType.NONE;
     }
 
     public static boolean isTruncateMultipleSpaces(JsonNode jsonNodeComponent) {
