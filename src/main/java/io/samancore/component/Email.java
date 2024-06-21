@@ -55,8 +55,13 @@ public class Email extends Component implements Field {
 
 
     @Override
+    public Boolean evaluateIfNeedPairToEntity() {
+        return getIsEncrypted() || !getCaseType().equals(CaseType.NONE) || getIsTruncateMultipleSpaces();
+    }
+
+    @Override
     public Boolean evaluateIfNeedPairToModel() {
-        return getHasSensitiveDataMaskType();
+        return getIsEncrypted() || !getCaseType().equals(CaseType.NONE) || getIsTruncateMultipleSpaces() || getHasSensitiveDataMaskType();
     }
 
 

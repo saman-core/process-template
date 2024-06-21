@@ -42,7 +42,7 @@ public class Phonenumber extends Component implements Field {
 
     @Override
     public Boolean evaluateIfNeedPairToEntity() {
-        return getIsTruncateMultipleSpaces() || !getCaseType().equals(CaseType.NONE) || getIsEncrypted();
+        return getIsTruncateMultipleSpaces() || getIsEncrypted();
     }
 
     @Override

@@ -111,16 +111,6 @@ public class Number extends Component implements Field {
     }
 
     @Override
-    public Boolean evaluateIfNeedPairToEntity() {
-        return getIsEncrypted();
-    }
-
-    @Override
-    public Boolean evaluateIfNeedPairToModel() {
-        return getIsEncrypted();
-    }
-
-    @Override
     public String getMethodEncrypt() {
         return String.format("return encrypt.%s(element.toString());", getEncryptType().getEncryptMethod());
     }

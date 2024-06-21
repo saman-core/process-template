@@ -151,12 +151,12 @@ public class Template extends Validation {
 
     public String getTransformToEntity() {
         var transformDefinition = "return transformToEntity(model, %s);";
-        return getMethodToTransform(transformDefinition);
+        return getMethodToTransformToEntity(transformDefinition);
     }
 
     public String getTransformToModel() {
         var transformDefinition = "return transformToModel(entity, %s);";
-        return getMethodToTransform(transformDefinition);
+        return getMethodToTransformToModel(transformDefinition);
     }
 
     public String getIdColumn() {
@@ -183,9 +183,17 @@ public class Template extends Validation {
         return tableName.toLowerCase(Locale.ROOT);
     }
 
-    private String getMethodToTransform(String transformDefinition) {
+    private String getMethodToTransformToEntity(String transformDefinition) {
         var allPair = getAllFieldToPersist().stream()
                 .filter(Input::evaluateIfNeedPairToEntity)
+                .map(field -> String.format(GeneralConstant.PAIR_S, field.getKeyFormatted()))
+                .collect(Collectors.joining(", "));
+        return String.format(transformDefinition, allPair);
+    }
+
+    private String getMethodToTransformToModel(String transformDefinition) {
+        var allPair = getAllFieldToPersist().stream()
+                .filter(Input::evaluateIfNeedPairToModel)
                 .map(field -> String.format(GeneralConstant.PAIR_S, field.getKeyFormatted()))
                 .collect(Collectors.joining(", "));
         return String.format(transformDefinition, allPair);
