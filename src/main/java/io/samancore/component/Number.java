@@ -70,7 +70,7 @@ public class Number extends Component implements Field {
             String precisionScale = String.format("precision = %d, ", DEFAULT_INTEGER_PLACES);
             String scale = String.format("scale = %d, ", decimalLimit);
             columnDescription = columnDescription.concat(", ");
-            if (requireDecimal) {
+            if (!getIsEncrypted() && requireDecimal) {
                 columnDescription = columnDescription.concat(precisionScale).concat(scale);
             }
             if (getIsUnique()) {
