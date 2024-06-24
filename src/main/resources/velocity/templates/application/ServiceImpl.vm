@@ -5,6 +5,8 @@ import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}Req
 import ${template.getPackageComplete()}.repository.${template.getNameCapitalize()}Repository;
 import ${template.getPackageComplete()}.service.${template.getNameCapitalize()}Service;
 import ${template.getPackageComplete()}.transformer.${template.getNameCapitalize()}Transformer;
+import io.samancore.common.error.exception.BusinessException;
+import io.samancore.common.error.message.BusinessExceptionsEnum;
 import io.smallrye.mutiny.Uni;
 import io.samancore.common.util.ConditionsUtil;
 import io.samancore.condition_template.client.ConditionTemplateClient;
@@ -13,8 +15,13 @@ import io.samancore.common.error.util.ExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.samancore.common.bean.jackson.CustomObjectMapper;
 
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
@@ -48,6 +55,7 @@ public class ${template.getNameCapitalize()}ServiceImpl implements ${template.ge
     public Uni<${template.getNameCapitalize()}Model> create(${template.getNameCapitalize()}Model model) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.create %s ", model);
         return getModelUpdated(model)
+                .onItem().invoke(auto1Model -> validateModel(auto1Model))
                 .onItem().transformToUni(model1 -> repository.create(transformer.toEntity(model1)))
                 .onItem().transform(entity -> transformer.toModel(entity));
     }
@@ -56,6 +64,7 @@ public class ${template.getNameCapitalize()}ServiceImpl implements ${template.ge
     public Uni<${template.getNameCapitalize()}Model> update(${template.getNameCapitalize()}Model model) {
         log.debugf("${template.getNameCapitalize()}RepositoryReactivePanache.update %s ", model);
         return getModelUpdated(model)
+                .onItem().invoke(auto1Model -> validateModel(auto1Model))
                 .onItem().transformToUni(model1->  repository.update(transformer.toEntity(model1)))
                 .onItem().transform(entity -> transformer.toModel(entity));
     }
@@ -81,5 +90,15 @@ public class ${template.getNameCapitalize()}ServiceImpl implements ${template.ge
         .onItem().transform(conditions -> ConditionsUtil.getModelMapUpdatedWithConditions(modelMap, conditions))
         .onItem().transform(modelMapChanged -> objectMapper.convertValue(modelMapChanged, ${template.getNameCapitalize()}Model.class))
         .onFailure().transform(e -> ExceptionHandler.throwNotFoundOrLocal(TechnicalExceptionsEnum.PROCESSING_CONDITION_ERROR, e));
+    }
+
+    private void validateModel(${template.getNameCapitalize()}Model model) {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        var validator = factory.getValidator();
+        var violations = validator.validate(model);
+        if (!violations.isEmpty()){
+            var errorMessage = violations.stream().map(constraintViolation -> constraintViolation.getPropertyPath().toString().concat(": ").concat(constraintViolation.getMessage())).collect(Collectors.joining(", "));
+            throw new BusinessException(BusinessExceptionsEnum.CONDITION_VALIDATE_ERROR, List.of(errorMessage));
+        }
     }
 }

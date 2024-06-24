@@ -11,7 +11,6 @@ import org.jboss.logging.Logger;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -53,7 +52,7 @@ public class ${template.getNameCapitalize()}Api {
    @POST
    @Path("/")
    @RolesAllowed({"admin"})
-   public Uni<${template.getNameCapitalize()}Model> create(@Valid ${template.getNameCapitalize()}Model ${template.getNameLowerCase()}Model) {
+   public Uni<${template.getNameCapitalize()}Model> create(${template.getNameCapitalize()}Model ${template.getNameLowerCase()}Model) {
         log.debug("${template.getNameCapitalize()}Api.create");
         return service.create(${template.getNameLowerCase()}Model);
    }
@@ -61,7 +60,7 @@ public class ${template.getNameCapitalize()}Api {
    @PUT
    @Path("/")
    @RolesAllowed({"admin"})
-   public Uni<${template.getNameCapitalize()}Model> update(@Valid ${template.getNameCapitalize()}Model ${template.getNameLowerCase()}Model) {
+   public Uni<${template.getNameCapitalize()}Model> update(${template.getNameCapitalize()}Model ${template.getNameLowerCase()}Model) {
         log.debug("${template.getNameCapitalize()}Api.update");
         return service.update(${template.getNameLowerCase()}Model);
    }

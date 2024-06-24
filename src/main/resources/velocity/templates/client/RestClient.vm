@@ -14,7 +14,7 @@ import io.samancore.common.page.PageRequest;
 @ApplicationScoped
 @RegisterRestClient(configKey = "cde-${template.getProductNameLowerCase()}-${template.getNameLowerCase()}-api")
 @RegisterClientHeaders
-@Path("/${template.getNameLowerCase()}s")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface ${template.getNameCapitalize()}RestClient {
