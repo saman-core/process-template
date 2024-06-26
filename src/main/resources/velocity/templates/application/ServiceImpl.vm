@@ -98,7 +98,7 @@ public class ${template.getNameCapitalize()}ServiceImpl implements ${template.ge
         var violations = validator.validate(model);
         if (!violations.isEmpty()){
             var errorMessage = violations.stream().map(constraintViolation -> constraintViolation.getPropertyPath().toString().concat(": ").concat(constraintViolation.getMessage())).collect(Collectors.joining(", "));
-            throw new BusinessException(BusinessExceptionsEnum.CONDITION_VALIDATE_ERROR, List.of(errorMessage));
+            throw new BusinessException(BusinessExceptionsEnum.VALIDATE_REQUEST_ERROR, List.of(errorMessage));
         }
     }
 }

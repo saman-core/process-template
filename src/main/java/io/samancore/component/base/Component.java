@@ -52,16 +52,16 @@ public abstract class Component extends ValidationComponent implements Input {
     @Override
     public List<String> getAllAnnotationToEntity() {
         var columnDescription = String.format(COLUMN_NAME_S, getKeyToColumn());
-        if (getIsUnique() || getIsRequired()) {
+        if (getIsUnique() || getIsRequired() || getIsEncrypted()) {
             columnDescription = columnDescription.concat(", ");
-            if (getIsUnique()) {
+            if (getIsUnique() && !getIsEncrypted()) {
                 columnDescription = columnDescription.concat(UNIQUE_TRUE);
             }
             if (getIsRequired()) {
                 columnDescription = columnDescription.concat(NULLABLE_FALSE);
             }
-            if (getMaxLength() != null) {
-                columnDescription = columnDescription.concat(String.format(LENGTH_D, getMaxLength()));
+            if (getModelMaxLength() != null || getIsEncrypted()) {
+                columnDescription = columnDescription.concat(String.format(LENGTH_D, getDbMaxLength()));
             }
             columnDescription = columnDescription.substring(0, columnDescription.lastIndexOf(",")).concat(")");
         } else columnDescription = columnDescription.concat(")");
@@ -175,7 +175,25 @@ public abstract class Component extends ValidationComponent implements Input {
         return String.format("%s.getFirst(\"%s\")", value, key);
     }
 
-    public Integer getMaxLength() {
-        return encryptType.equals(EncryptType.NONE) ? maxLength : encryptType.getMaxLength();
+    public Integer getModelMaxLength() {
+        return encryptType.equals(EncryptType.NONE) ? maxLength : encryptType.getModelMaxLength();
+    }
+
+    public Integer getDbMaxLength() {
+        return encryptType.equals(EncryptType.NONE) ? maxLength : encryptType.getDbMaxLength();
+    }
+
+    @Override
+    public List<String> getValidationToModel() {
+        return List.of();
+    }
+
+    public String getElementNameAndAddMethodDecrypt(ArrayList<String> list) {
+        var object = ELEMENT;
+        if (getIsEncrypted()) {
+            list.add(getMethodDecrypt());
+            object = NEW_ELEMENT;
+        }
+        return object;
     }
 }

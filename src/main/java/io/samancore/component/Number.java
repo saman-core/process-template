@@ -86,28 +86,31 @@ public class Number extends Component implements Field {
 
     @Override
     public List<String> getValidationToModel() {
-        var validation = new ArrayList<String>();
+        var validationList = new ArrayList<String>();
         if (getIsRequired()) {
-            validation.add(NOT_NULL);
+            validationList.add(NOT_NULL);
+        }
+        if (getIsEncrypted()) {
+            validationList.add(String.format(MAX_BYTE_VALUE_S, getEncryptType().getModelMaxLength()));
         }
         if (minValue != null || maxValue != null) {
             if (isArbitraryPrecision) {
                 if (minValue != null) {
-                    validation.add(String.format("@MinDecimal(value = \"%s\" )", minValue));
+                    validationList.add(String.format("@MinDecimal(value = \"%s\" )", minValue));
                 }
                 if (maxValue != null) {
-                    validation.add(String.format("@MaxDecimal(value = \"%s\" )", maxValue));
+                    validationList.add(String.format("@MaxDecimal(value = \"%s\" )", maxValue));
                 }
             } else {
                 if (minValue != null) {
-                    validation.add(String.format("@Min(value = %s )", minValue));
+                    validationList.add(String.format("@Min(value = %s )", minValue));
                 }
                 if (maxValue != null) {
-                    validation.add(String.format("@Max(value = %s )", maxValue));
+                    validationList.add(String.format("@Max(value = %s )", maxValue));
                 }
             }
         }
-        return validation;
+        return validationList;
     }
 
     @Override
@@ -130,17 +133,13 @@ public class Number extends Component implements Field {
     public List<String> getMethodTransformToModel() {
         var list = new ArrayList<String>();
         list.add(String.format(PRIVATE_S_TRANSFORM_S_TO_MODEL_S_ELEMENT, getObjectTypeToModel(), getKeyFormatted(), getObjectTypeToEntity()));
-        var object = "element";
-        if (getIsEncrypted()) {
-            list.add(getMethodDecrypt());
-            object = "newElement";
-        }
+        String elementName = getElementNameAndAddMethodDecrypt(list);
         var objectType = getObjectTypeToModel();
         String descriptionReturn = String.format("%s.valueOf", objectType);
         if (objectType.equals(DATA_TYPE_BIG_DECIMAL)) {
             descriptionReturn = String.format("new %s", objectType);
         }
-        list.add(String.format("return %s(%s);", descriptionReturn, object));
+        list.add(String.format("return %s(%s);", descriptionReturn, elementName));
         list.add(CLOSE_KEY);
         return list;
     }

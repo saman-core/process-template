@@ -6,8 +6,6 @@ import io.samancore.component.base.Field;
 import io.samancore.type.CaseType;
 import lombok.Getter;
 
-import java.util.List;
-
 import static io.samancore.util.GeneralConstant.DATA_TYPE_BOOLEAN;
 import static io.samancore.util.GeneralConstant.DATA_TYPE_BYTEA;
 
@@ -27,11 +25,6 @@ public class Checkbox extends Component implements Field {
     @Override
     public String getObjectTypeToEntity() {
         return getIsEncrypted() ? DATA_TYPE_BYTEA : DATA_TYPE_BOOLEAN;
-    }
-
-    @Override
-    public List<String> getValidationToModel() {
-        return List.of();
     }
 
     @Override

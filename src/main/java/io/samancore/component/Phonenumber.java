@@ -29,15 +29,18 @@ public class Phonenumber extends Component implements Field {
 
     @Override
     public List<String> getValidationToModel() {
-        var validation = new ArrayList<String>();
+        var validationList = new ArrayList<String>();
+        if (getIsEncrypted()) {
+            validationList.add(String.format(MAX_BYTE_VALUE_S, getEncryptType().getModelMaxLength()));
+        }
         if (getIsRequired()) {
-            validation.add(NOT_BLANK);
-            validation.add(NOT_EMPTY);
+            validationList.add(NOT_BLANK);
+            validationList.add(NOT_EMPTY);
         }
-        if (getMaxLength() != null) {
-            validation.add(String.format("@Size(max = %d)", getMaxLength()));
+        if (getModelMaxLength() != null) {
+            validationList.add(String.format(SIZE_MAX_D, getModelMaxLength()));
         }
-        return validation;
+        return validationList;
     }
 
     @Override
@@ -68,21 +71,17 @@ public class Phonenumber extends Component implements Field {
     public List<String> getMethodTransformToModel() {
         var list = new ArrayList<String>();
         list.add(String.format(PRIVATE_S_TRANSFORM_S_TO_MODEL_S_ELEMENT, getObjectTypeToModel(), getKeyFormatted(), getObjectTypeToEntity()));
-        var object = "element";
-        if (getIsEncrypted()) {
-            list.add(getMethodDecrypt());
-            object = "newElement";
-        }
+        String elementName = getElementNameAndAddMethodDecrypt(list);
         if (!getCaseType().equals(CaseType.NONE)) {
-            list.add(String.format(S_S_TO_S_JAVA_UTIL_LOCALE_ROOT, object, object, getCaseType().getDescription()));
+            list.add(String.format(S_S_TO_S_JAVA_UTIL_LOCALE_ROOT, elementName, elementName, getCaseType().getDescription()));
         }
         if (getIsTruncateMultipleSpaces()) {
-            list.add(String.format(S_S_TRIM_REPLACE_ALL_S_2_G, object, object));
+            list.add(String.format(S_S_TRIM_REPLACE_ALL_S_2_G, elementName, elementName));
         }
         if (getHasSensitiveDataMaskType()) {
-            list.add(String.format(S_MASKER_S_APPLY_S, object, getSensitiveDataMaskType().getDescriptionCapitalize(), object));
+            list.add(String.format(S_MASKER_S_APPLY_S, elementName, getSensitiveDataMaskType().getDescriptionCapitalize(), elementName));
         }
-        list.add(String.format(RETURN_S, object));
+        list.add(String.format(RETURN_S, elementName));
         list.add(CLOSE_KEY);
         return list;
     }

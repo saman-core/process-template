@@ -7,10 +7,10 @@ import io.samancore.type.CaseType;
 import io.samancore.type.EncryptType;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static io.samancore.util.GeneralConstant.NOT_EMPTY;
-import static io.samancore.util.GeneralConstant.SET_STRING;
+import static io.samancore.util.GeneralConstant.*;
 
 @Getter
 public class Tags extends Multivalue implements Field {
@@ -33,9 +33,13 @@ public class Tags extends Multivalue implements Field {
 
     @Override
     public List<String> getValidationToModel() {
-        if (getIsRequired()) {
-            return List.of(NOT_EMPTY);
+        var validationList = new ArrayList<String>();
+        if (getIsEncrypted()) {
+            validationList.add(String.format(MAX_BYTE_VALUE_S, getEncryptType().getModelMaxLength()));
         }
-        return List.of();
+        if (getIsRequired()) {
+            validationList.add(NOT_EMPTY);
+        }
+        return validationList;
     }
 }

@@ -37,4 +37,6 @@ public interface Input {
     String getConversionFromStringToObjectType(String value);
 
     Boolean evaluateIfFilterNeedDefineJoin();
+
+    List<String> getValidationToModel();
 }

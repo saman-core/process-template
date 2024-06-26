@@ -6,19 +6,21 @@ import java.util.Arrays;
 
 @Getter
 public enum EncryptType {
-    NONE("false", null, null, null),
-    TRUE("true", 2000, "encrypt", "decrypt"),
-    SYMMETRIC("symmetric", 2000, "encrypt", "decrypt"),
-    ASYMMETRIC("asymmetric", 1000, "encrypt", "decrypt");
+    NONE("false", null, null, null, null),
+    TRUE("true", 470, 512, "encrypt", "decrypt"),
+    SYMMETRIC("symmetric", 4096, 4096, "encrypt", "decrypt"),
+    ASYMMETRIC("asymmetric", 470, 512, "encrypt", "decrypt");
 
     private String description;
-    private Integer maxLength;
+    private Integer modelMaxLength;
+    private Integer dbMaxLength;
     private String encryptMethod;
     private String decryptMethod;
 
-    EncryptType(String description, Integer maxLength, String encryptMethod, String decryptMethod) {
+    EncryptType(String description, Integer modelMaxLength, Integer dbMaxLength, String encryptMethod, String decryptMethod) {
         this.description = description;
-        this.maxLength = maxLength;
+        this.modelMaxLength = modelMaxLength;
+        this.dbMaxLength = dbMaxLength;
         this.encryptMethod = encryptMethod;
         this.decryptMethod = decryptMethod;
     }

@@ -19,14 +19,17 @@ public class Time extends Component implements Field {
 
     @Override
     public List<String> getValidationToModel() {
-        var validation = new ArrayList<String>();
+        var validationList = new ArrayList<String>();
+        if (getIsEncrypted()) {
+            validationList.add(String.format(MAX_BYTE_VALUE_S, getEncryptType().getModelMaxLength()));
+        }
         if (getIsRequired()) {
-            validation.add(NOT_BLANK);
-            validation.add(NOT_EMPTY);
+            validationList.add(NOT_BLANK);
+            validationList.add(NOT_EMPTY);
         }
-        if (getMaxLength() != null) {
-            validation.add(String.format("@Size(max = %d)", getMaxLength()));
+        if (getModelMaxLength() != null) {
+            validationList.add(String.format(SIZE_MAX_D, getModelMaxLength()));
         }
-        return validation;
+        return validationList;
     }
 }

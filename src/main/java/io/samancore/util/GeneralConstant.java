@@ -127,6 +127,13 @@ public class GeneralConstant {
     public static final String S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS = "%s name length should be max %s characters";
     public static final String IO_SAMANCORE_COMMON_TRANSFORMER_MASKER_MASKER_S = "io.samancore.common.transformer.Masker masker%s;";
     public static final String SENSITIVE_DATA_MASK = "sensitiveDataMask";
+    public static final String MAX_BYTE_VALUE_S = "@MaxByte(value = %s )";
+    public static final String SIZE_MAX_D = "@Size(max = %d)";
+    public static final String SIZE_MIN_D = "@Size(min = %d)";
+    public static final String SIZE_MIN_D_MAX_D = "@Size(min = %d, max = %d)";
+    public static final String PATTERN_REGEXP_S = "@Pattern(regexp = \"%s\")";
+    public static final String ELEMENT = "element";
+    public static final String NEW_ELEMENT = "newElement";
 
 
     private GeneralConstant() {

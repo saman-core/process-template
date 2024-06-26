@@ -47,14 +47,14 @@ public class Datetime extends Component implements Field {
 
     @Override
     public List<String> getValidationToModel() {
-        var annotations = new ArrayList<String>(List.of());
+        var validationList = new ArrayList<String>();
         if (getDisabledDates() != null || getDisableWeekdays() || getDisableWeekends()) {
-            annotations.add(String.format("@DateDisable(disableDates=\"%s\", disableWeekdays=%s, disableWeekends=%s)", getDisabledDates() != null ? getDisabledDates() : "", getDisableWeekdays(), getDisableWeekends()));
+            validationList.add(String.format("@DateDisable(disableDates=\"%s\", disableWeekdays=%s, disableWeekends=%s)", getDisabledDates() != null ? getDisabledDates() : "", getDisableWeekdays(), getDisableWeekends()));
         }
         if (getMinDate() != null || getMaxDate() != null) {
-            annotations.add(String.format(" @DateLimit(minDate = \"%s\", maxDate = \"%s\")", getMinDate() != null ? getMinDate() : "", getMaxDate() != null ? getMaxDate() : ""));
+            validationList.add(String.format(" @DateLimit(minDate = \"%s\", maxDate = \"%s\")", getMinDate() != null ? getMinDate() : "", getMaxDate() != null ? getMaxDate() : ""));
         }
-        return annotations;
+        return validationList;
     }
 
     @Override

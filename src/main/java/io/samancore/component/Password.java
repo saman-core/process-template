@@ -34,22 +34,25 @@ public class Password extends Component implements Field {
 
     @Override
     public List<String> getValidationToModel() {
-        var validation = new ArrayList<String>();
+        var validationList = new ArrayList<String>();
+        if (getIsEncrypted()) {
+            validationList.add(String.format(MAX_BYTE_VALUE_S, getEncryptType().getModelMaxLength()));
+        }
         if (getIsRequired()) {
-            validation.add(NOT_BLANK);
-            validation.add(NOT_EMPTY);
+            validationList.add(NOT_BLANK);
+            validationList.add(NOT_EMPTY);
         }
         if (pattern != null) {
-            validation.add(String.format("@Pattern(regexp = \"%s\")", pattern));
+            validationList.add(String.format(PATTERN_REGEXP_S, pattern));
         }
-        if (minLength != null && getMaxLength() != null) {
-            validation.add(String.format("@Size(min = %d, max = %d)", minLength, getMaxLength()));
+        if (minLength != null && getModelMaxLength() != null) {
+            validationList.add(String.format(SIZE_MIN_D_MAX_D, minLength, getModelMaxLength()));
         } else if (minLength != null) {
-            validation.add(String.format("@Size(min = %d)", minLength));
-        } else if (getMaxLength() != null) {
-            validation.add(String.format("@Size(max = %d)", getMaxLength()));
+            validationList.add(String.format(SIZE_MIN_D, minLength));
+        } else if (getModelMaxLength() != null) {
+            validationList.add(String.format(SIZE_MAX_D, getModelMaxLength()));
         }
-        return validation;
+        return validationList;
     }
 
     @Override
@@ -83,18 +86,14 @@ public class Password extends Component implements Field {
     public List<String> getMethodTransformToModel() {
         var list = new ArrayList<String>();
         list.add(String.format(PRIVATE_S_TRANSFORM_S_TO_MODEL_S_ELEMENT, getObjectTypeToModel(), getKeyFormatted(), getObjectTypeToEntity()));
-        var object = "element";
-        if (getIsEncrypted()) {
-            list.add(getMethodDecrypt());
-            object = "newElement";
-        }
+        String elementName = getElementNameAndAddMethodDecrypt(list);
         if (!getCaseType().equals(CaseType.NONE)) {
-            list.add(String.format(S_S_TO_S_JAVA_UTIL_LOCALE_ROOT, object, object, getCaseType().getDescription()));
+            list.add(String.format(S_S_TO_S_JAVA_UTIL_LOCALE_ROOT, elementName, elementName, getCaseType().getDescription()));
         }
         if (getIsTruncateMultipleSpaces()) {
-            list.add(String.format(S_S_TRIM_REPLACE_ALL_S_2_G, object, object));
+            list.add(String.format(S_S_TRIM_REPLACE_ALL_S_2_G, elementName, elementName));
         }
-        list.add(String.format(RETURN_S, object));
+        list.add(String.format(RETURN_S, elementName));
         list.add(CLOSE_KEY);
         return list;
     }

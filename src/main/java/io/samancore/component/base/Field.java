@@ -1,7 +1,5 @@
 package io.samancore.component.base;
 
-import java.util.List;
-
 public interface Field extends Input {
 
     String getKey();
@@ -9,8 +7,6 @@ public interface Field extends Input {
     Boolean getIsPersistent();
 
     Boolean getHasDbIndex();
-
-    List<String> getValidationToModel();
 
     String getPairTransformToEntity();
 

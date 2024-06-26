@@ -6,6 +6,7 @@ import io.samancore.component.base.Field;
 import io.samancore.type.CaseType;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.samancore.util.GeneralConstant.*;
@@ -30,9 +31,14 @@ public class Signature extends Component implements Field {
 
     @Override
     public List<String> getValidationToModel() {
-        if (getIsRequired()) {
-            return List.of(NOT_BLANK, NOT_EMPTY);
+        var validationList = new ArrayList<String>();
+        if (getIsEncrypted()) {
+            validationList.add(String.format(MAX_BYTE_VALUE_S, getEncryptType().getModelMaxLength()));
         }
-        return List.of();
+        if (getIsRequired()) {
+            validationList.add(NOT_BLANK);
+            validationList.add(NOT_EMPTY);
+        }
+        return validationList;
     }
 }

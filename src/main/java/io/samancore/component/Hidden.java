@@ -14,11 +14,6 @@ public class Hidden extends Component implements Field {
     }
 
     @Override
-    public List<String> getValidationToModel() {
-        return List.of();
-    }
-
-    @Override
     public List<String> getAllAnnotationToEntity() {
         return List.of();
     }
