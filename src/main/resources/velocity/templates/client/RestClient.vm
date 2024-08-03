@@ -12,7 +12,7 @@ import io.samancore.common.model.PageData;
 import io.samancore.common.page.PageRequest;
 
 @ApplicationScoped
-@RegisterRestClient(configKey = "cde-${template.getProductNameLowerCase()}-${template.getNameLowerCase()}-api")
+@RegisterRestClient(configKey = "${template.getRestClientConfigKey()}")
 @RegisterClientHeaders
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)

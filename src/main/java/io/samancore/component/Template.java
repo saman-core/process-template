@@ -106,6 +106,11 @@ public class Template extends Validation {
         return productName.toLowerCase(Locale.ROOT);
     }
 
+    public String getRestClientConfigKey() {
+        var configKey = "cde-".concat(productName).concat("-").concat(name).concat("-").concat("api");
+        return configKey.toLowerCase(Locale.ROOT);
+    }
+
     public Boolean evaluateIfAnyFieldIsMultiple() {
         return getAllFieldToPersist().stream().anyMatch(field -> field instanceof Multivalue);
     }
@@ -168,7 +173,7 @@ public class Template extends Validation {
     }
 
     public String getTableName() {
-        var tableName = PREFIX_TABLENAME_CE.concat(productName).concat(UNDERSCORE).concat(name);
+        var tableName= PREFIX_TABLENAME_CE.concat(productName).concat(UNDERSCORE).concat(name);
         if (dbElementCaseSensitive.equals(CaseType.UPPERCASE)) {
             return tableName.toUpperCase(Locale.ROOT);
         }
@@ -176,7 +181,7 @@ public class Template extends Validation {
     }
 
     public String getSequenceName() {
-        var tableName = PREFIX_SEQUENCENAME_SQ.concat(productName).concat(UNDERSCORE).concat(name);
+        var tableName= PREFIX_SEQUENCENAME_SQ.concat(productName).concat(UNDERSCORE).concat(name);
         if (dbElementCaseSensitive.equals(CaseType.UPPERCASE)) {
             return tableName.toUpperCase(Locale.ROOT);
         }
