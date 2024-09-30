@@ -16,7 +16,7 @@ import static io.samancore.util.GeneralConstant.*;
 @Getter
 public class Number extends Component implements Field {
     private Boolean requireDecimal = false;
-    private Boolean isArbitraryPrecision = false;
+    private Boolean isLongNumber = false;
     private Boolean delimiterThouzand = false;
     private Integer decimalLimit = null;
     private BigDecimal minValue = null;
@@ -24,24 +24,28 @@ public class Number extends Component implements Field {
 
     public Number(CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
         super(columnCaseSensitive, jsonNodeComponent);
-        this.isArbitraryPrecision = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, ARBITRARY_PRECISION);
+        this.isLongNumber = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, LONG_NUMBER);
         this.delimiterThouzand = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, DELIMITER);
         this.decimalLimit = JsonFormIoUtil.getDecimalLimit(jsonNodeComponent);
         this.requireDecimal = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, REQUIRE_DECIMAL);
         this.minValue = JsonFormIoUtil.getBigDecimalPropertyFromValidate(jsonNodeComponent, MIN);
         this.maxValue = JsonFormIoUtil.getBigDecimalPropertyFromValidate(jsonNodeComponent, MAX);
-        if (decimalLimit == null && requireDecimal) {
-            decimalLimit = DEFAULT_DECIMAL_PLACES;
+        if(requireDecimal){
+            if (decimalLimit == null || decimalLimit.intValue()==0) {
+                decimalLimit =  isLongNumber ? MAX_DECIMAL_PLACES : DEFAULT_DECIMAL_PLACES;
+            }else{
+                decimalLimit = decimalLimit > MAX_DECIMAL_PLACES ? MAX_DECIMAL_PLACES : decimalLimit;
+            }
+        }else {
+            decimalLimit = 0;
         }
     }
 
     @Override
     public String getObjectTypeToModel() {
         if (requireDecimal || decimalLimit != null) {
-            if (isArbitraryPrecision) {
-                return DATA_TYPE_BIG_DECIMAL;
-            } else return DATA_TYPE_DOUBLE;
-        } else if (isArbitraryPrecision) {
+            return DATA_TYPE_BIG_DECIMAL;
+        } else if (isLongNumber) {
             return DATA_TYPE_LONG;
         } else return DATA_TYPE_INTEGER;
 
@@ -52,10 +56,8 @@ public class Number extends Component implements Field {
         if (getIsEncrypted()) {
             return DATA_TYPE_BYTEA;
         } else if (requireDecimal) {
-            if (isArbitraryPrecision) {
-                return DATA_TYPE_BIG_DECIMAL;
-            } else return DATA_TYPE_DOUBLE;
-        } else if (isArbitraryPrecision) {
+            return DATA_TYPE_BIG_DECIMAL;
+        } else if (isLongNumber) {
             return DATA_TYPE_LONG;
         } else return DATA_TYPE_INTEGER;
 
@@ -67,10 +69,12 @@ public class Number extends Component implements Field {
         if (getIsUnique() || getIsRequired() || this.requireDecimal) {
             String unique = UNIQUE_TRUE;
             String required = NULLABLE_FALSE;
-            String precisionScale = String.format("precision = %d, ", DEFAULT_INTEGER_PLACES);
-            String scale = String.format("scale = %d, ", decimalLimit);
+
             columnDescription = columnDescription.concat(", ");
             if (!getIsEncrypted() && requireDecimal) {
+                var precision = (isLongNumber ? MAX_INTEGER_PLACES: DEFAULT_INTEGER_PLACES) + decimalLimit ;
+                String precisionScale = String.format("precision = %d, ", precision);
+                String scale = String.format("scale = %d, ", decimalLimit);
                 columnDescription = columnDescription.concat(precisionScale).concat(scale);
             }
             if (getIsUnique()) {
@@ -94,7 +98,7 @@ public class Number extends Component implements Field {
             validationList.add(String.format(MAX_BYTE_VALUE_S, getEncryptType().getModelMaxLength()));
         }
         if (minValue != null || maxValue != null) {
-            if (isArbitraryPrecision) {
+            if (isLongNumber) {
                 if (minValue != null) {
                     validationList.add(String.format("@MinDecimal(value = \"%s\" )", minValue));
                 }

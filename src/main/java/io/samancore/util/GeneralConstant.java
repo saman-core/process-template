@@ -22,11 +22,13 @@ public class GeneralConstant {
     public static final int MAX_LENGTH_TIME = 8;
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssX";
     public static final int DEFAULT_DECIMAL_PLACES = 2; //TODO read from property
-    public static final int DEFAULT_INTEGER_PLACES = 30; //TODO read from property
+    public static final int DEFAULT_INTEGER_PLACES = 10; //TODO read from property
+    public static final int MAX_DECIMAL_PLACES = 8; //TODO read from property
+    public static final int MAX_INTEGER_PLACES = 19; //TODO read from property
     public static final String DEFAULT_NAME_NUMBER = "1";
     public static final String TEMPLATE_FILE_NAME = "template-details";
     public static final String JSON_FILE_NAME = "form.json";
-    public static final String ARBITRARY_PRECISION = "arbitraryPrecision";
+    public static final String LONG_NUMBER = "longNumber";
     public static final String KEY = "key";
     public static final String PERSISTENT = "persistent";
     public static final String UNIQUE = "unique";
