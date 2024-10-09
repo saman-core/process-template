@@ -43,7 +43,7 @@ public class Number extends Component implements Field {
 
     @Override
     public String getObjectTypeToModel() {
-        if (requireDecimal || decimalLimit != null) {
+        if (requireDecimal || decimalLimit != 0) {
             return DATA_TYPE_BIG_DECIMAL;
         } else if (isLongNumber) {
             return DATA_TYPE_LONG;
@@ -55,7 +55,7 @@ public class Number extends Component implements Field {
     public String getObjectTypeToEntity() {
         if (getIsEncrypted()) {
             return DATA_TYPE_BYTEA;
-        } else if (requireDecimal) {
+        } else if (requireDecimal || decimalLimit != 0) {
             return DATA_TYPE_BIG_DECIMAL;
         } else if (isLongNumber) {
             return DATA_TYPE_LONG;
