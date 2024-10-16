@@ -55,8 +55,9 @@ public class Select extends Multivalue implements Field {
         if (getIsRequired()) {
             if (getIsMultiple()) {
                 return List.of(NOT_EMPTY);
-            } else
-                return List.of(NOT_BLANK, NOT_EMPTY);
+            } else if (getDataSrc() != null && getDataSrc().equalsIgnoreCase(DATA_SRC_RESOURCE)) {
+                return List.of(NOT_NULL);
+            }else return List.of(NOT_BLANK, NOT_EMPTY);
         }
         return List.of();
     }
