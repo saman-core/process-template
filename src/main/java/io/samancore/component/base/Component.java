@@ -32,7 +32,7 @@ public abstract class Component extends ValidationComponent implements Input {
     public Component(CaseType dbElementCaseSensitive, JsonNode jsonNodeComponent) {
         this.key = JsonFormIoUtil.getKey(jsonNodeComponent);
         validateIfNameIsAReservedWord(this.key);
-        validateLengthName(this.getKey(), String.format(S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS, Component.class.descriptorString(), MAX_LENGTH_NAME_ALLOWED));
+        validateLengthName(this.getKey(), MAX_LENGTH_PHONE_NUMBER, String.format(S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS, Component.class.descriptorString(), MAX_LENGTH_NAME_ALLOWED));
         validateIfNameBeginWithLowerCase(this.key);
         validateIfNameContainAnySymbol(this.key);
         this.dbElementCaseSensitive = dbElementCaseSensitive;

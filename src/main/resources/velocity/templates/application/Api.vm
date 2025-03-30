@@ -1,7 +1,7 @@
 package ${template.getPackageComplete()}.api;
 
 import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}Model;
-import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}RequestParameter;
+import ${template.getPackageComplete()}.request.parameter.${template.getNameCapitalize()}RequestParameter;
 import ${template.getPackageComplete()}.service.${template.getNameCapitalize()}Service;
 import io.samancore.common.error.message.TechnicalExceptionsEnum;
 import io.samancore.common.error.util.ExceptionHandler;

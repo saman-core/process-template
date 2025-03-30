@@ -30,7 +30,7 @@ public class ProcessTemplate {
         Properties templateProperties = new Properties();
         templateProperties.load(templateInputStream);
         var caseType = CaseType.getByInitialOrDescriptionDefaultLowerCase(templateProperties.getProperty("dbElementCaseSensitive"));
-        return new Template(templateProperties.getProperty("packageName"), templateProperties.getProperty("templateName"), templateProperties.getProperty("productName"), caseType);
+        return new Template(templateProperties.getProperty("packageName"), templateProperties.getProperty("templateName"), templateProperties.getProperty("productName"), templateProperties.getProperty("moduleName"), caseType);
     }
 
     public void updateTemplateWithFieldsFromFormJsonFile(String absolutePath, Template template) throws IOException {

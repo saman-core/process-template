@@ -15,8 +15,8 @@ import static io.samancore.util.GeneralConstant.*;
 @Getter
 public class Tags extends Multivalue implements Field {
 
-    public Tags(String productName, String templateName, CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
-        super(productName, templateName, columnCaseSensitive, jsonNodeComponent);
+    public Tags(String moduleName, String productName, String templateName, CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+        super(moduleName, productName, templateName, columnCaseSensitive, jsonNodeComponent);
         this.setIsMultiple(true);
         setEncryptType(EncryptType.NONE);
     }

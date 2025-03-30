@@ -2,7 +2,7 @@ package ${template.getPackageComplete()}.client.rest.microprofile;
 
 import io.smallrye.mutiny.Uni;
 import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}Model;
-import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}RequestParameter;
+import ${template.getPackageComplete()}.request.parameter.${template.getNameCapitalize()}RequestParameter;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import jakarta.enterprise.context.ApplicationScoped;

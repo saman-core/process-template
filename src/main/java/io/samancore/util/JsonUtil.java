@@ -58,8 +58,8 @@ public class JsonUtil {
             case COMPONENT_PHONENUMBER, COMPONENT_SAMANPHONENUMBER -> new Phonenumber(template.getDbElementCaseSensitive(), jsonNodeComponent);
             case COMPONENT_TIME, COMPONENT_SAMANTIME -> new Time(template.getDbElementCaseSensitive(), jsonNodeComponent);
             case COMPONENT_SIGNATURE, COMPONENT_SAMANSIGNATURE -> new Signature(template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_SELECT, COMPONENT_SAMANSELECT -> new Select(template.getProductName(), template.getName(), template.getDbElementCaseSensitive(), jsonNodeComponent);
-            case COMPONENT_TAGS, COMPONENT_SAMANTAGS -> new Tags(template.getProductName(), template.getName(), template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_SELECT, COMPONENT_SAMANSELECT -> new Select(template.getModuleName(), template.getProductName(), template.getName(), template.getDbElementCaseSensitive(), jsonNodeComponent);
+            case COMPONENT_TAGS, COMPONENT_SAMANTAGS -> new Tags(template.getModuleName(), template.getProductName(), template.getName(), template.getDbElementCaseSensitive(), jsonNodeComponent);
             case COMPONENT_HIDDEN, COMPONENT_SAMANHIDDEN -> new Hidden(template.getDbElementCaseSensitive(), jsonNodeComponent);
             default -> null;
 

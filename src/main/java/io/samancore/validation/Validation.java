@@ -13,8 +13,8 @@ public class Validation {
         }
     }
 
-    public void validateLengthName(String name, String message) {
-        if (name != null && name.length() > MAX_LENGTH_NAME_ALLOWED) {
+    public void validateLengthName(String name, int limit,String message) {
+        if (name != null && name.length() > limit) {
             throw new RuntimeException(message);
         }
     }

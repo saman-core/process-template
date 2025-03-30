@@ -24,15 +24,18 @@ public class Template extends Validation {
     private String packageName;
     private String name;
     private String productName;
+    private String moduleName;
     private CaseType dbElementCaseSensitive;
     private List<Field> fields;
 
-    public Template(String packageName, String name, String productName, CaseType dbElementCaseSensitive) {
+    public Template(String packageName, String name, String productName, String moduleName, CaseType dbElementCaseSensitive) {
         this.name = name;
         validateIfNameIsAReservedWord(this.name);
-        validateLengthName(this.name, String.format(S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS, "Template", MAX_LENGTH_NAME_ALLOWED));
+        validateLengthName(this.name, MAX_LENGTH_NAME_ALLOWED,String.format(S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS, "Template", MAX_LENGTH_NAME_ALLOWED));
         this.productName = productName;
-        validateLengthName(this.productName, String.format(S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS, "Product", MAX_LENGTH_NAME_ALLOWED));
+        validateLengthName(this.productName, MAX_LENGTH_NAME_ALLOWED, String.format(S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS, "Product", MAX_LENGTH_NAME_ALLOWED));
+        this.moduleName = moduleName;
+        validateLengthName(this.moduleName, MAX_LENGTH_MODULE_NAME_ALLOWED, String.format(S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS, "Module", MAX_LENGTH_MODULE_NAME_ALLOWED));
         this.packageName = packageName;
         this.dbElementCaseSensitive = dbElementCaseSensitive;
     }
@@ -42,12 +45,12 @@ public class Template extends Validation {
     }
 
     public String getPackageWithProduct() {
-        var packageComplete = packageName.concat(".").concat(productName);
+        var packageComplete = packageName.concat(".").concat(moduleName).concat(".").concat(productName);
         return packageComplete.toLowerCase(Locale.ROOT);
     }
 
     public String getPackageComplete() {
-        var packageComplete = packageName.concat(".").concat(productName).concat(".").concat(name);
+        var packageComplete = packageName.concat(".").concat(moduleName).concat(".").concat(productName).concat(".").concat(name);
         return packageComplete.toLowerCase(Locale.ROOT);
     }
 
@@ -106,8 +109,12 @@ public class Template extends Validation {
         return productName.toLowerCase(Locale.ROOT);
     }
 
+    public String getModuleNameLowerCase() {
+        return moduleName.toLowerCase(Locale.ROOT);
+    }
+
     public String getRestClientConfigKey() {
-        var configKey = "cde-".concat(productName).concat("-").concat(name).concat("-").concat("api");
+        var configKey = "cde-".concat(moduleName).concat("-").concat(productName).concat("-").concat(name).concat("-").concat("api");
         return configKey.toLowerCase(Locale.ROOT);
     }
 
@@ -173,7 +180,7 @@ public class Template extends Validation {
     }
 
     public String getTableName() {
-        var tableName= PREFIX_TABLENAME_CE.concat(productName).concat(UNDERSCORE).concat(name);
+        var tableName= PREFIX_TABLENAME_CE.concat(moduleName).concat(UNDERSCORE).concat(productName).concat(UNDERSCORE).concat(name);
         if (dbElementCaseSensitive.equals(CaseType.UPPERCASE)) {
             return tableName.toUpperCase(Locale.ROOT);
         }
@@ -181,7 +188,7 @@ public class Template extends Validation {
     }
 
     public String getSequenceName() {
-        var tableName= PREFIX_SEQUENCENAME_SQ.concat(productName).concat(UNDERSCORE).concat(name);
+        var tableName= PREFIX_SEQUENCENAME_SQ.concat(moduleName).concat(UNDERSCORE).concat(productName).concat(UNDERSCORE).concat(name);
         if (dbElementCaseSensitive.equals(CaseType.UPPERCASE)) {
             return tableName.toUpperCase(Locale.ROOT);
         }

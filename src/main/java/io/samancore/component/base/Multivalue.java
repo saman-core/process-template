@@ -17,13 +17,15 @@ import static io.samancore.util.GeneralConstant.*;
 public abstract class Multivalue extends Component {
 
     private Boolean isMultiple = false;
+    private String moduleName = null;
     private String productName = null;
     private String templateName = null;
     private String dataSrc = null;
 
-    public Multivalue(String productName, String templateName, CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+    public Multivalue(String moduleName, String productName, String templateName, CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
         super(columnCaseSensitive, jsonNodeComponent);
         this.isMultiple = JsonFormIoUtil.getBooleanPropertyFromNode(jsonNodeComponent, MULTIPLE);
+        this.moduleName = moduleName;
         this.productName = productName;
         this.templateName = templateName;
         this.dataSrc = JsonFormIoUtil.getStringPropertyFromNode(jsonNodeComponent, DATA_SRC);
@@ -46,7 +48,7 @@ public abstract class Multivalue extends Component {
         var allAnnotations = new ArrayList<String>();
         if (getIsMultiple()) {
             var name = getKeyToColumn();
-            var tableName = PREFIX_TABLENAME_CE.concat(productName).concat(UNDERSCORE).concat(templateName).concat(UNDERSCORE).concat(UNDERSCORE).concat(getKey());
+            var tableName = PREFIX_TABLENAME_CE.concat(moduleName).concat(UNDERSCORE).concat(productName).concat(UNDERSCORE).concat(templateName).concat(UNDERSCORE).concat(UNDERSCORE).concat(getKey());
             var columnId = templateName.concat(UNDERSCORE).concat("id");
             if (getDbElementCaseSensitive().equals(CaseType.UPPERCASE)) {
                 tableName = tableName.toUpperCase(Locale.ROOT);

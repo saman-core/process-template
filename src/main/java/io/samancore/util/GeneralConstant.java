@@ -17,6 +17,7 @@ public class GeneralConstant {
             "provides", "record", "requires", "sealed", "to", "transitive", "uses",
             "var", "when", "with", "yield"));
     public static final Pattern PATTERN_LETTER_NUMBER = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+    public static final int MAX_LENGTH_MODULE_NAME_ALLOWED = 2;
     public static final int MAX_LENGTH_NAME_ALLOWED = 19;
     public static final int MAX_LENGTH_PHONE_NUMBER = 20;
     public static final int MAX_LENGTH_TIME = 8;

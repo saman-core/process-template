@@ -2,7 +2,7 @@ package ${template.getPackageComplete()}.repository;
 
 import io.smallrye.mutiny.Uni;
 import ${template.getPackageComplete()}.entity.${template.getNameCapitalize()}Entity;
-import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}RequestParameter;
+import ${template.getPackageComplete()}.request.parameter.${template.getNameCapitalize()}RequestParameter;
 import io.samancore.common.model.PageData;
 import io.samancore.common.page.PageRequest;
 

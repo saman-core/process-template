@@ -1,4 +1,4 @@
-package ${template.getPackageComplete()}.model;
+package ${template.getPackageComplete()}.request.parameter;
 
 import lombok.Builder;
 import lombok.Value;

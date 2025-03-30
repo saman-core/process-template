@@ -15,8 +15,8 @@ import static io.samancore.util.GeneralConstant.*;
 public class Select extends Multivalue implements Field {
 
 
-    public Select(String productName, String templateName, CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
-        super(productName, templateName, columnCaseSensitive, jsonNodeComponent);
+    public Select(String moduleName, String productName, String templateName, CaseType columnCaseSensitive, JsonNode jsonNodeComponent) {
+        super(moduleName, productName, templateName, columnCaseSensitive, jsonNodeComponent);
         setEncryptType(EncryptType.NONE);
     }
 

@@ -3,7 +3,7 @@ package ${template.getPackageComplete()}.client.rest;
 import ${template.getPackageComplete()}.client.${template.getNameCapitalize()}Client;
 import ${template.getPackageComplete()}.client.rest.microprofile.${template.getNameCapitalize()}RestClient;
 import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}Model;
-import ${template.getPackageComplete()}.model.${template.getNameCapitalize()}RequestParameter;
+import ${template.getPackageComplete()}.request.parameter.${template.getNameCapitalize()}RequestParameter;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
