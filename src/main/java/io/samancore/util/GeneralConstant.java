@@ -124,7 +124,6 @@ public class GeneralConstant {
     public static final String COLUMN_NAME_S = "@Column( name= \"%s\"";
     public static final String COLUMN_ID = "_id";
     public static final String LENGTH_D = "length  = %d, ";
-    public static final String PREFIX_TABLENAME_CE = "CE_";
     public static final String PREFIX_SEQUENCENAME_SQ = "SQ_";
     public static final String UNDERSCORE = "_";
     public static final String S_NAME_LENGTH_SHOULD_BE_MAX_S_CHARACTERS = "%s name length should be max %s characters";

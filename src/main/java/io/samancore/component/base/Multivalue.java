@@ -48,7 +48,7 @@ public abstract class Multivalue extends Component {
         var allAnnotations = new ArrayList<String>();
         if (getIsMultiple()) {
             var name = getKeyToColumn();
-            var tableName = PREFIX_TABLENAME_CE.concat(moduleName).concat(UNDERSCORE).concat(productName).concat(UNDERSCORE).concat(templateName).concat(UNDERSCORE).concat(UNDERSCORE).concat(getKey());
+            var tableName = moduleName.concat(UNDERSCORE).concat(UNDERSCORE).concat(productName).concat(UNDERSCORE).concat(templateName).concat(UNDERSCORE).concat(UNDERSCORE).concat(getKey());
             var columnId = templateName.concat(UNDERSCORE).concat("id");
             if (getDbElementCaseSensitive().equals(CaseType.UPPERCASE)) {
                 tableName = tableName.toUpperCase(Locale.ROOT);

@@ -114,7 +114,7 @@ public class Template extends Validation {
     }
 
     public String getRestClientConfigKey() {
-        var configKey = "cde-".concat(moduleName).concat("-").concat(productName).concat("-").concat(name).concat("-").concat("api");
+        var configKey = moduleName.concat("-cde-").concat(productName).concat("-").concat(name).concat("-").concat("api");
         return configKey.toLowerCase(Locale.ROOT);
     }
 
@@ -180,7 +180,7 @@ public class Template extends Validation {
     }
 
     public String getTableName() {
-        var tableName= PREFIX_TABLENAME_CE.concat(moduleName).concat(UNDERSCORE).concat(productName).concat(UNDERSCORE).concat(name);
+        var tableName= moduleName.concat(UNDERSCORE).concat(UNDERSCORE).concat(productName).concat(UNDERSCORE).concat(name);
         if (dbElementCaseSensitive.equals(CaseType.UPPERCASE)) {
             return tableName.toUpperCase(Locale.ROOT);
         }
